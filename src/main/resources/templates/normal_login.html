@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .error {
+            border-color: red;
+            color: red;
+        }
+        .field-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <a href="/">홈으로</a>
+    <a href="/join">회원가입</a>
+    <form action="/auth/loginProc" method="post">
+        <input type="text" name="username">
+        <input type="password" name="password">
+        <button id="btn-login">로그인</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <form action="/detail_upload" th:action="@{/detail_upload/{itemId}(itemId = ${itemId})}" method="post">
+        <div id="detail">
+            사이즈 : <input type="text" name="size"> 수량 : <input type="text" name="stock">
+        </div>
+        <input type="button" value="추가" id="add"> <input type="button" value="삭제" id="remove"> <br>
+        <input type="submit" value="업로드">
+    </form>
+
+    <script type="text/javascript">
+        const add = document.getElementById('add');
+
+        add.addEventListener('click', () => {
+            var newDivHtml = "사이즈 : <input type='text' name='size'> 수량 : <input type='text' name='stock'>";
+
+            var div = parent.document.createElement("div");
+            div.innerHTML = newDivHtml;
+
+            parent.document.getElementById("detail").append(div);
+        })
+
+        const remove = document.getElementById('remove');
+
+        remove.addEventListener('click', () => {
+            const detailDiv = document.getElementById('detail');
+            detailDiv.lastElementChild.remove();
+        })
+    </script>
+</body>
+</html>

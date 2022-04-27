@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <div th:each="items : ${items}">
+        <a th:href="@{/item_detail/{id}(id = ${items.id})}"><img th:src="${items.itemUrl}" width="200" height="200"></a>
+        <a th:href="@{/item_detail/{id} (id = ${items.id})}" th:text="${items.viewName}"></a>
+    </div>
+
+<div class="page">
+    <a href="/item_list/?page=1"><<</a>
+    <a th:each="page : ${pageCount}" th:href="@{/item_list/(page=${page.value})}" th:text="${page.value}">page</a>
+    <a th:href="@{/item_list/(page=${lastPage})}">>></a>
+</div>
+</body>
+</html>

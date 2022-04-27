@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <style>
+        .error {
+            color: red;
+            border-color: red;
+        }
+
+        .field-error {
+            color: red;
+        }
+
+        #back {
+            position: absolute;
+            z-index: 100;
+            background-color: #000000;
+            display: none;
+            left: 0;
+            top: 0;
+        }
+
+        #loadingBar {
+            position: absolute;
+            display: inline-block;
+            z-index: 200;
+            width: 50px;
+            height: 50px;
+        }
+
+        img {
+            width: 70px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <div>
+        <form action="/join" method="post" th:object="${join}">
+            아이디 : <input type="text" name="loginId" th:field="*{loginId}" th:errorclass="error" id="loginId">
+            <input type="button" value="중복확인" id="loginIdDuplicate">
+            <div class="field-error">
+                <p th:errors="*{loginId}"></p>
+            </div>
+
+            비밀번호 : <input type="password" name="loginPw" th:field="*{loginPw}" th:errorclass="error">
+            <div class="field-error">
+                <p th:errors="*{loginPw}"></p>
+            </div>
+
+            <div id="checkEmail">
+                이메일 : <input type="email" name="email" id="email">
+                <input type="button" value="본인확인" id="check">
+            </div>
+
+            <div id="divAuth" style="display: none;">
+                인증번호 : <input type='text' name='checkNum' id='checkNum'> <input type='button' value='인증' id='auth'>
+            </div>
+
+            생년월일 : <input type="text" name="birth" th:field="*{birth}" th:errorclass="error">
+            <div class="field-error">
+                <p th:errors="*{birth}"></p>
+            </div>
+
+            <label for="male">남자</label>
+            <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="male" value="남자">
+            <label for="female">여자</label>
+            <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="female" value="여자">
+            <div class="field-error">
+                <p th:errors="*{gender}"></p>
+            </div>
+
+            <div th:if="${#fields.hasGlobalErrors()}">
+                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+            </div>
+
+            <input type="submit" value="회원가입">
+        </form>
+    </div>
+</body>
+<script type="text/javascript">
+
+    //아이디 중복
+    const loginIdDuplicate = document.getElementById('loginIdDuplicate');
+
+    loginIdDuplicate.addEventListener('click', () => {
+        // window.open("login_id_duplicate", "popup", "width=500, height=500, top=50, left=50");
+        var loginId = document.getElementById('loginId').value;
+
+        $.ajax({
+            type : "POST",
+            dataType : "json",
+            url : "/login_id_duplicate",
+            contentType : "application/json",
+            data : JSON.stringify({
+                loginId : loginId
+            })
+        }).done(function (data){
+            alert(data.message);
+        })
+    })
+
+    //이메일 본인인증
+    const check = document.getElementById('check');
+
+    check.addEventListener('click', () => {
+        var email = document.getElementById('email').value;
+        console.log(email);
+
+        $.ajax({
+            type : "POST",
+            dataType : "json",
+            url : "/sendEmail",
+            contentType : "application/json",
+            data : JSON.stringify({
+                email: email
+            }),
+            beforeSend: function () {
+                FunLoadingBarStart();
+            },
+            complete: function () {
+                FunLoadingBarEnd();
+            }
+        })
+
+        const div = document.getElementById('divAuth');
+        div.style.display = "block";
+
+    })
+
+    //인증버튼 클릭
+    const auth = document.getElementById('auth');
+
+    auth.addEventListener('click', () => {
+        var checkNum = document.getElementById('checkNum').value;
+        console.log(checkNum);
+
+        $.ajax({
+            type : "POST",
+            dataType : "json",
+            url : "/checkNumber",
+            contentType : "application/json",
+            data : JSON.stringify({
+                checkNum: checkNum
+            })
+        }).done(function (data){
+            alert(data.message);
+        })
+    })
+
+    //로딩바
+    function FunLoadingBarStart() {
+        var backHeight = $(document).height();
+        var backWidth = window.document.body.clientWidth;
+
+        var backGroundCover =- "<div id='back'></div>"
+        var loadingBarImage = '';
+
+        loadingBarImage += "<div id='loadingBar'>";
+        loadingBarImage += "    <img src='/image/loading.gif'/>";
+        loadingBarImage += "</div>";
+
+        $('#checkEmail').append(backGroundCover).append(loadingBarImage);
+
+        $('#back').css({'width': backWidth, 'height': backHeight, 'opacity': '0.3'});
+        $('#back').show();
+        $('#loadingBar').show();
+    }
+
+    function FunLoadingBarEnd() {
+        $('#back, #loadingBar').hide();
+        $('#back, #loadingBar').remove();
+    }
+</script>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <div th:each="items : ${items}">
+        <a th:href="@{/item_detail/{id}(id = ${items.id})}"><img th:src="${items.itemUrl}" width="200" height="200"></a>
+        <a th:href="@{/item_detail/{id}(id = ${items.id})}"><p th:text="${items.viewName}"></p></a>
+        <p th:text="${items.price}"></p>
+    </div>
+
+    <div class="page">
+        <a th:href="@{/find_by_detail_category/(page=1, category=${category})}"><<</a>
+        <a th:each="page : ${pageCount}" th:href="@{/find_by_detail_category/(page=${page.value}, category=${category})}" th:text="${page.value}">page</a>
+        <a th:href="@{/find_by_detail_category/(page=${lastPage}, category=${category})}">>></a>
+    </div>
+</body>
+</html>

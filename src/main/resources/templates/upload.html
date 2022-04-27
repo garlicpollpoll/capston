@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <style>
+        .error {
+            color: red;
+            border-color: red;
+        }
+
+        .field-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <form action="/upload_item" method="post" enctype="multipart/form-data" th:object="${upload}">
+        <label>파일 업로드</label>
+        <img id="preview-image" src="" style="width: 200px; height: 200px; display: none;">
+        <input style="display: block" type="file" id="input-image" name="image" th:field="*{image}" th:errorclass="error">
+        <div class="field-error">
+            <p th:errors="*{image}"></p>
+        </div>
+        보여지는 이름<input type="text" name="viewName" th:field="*{viewName}" th:errorclass="error"><label>방문자에게 보여지는 이름입니다.</label>
+        <div class="field-error">
+            <p th:errors="*{viewName}"></p>
+        </div>
+
+        상품이름<input type="text" name="itemName" th:field="*{itemName}" th:errorclass="error" id="itemName"><label>같은 제품이면 같은 상품명을 입력해주세요</label>
+        <input type="button" value="상품이름 중복검사" id="itemNameDuplicate">
+        <div class="field-error">
+            <p th:errors="*{itemName}"></p>
+        </div>
+
+        가격<input type="number" name="price" th:field="*{price}" th:errorclass="error">
+        <div class="field-error">
+            <p th:errors="*{price}"></p>
+        </div>
+
+        상품코드<input type="text" name="uniqueCode" th:field="*{uniqueCode}" th:errorclass="error" id="uniqueCode">
+        <input type="button" value="상품코드 중복검사" id="uniqueCodeDuplicate">
+        <div class="field-error">
+            <p th:errors="*{uniqueCode}"></p>
+        </div>
+
+        색깔<input type="text" name="color" th:field="*{color}" th:errorclass="error">
+        <div class="field-error">
+            <p th:errors="*{color}"></p>
+        </div>
+
+        카테고리<input type="text" name="category" th:field="*{category}" th:errorclass="error">
+        <p>카테고리 작성방법 (ex: #상의,#후드티,#오버핏,#남녀공용,#로고)</p>
+        <div class="field-error">
+            <p th:errors="*{category}"></p>
+        </div>
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <input type="submit" value="업로드">
+    </form>
+
+    <!-- 상품이름 중복검사 -->
+    <script type="text/javascript">
+        const itemNameDuplicate = document.getElementById('itemNameDuplicate');
+
+        itemNameDuplicate.addEventListener('click', () => {
+            window.open("item_name_duplicate", "popup", "width=500, height=500, top=50, left=50");
+        })
+    </script>
+
+    <!-- 상품코드 중복검사 -->
+    <script>
+        const uniqueCodeDuplicate = document.getElementById('uniqueCodeDuplicate');
+
+        uniqueCodeDuplicate.addEventListener('click', () => {
+            window.open("unique_code_duplicate", "popup", "width=500, height=500, top=50, left=50");
+        })
+    </script>
+
+    <!-- 이미지 미리보기 -->
+    <script type="text/javascript">
+        function readImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = e => {
+                    const previewImage = document.getElementById("preview-image");
+                    previewImage.src = e.target.result;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        const inputImage = document.getElementById("input-image");
+        inputImage.addEventListener("change", e => {
+            document.getElementById("preview-image").style.display = 'block';
+            readImage(e.target);
+        })
+    </script>
+</body>
+</html>

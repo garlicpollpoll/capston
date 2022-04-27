@@ -1,0 +1,35 @@
+#thead-title {
+    text-align: center;
+}
+
+.number, .title, .writer, .write-date {
+    text-align: center;
+}
+
+.number {
+    width: 10%;
+}
+
+.title {
+    width: 50%;
+}
+
+.writer {
+    width: 20%;
+}
+
+.write-date {
+    width: 20%;
+}
+
+.board-footer {
+    text-align: right;
+}
+
+.container {
+    padding: 50px;
+}
+
+.pagination {
+    margin: 0 auto;
+}

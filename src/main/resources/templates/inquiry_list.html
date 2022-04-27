@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+    <link rel="stylesheet" href="/css/inquiry/board.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/summernote-lite.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
+
+</head>
+<body>
+<a href="/">홈으로</a>
+<div class="container">
+    <div class="table-wrap">
+        <div>
+            <h2>문의하기</h2>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="number">No</th>
+                    <th scope="col" class="title" id="thead-title">제목</th>
+                    <th scope="col" class="write-date">작성시간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="inquiry : ${inquiry}">
+                    <td class="number" th:text="${inquiry.id}"></td>
+                    <td class="title">
+                        <a th:href="@{/inquiry_detail/{id}(id = ${inquiry.id})}" th:text="${inquiry.title}"></a>
+                    </td>
+                    <td class="write-date" th:text="${inquiry.writeDate}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav class="page">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="/inquiry/?page=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li th:each="page : ${pageCount}" class="page-item">
+                    <a class="page-link" th:href="@{/inquiry/(page=${page.value})}" th:text="${page.value}">page</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/inquiry/(page=${lastPage})}">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="board-footer">
+            <a href="/inquiry_write" class="btn btn-dark">글쓰기</a>
+        </div>
+        <!-- Ex sec:authorize="hasRole('ROLE_ADMIN')" -->
+    </div>
+</div>
+</body>
+</html>

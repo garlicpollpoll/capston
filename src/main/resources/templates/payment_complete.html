@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/">홈으로</a>
+    <table>
+        <thead>
+            <tr>
+                <td>id</td>
+                <td>이미지</td>
+                <td>상품이름</td>
+                <td>수량</td>
+                <td>가격</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tOrder : ${tOrder}">
+                <td th:text="${tOrder.order.id}"></td>
+                <td><img th:src="${tOrder.item.itemUrl}" width="70" height="70"></td>
+                <td th:text="${tOrder.item.itemName}"></td>
+                <td th:text="${tOrder.count}"></td>
+                <td th:text="${tOrder.orderPrice}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        총 결제 금액 : <label th:text="${orderPrice}"></label>
+    </div>
+</body>
+</html>

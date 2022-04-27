@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/social_login">로그인</a>
+<a href="/item_upload" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_MANAGER or status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">상품 등록</a>
+<a href="/item_list">상품 리스트 (최신)</a>
+<a href="/item_list_popular">상품 리스트 (인기)</a>
+<a href="/admin/member_to_manager" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">매니저 단계로 승급</a>
+<a href="/inquiry">문의하기</a>
+<form action="/find_by_detail_category" method="get">
+    <input type="text" name="category">
+    <input type="submit" value="검색">
+</form>
+</body>
+</html>

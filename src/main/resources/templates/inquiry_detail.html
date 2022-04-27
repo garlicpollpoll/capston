@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        .title {
+            border-bottom: #cccccc;
+        }
+    </style>
+</head>
+<body>
+<a href="/">홈으로</a>
+<div class="container">
+    <h2 th:text="${inquiry.title}" class="title"></h2>
+    <a th:if="${correct == 1}" th:href="@{/inquiry_rewrite/{id}(id = ${inquiry.id})}">수정하기</a>
+    <a th:if="${correct == 1}" id="delete">삭제하기</a>
+    <p th:utext="${inquiry.content}"></p>
+</div>
+</body>
+<script type="text/javascript">
+    const clickDelete = document.getElementById('delete');
+    var id = '[[${inquiry.id}]]';
+
+    clickDelete.addEventListener('click', () => {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            alert("삭제되었습니다.");
+            location.href = "/inquiry_delete/" + id;
+        }
+    })
+</script>
+</html>

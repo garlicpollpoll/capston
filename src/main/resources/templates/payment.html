@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+    <style>
+        .error {
+            color: red;
+            border-color: red;
+        }
+
+        .field-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <a href="/">홈으로</a> <br>
+
+    <table>
+        <thead>
+            <tr>id</tr>
+            <tr>이미지</tr>
+            <tr>상품이름</tr>
+            <tr>수량</tr>
+            <tr>옵션</tr>
+            <tr>가격</tr>
+        </thead>
+        <tbody>
+            <tr th:each="tOrder : ${tOrder}">
+                <td th:text="${tOrder.bucket.id}" th:value="${tOrder.bucket.id}" class="bucketId"></td>
+                <td><img th:src="${tOrder.bucket.item.itemUrl}" width="70" height="70"></td>
+                <td><label th:text="${tOrder.bucket.item.itemName}"></label></td>
+                <td><label th:text="${tOrder.count}"></label></td>
+                <td><label th:text="${tOrder.size}"></label></td>
+                <td><label th:text="${tOrder.price}"></label></td>
+            </tr>
+        </tbody>
+    </table>
+    <label th:text="|총 가격 : ${orderPrice}|"></label>
+
+    <form action="/payment" method="post" th:object="${payment}">
+        <div>
+            수령인 : <input type="text" name="recipient" th:field="*{recipient}" th:errorclass="error" id="recipient">
+            <div class="field-error">
+                <p th:errors="*{recipient}"></p>
+            </div>
+        </div>
+        <div>
+            핸드폰 : <input type="text" name="first" th:field="*{first}" th:errorclass="error" size="6" id="first">-
+            <input type="text" name="second" th:field="*{second}" th:errorclass="error" size="6" id="second">-
+            <input type="text" name="third" th:field="*{third}" th:errorclass="error" size="6" id="third">
+            <div class="field-error">
+                <p th:errors="*{first}"></p>
+                <p th:errors="*{second}"></p>
+                <p th:errors="*{third}"></p>
+            </div>
+        </div>
+        <div>
+            <input type="text" placeholder="우편번호" name="zipcode" readonly="readonly" id="postNumber" th:field="*{zipcode}" th:errorclass="error">
+            <input type="button" id="post" value="우편번호 찾기">
+            <div class="field-error">
+                <p th:errors="*{zipcode}"></p>
+            </div>
+        </div>
+        <div>
+            <input type="text" placeholder="도로명 주소" name="street" readonly="readonly" id="roadAddress" size="40" th:field="*{street}" th:errorclass="error">
+            <div class="field-error">
+                <p th:errors="*{street}"></p>
+            </div>
+        </div>
+
+        <span id="guide" style="color:#999; display: none"></span>
+
+        <div>
+            <input type="text" name="detailAddress" placeholder="세부 주소" id="detailAddress" th:field="*{detailAddress}" th:errorclass="error">
+            <div class="field-error">
+                <p th:errors="*{detailAddress}"></p>
+            </div>
+        </div>
+        <select name="memo">
+            <option value="none">배송 시 요청사항을 선택해주세요</option>
+            <option value="부재 시 경비실에 맡겨주세요">부재 시 경비실에 맡겨주세요</option>
+            <option value="부재 시 택배함에 넣어주세요">부재 시 택배함에 넣어주세요</option>
+            <option value="부재 시 집 앞에 놔주세요">부재 시 집 앞에 놔주세요</option>
+            <option value="배송 전 연락 바랍니다">배송 전 연락 바랍니다</option>
+            <option value="파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요">파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요</option>
+        </select>
+
+        <div>
+            <button type="button" id="buy">구매하기</button>
+        </div>
+    </form>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //결제
+        const buy = document.getElementById('buy');
+        const recipient = document.getElementById('recipient');
+        const first = document.getElementById('first');
+        const second = document.getElementById('second');
+        const third = document.getElementById('third');
+        const zipcode = document.getElementById('postNumber');
+        const roadAddress = document.getElementById('roadAddress');
+        const detailAddress = document.getElementById('detailAddress');
+
+        buy.addEventListener('click', () => {
+            var memberId = '[[${member?.id}]]';
+            var userId = '[[${user?.id}]]';
+            var userEmail = '[[${session.userEmail}]]';
+            var loginId = '[[${session.loginId}]]';
+            var itemName = '[[${itemName}]]' + "외 " + '[[${tOrderSize}]]' + "개";
+            var orderPrice = '[[${orderPrice}]]';   //결제가격
+            var giver = recipient.value;        //수령인
+            var phone = first.value + "-" + second.value + "-" + third.value;   //핸드폰
+            var postNumber = zipcode.value;     //우편번호
+            var address = roadAddress.value + " " + detailAddress.value;        //주소
+
+            console.log(itemName);
+            console.log(orderPrice);
+            console.log(giver);
+            console.log(phone);
+            console.log(postNumber);
+            console.log(address);
+            console.log("member : " + memberId);
+            console.log("user : " + userId);
+
+            if (recipient.value == "" || first.value == "" || second.value == "" || third.value == "" || zipcode.value == "" || roadAddress.value == "" || detailAddress.value == "") {
+                alert("빈칸을 채워주세요");
+            }
+            else {
+                if (userEmail == "" && loginId == "") {
+                    alert("로그인을 진행해주세요")
+                    location.href = "/login";
+                }
+                else {
+                    IMP.init('imp20762411')
+                    IMP.request_pay({
+                        pg : 'kcp',
+                        pay_method : 'card',
+                        merchant_uid : 'merchant_' + new Date().getTime(),
+                        name : itemName,
+                        amount : 100,
+                        buyer_email : userEmail,
+                        buyer_name : giver,
+                        buyer_tel : phone,
+                        buyer_addr : address,
+                        buyer_postcode : postNumber
+                    }, function (rsp) {
+                        $.ajax({
+                            type : "POST",
+                            url : "/verifyIamport/" + rsp.imp_uid
+                        }).done(function (data) {
+                            if (rsp.paid_amount == data.response.amount) {
+                                // if (userEmail == '') {
+                                //     $.ajax({
+                                //         type : "POST",
+                                //         url : "/paymentCompleteMember",
+                                //         contentType : "application/json",
+                                //         dataType : "json",
+                                //         data : JSON.stringify({
+                                //             id : memberId,
+                                //             zipcode : postNumber,
+                                //             street : roadAddress.value,
+                                //             detailAddress : detailAddress.value
+                                //         })
+                                //     })
+                                //     location.href = "/paymentComplete";
+                                // }
+                                // else if (loginId == '') {
+                                //     $.ajax({
+                                //         type : "POST",
+                                //         url : "/paymentCompleteUser",
+                                //         contentType : "application/json",
+                                //         dataType : "json",
+                                //         data : JSON.stringify({
+                                //             id : userId,
+                                //             zipcode : postNumber,
+                                //             street : roadAddress.value,
+                                //             detailAddress : detailAddress.value
+                                //         })
+                                //     })
+                                //     location.href = "/paymentComplete";
+                                // }
+                                $.ajax({
+                                    type : "POST",
+                                    url : "/paymentComplete",
+                                    contentType : "application/json",
+                                    dataType : "json",
+                                    data : JSON.stringify({
+                                        memberId : memberId,
+                                        userId : userId,
+                                        zipcode : postNumber,
+                                        street : roadAddress.value,
+                                        detailAddress : detailAddress.value
+                                    })
+                                }).done (function (data) {
+                                    if (data.message == '결제가 정상적으로 완료되었습니다.') {
+                                        alert(data.message);
+                                        location.href = "/paymentComplete";
+                                    }
+                                    else {
+                                        $.ajax({
+                                            url : "/payment_cancel",
+                                            type : "POST",
+                                            contentType : "application/json",
+                                            dataType : "json",
+                                            data : JSON.stringify({
+                                                imp_uid : rsp.imp_uid,
+                                                amount : 100,
+                                                checksum : 100,
+                                                reason : "재고 부족으로 인한 취소",
+                                            })
+                                        }).done(function (data){
+                                            alert(data.message);
+                                        })
+                                        alert(data.message);
+                                        location.href = "/bucket";
+                                    }
+                                })
+                            }
+                        })
+                    })
+                }
+            }
+        })
+
+
+        //주소 찾기
+
+        const postcode = document.getElementById('post');
+
+        postcode.addEventListener('click', () => {
+            new daum.Postcode ({
+                oncomplete: function (data) {
+                    var roadAddr = data.roadAddress;
+                    var extraRoadAddr = '';
+
+                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                        extraRoadAddr += data.bname;
+                    }
+
+                    if (data.buildingName !== '' && data.apartment === 'Y') {
+                        extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+
+                    if (extraRoadAddr !== '') {
+                        extraRoadAddr = ' (' + extraRoadAddr + ')';
+                    }
+
+                    document.getElementById('postNumber').value = data.zonecode;
+                    document.getElementById('roadAddress').value = roadAddr;
+
+                    var guideTextBox = document.getElementById('guide');
+
+                    if (data.autoRoadAddress) {
+                        var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                        guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+                        guideTextBox.style.display = 'block';
+                    }
+                    else if (data.autoJibunAddress) {
+                        var expJibunAddr = data.autoJibunAddress;
+                        guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+                        guideTextBox.style.display = 'block';
+                    }
+                    else {
+                        guideTextBox.innerHTML = '';
+                        guideTextBox.style.display = 'none';
+                    }
+                }
+            }).open();
+        })
+    })
+</script>
+</body>
+</html>

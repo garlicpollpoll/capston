@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .error {
+            color: red;
+            border-color: red;
+        }
+
+        .field-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form action="/login_id_duplicate" method="post" th:object="${duplicate}">
+            아이디 중복검사 : <input type="text" name="loginId" th:field="*{loginId}" th:errorclass="error">
+            <div class="field-error">
+                <p th:errors="*{loginId}"></p>
+            </div>
+            <input type="submit" value="중복검사">
+            <div th:if="${#fields.hasGlobalErrors()}">
+                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지지</p>
+                <label th:text="${result}"></label>
+                <input type="button" value="닫기" id="close">
+            </div>
+        </form>
+    </div>
+<script type="text/javascript">
+    const close = document.getElementById('close');
+
+    close.addEventListener('click', () => {
+        window.close();
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  profiles:
+    active: local
+    include: google, naver, kakao
+  datasource:
+    url: jdbc:mysql://localhost:3306/assignment?serverTimezone=UTC&chyaracterEncoding=UTF-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    properties:
+      hibernate:
+#        show_sql: true
+        format_sql: true
+  messages:
+    basename: errors
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kyoungsuk3254@gmail.com
+    password: cnlgfpagxudlgjzl
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIASZNLEKKPEYCUXU5N
+      secretKey: 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
+    s3:
+      bucket: ks-capston
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
