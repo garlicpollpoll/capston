@@ -1,0 +1,30 @@
+.item_name {
+    display: inline-block;
+    padding: 10px;
+}
+
+.item_name:nth-child(1) {
+    width: 25%;
+}
+
+.item_name:nth-child(2) {
+    width: 65%;
+}
+
+.button {
+    text-align: center;
+}
+
+.result {
+    margin-bottom: 20px;
+}
+
+.global_error {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.field-error {
+    text-align: center;
+    margin-top: 20px;
+}

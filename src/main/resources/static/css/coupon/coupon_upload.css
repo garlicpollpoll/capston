@@ -1,0 +1,29 @@
+.upload_wrap {
+    width: 900px;
+    margin: 0 auto;
+    padding: 50px;
+}
+
+.upload {
+    margin-bottom: 30px;
+}
+
+input[type=submit] {
+    width: 150px;
+    height: 50px;
+}
+
+.button {
+    text-align: center;
+}
+
+@media screen and (max-width: 420px) {
+    .upload_wrap {
+        width: 300px;
+        padding: 0;
+    }
+
+    input[type=file] {
+        width: 250px;
+    }
+}

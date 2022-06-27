@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width" initial-scale="1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/like_list/like_list.css">
+
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+</head>
+<body>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+<div class="container">
+    <div th:each="likes : ${myLikes}" class="like_wrap">
+        <div class="card">
+            <div class="check">
+                <input type="checkbox" th:value="${likes.id}" name="like_check" checked>
+            </div>
+            <div class="img">
+                <img th:src="${likes.item.itemUrl}" width="200" height="200">
+            </div>
+            <div>
+                <label th:text="|상품 이름 : ${likes.item.viewName}|">상품 이름 : 상품A</label>
+            </div>
+            <div>
+                <label th:text="|옵션 : ${likes.size}|">옵션 : S</label>
+            </div>
+            <div>
+                <label th:text="|상품 가격 : ${likes.item.price}|">상품 가격 : 55300</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="like_delete">
+        <button id="btn_cancel" class="btn btn-danger">선택한 상품 삭제하기</button>
+    </div>
+    <div class="like_to_bucket">
+        <button id="btn_bucket" class="btn btn-primary">선택한 상품 장바구니에 담기</button>
+    </div>
+</div>
+<div th:replace="fragment/footer :: footer"></div>
+</body>
+
+<script>
+    const btn_bucket = document.getElementById('btn_bucket');
+
+    btn_bucket.addEventListener('click', () => {
+        document.querySelectorAll("input[name=like_check]:checked").forEach(function (item) {
+            var likeId = item.getAttribute('value');
+
+            $.ajax({
+                type : "POST",
+                dataType : "json",
+                url : "/go_to_bucket",
+                contentType : "application/json",
+                data : JSON.stringify({
+                    id : likeId
+                })
+            })
+        })
+        alert("정상적으로 장바구니에 담았습니다. (품절인 상품은 장바구니에 담을 수 없습니다.)");
+        location.href = "/bucket";
+    })
+</script>
+
+<!-- 선택한 상품 좋아요 삭제하기 -->
+<script>
+    const btn_cancel = document.getElementById('btn_cancel');
+
+    btn_cancel.addEventListener('click', () => {
+        document.querySelectorAll("input[name=like_check]:checked").forEach(function (item) {
+            item.parentElement.parentElement.parentElement.remove();
+
+            var likeId = item.getAttribute('value');
+
+            $.ajax({
+                type : "POST",
+                dataType : "json",
+                url : "/cancel_like",
+                contentType : "application/json",
+                data : JSON.stringify({
+                    id : likeId
+                })
+            })
+        })
+        alert("삭제되었습니다.");
+    })
+</script>
+</html>

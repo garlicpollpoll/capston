@@ -4,10 +4,7 @@ import com.hello.capston.entity.*;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
-import com.hello.capston.service.ItemService;
-import com.hello.capston.service.LikeService;
-import com.hello.capston.service.MemberService;
-import com.hello.capston.service.UserService;
+import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,13 +37,15 @@ public class ItemController {
     private final LikeService likeService;
     private final ItemService itemService;
 
+    private final ClickDuplicationPreventService clickService;
+
     @GetMapping("/item_list")
-    public String itemList(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow) {
+    public String itemList(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow, HttpSession session) {
         if (pageNow != 0) {
             pageNow -= 1;
         }
 
-        PageRequest page = PageRequest.of(pageNow, 3);
+        PageRequest page = PageRequest.of(pageNow, 9);
         List<Item> findAll = itemRepository.findAllItem(page);
 
         pageNow += 1;
@@ -55,11 +56,11 @@ public class ItemController {
 
         long totalPage = 0;
 
-        if (size % 3 == 0) {
-            totalPage = size / 3;
+        if (size % 9 == 0) {
+            totalPage = size / 9;
         }
         else {
-            totalPage = size / 3 + 1;
+            totalPage = size / 9 + 1;
         }
 
         pageStart = pageNow - 2;
@@ -97,6 +98,13 @@ public class ItemController {
             map.put(i, i);
         }
 
+        String loginId = (String) session.getAttribute("loginId");
+        Member findMember = memberService.findMember(loginId);
+
+        if (findMember != null) {
+            model.addAttribute("status", findMember.getRole());
+        }
+
         model.addAttribute("pageCount", map);
         model.addAttribute("lastPage", totalPage);
 
@@ -108,7 +116,8 @@ public class ItemController {
     @GetMapping("/item_detail/{id}")
     @Transactional
     public String itemDetail(@PathVariable("id") Long id, Model model, HttpSession session,
-                             @RequestParam(value = "page", defaultValue = "0") Integer pageNow) {
+                             @RequestParam(value = "page", defaultValue = "0") Integer pageNow,
+                             HttpServletRequest request, HttpServletResponse response) {
         Item findItem = itemRepository.findById(id).orElse(new Item());
         List<String> categories = new ArrayList<>();
 
@@ -194,7 +203,7 @@ public class ItemController {
         }
 
         itemService.changeSizeToSoldOut(findItemDetail);
-        itemService.addClick(findItem);
+        clickService.viewCountUp(findItem, request, response);
 
         if (findMember == null && findUser == null) {
             Likes likes = new Likes();
@@ -212,6 +221,7 @@ public class ItemController {
 
         if (findMember == null) {
             Likes likes = likeService.findByUserId(findUser.getId(), findItem.getId());
+
             model.addAttribute("like", likes);
             model.addAttribute("user", findUser);
             model.addAttribute("isLogin", 1);
@@ -222,6 +232,7 @@ public class ItemController {
             model.addAttribute("like", likes);
             model.addAttribute("member", findMember);
             model.addAttribute("isLogin", 1);
+            model.addAttribute("status", findMember.getRole());
         }
 
         model.addAttribute("item", findItem);

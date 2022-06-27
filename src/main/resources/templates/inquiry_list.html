@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/summernote/summernote-lite.css">
     <link rel="stylesheet" href="/css/inquiry/board.css">
@@ -11,9 +12,37 @@
     <script src="/js/summernote-lite.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
 
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
 </head>
 <body>
-<a href="/">홈으로</a>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
 <div class="container">
     <div class="table-wrap">
         <div>
@@ -62,5 +91,6 @@
         <!-- Ex sec:authorize="hasRole('ROLE_ADMIN')" -->
     </div>
 </div>
+<div th:replace="fragment/footer :: footer"></div>
 </body>
 </html>

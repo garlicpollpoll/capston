@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav class="section nav_bar" th:fragment="nav">
+    <div class="inner">
+        <!-- 토글버튼 -->
+        <button id="toggle-btn"><img src="/image/toggle-btn.svg" alt="토글버튼"></button>
+
+        <div id="toggle-menu" class="hide">
+            <ul>
+                <li>
+                    <h3>아우터</h3>
+                    <a href="/find_by_detail_category?category=청자켓">청자켓</a>
+                    <a href="/find_by_detail_category?category=바시티자켓">바시티자켓</a>
+                    <a href="/find_by_detail_category?category=코트">코트</a>
+                    <a href="/find_by_detail_category?category=패딩">패딩</a>
+                    <a href="/find_by_detail_category?category=야상">야상</a>
+                    <a href="/find_by_detail_category?category=가디건">가디건</a>
+                    <a href="/find_by_detail_category?category=후드집업">후드집업</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h3>상의</h3>
+                    <a href="/find_by_detail_category?category=니트">니트</a>
+                    <a href="/find_by_detail_category?category=맨투맨">맨투맨</a>
+                    <a href="/find_by_detail_category?category=반팔">반팔</a>
+                    <a href="/find_by_detail_category?category=셔츠">셔츠</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h3>하의</h3>
+                    <a href="/find_by_detail_category?category=반바지">반바지</a>
+                    <a href="/find_by_detail_category?category=청바지">청바지</a>
+                    <a href="/find_by_detail_category?category=면바지">면바지</a>
+                    <a href="/find_by_detail_category?category=슬랙스">슬랙스</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h3>모자</h3>
+                    <a href="/find_by_detail_category?category=볼캡">볼 캡</a>
+                    <a href="/find_by_detail_category?category=스냅백">스냅 백</a>
+                    <a href="/find_by_detail_category?category=군모">군모</a>
+                    <a href="/find_by_detail_category?category=베레">베레</a>
+                    <a href="/find_by_detail_category?category=비니">비니</a>
+                    <a href="/find_by_detail_category?category=버킷햇">버킷 햇</a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h3>신발</h3>
+                    <a href="/find_by_detail_category?category=워커">워커</a>
+                    <a href="/find_by_detail_category?category=운동화">운동화</a>
+                    <a href="/find_by_detail_category?category=스니커즈">스니커즈</a>
+                    <a href="/find_by_detail_category?category=크록스">크록스</a>
+                    <a href="/find_by_detail_category?category=샌들">샌들</a>
+                    <a href="/find_by_detail_category?category=슬리퍼">슬리퍼</a>
+                </li>
+            </ul>
+
+        </div>
+
+        <script>
+            const el = document.querySelector('#toggle-menu');
+            const btn_el = document.querySelector('#toggle-btn');
+            btn_el.addEventListener('click', function () {
+                if (el.classList.contains('hide')) {
+                    el.classList.remove('hide');
+                } else {
+                    el.classList.add('hide');
+                }
+            });
+        </script>
+
+        <ul id="menuitems" class="menu float--right">
+            <li><a href="/item_list">최신상품</a></li>
+            <li><a href="/item_list_popular">인기상품</a></li>
+            <li><a href="/bucket">장바구니</a></li>
+            <li><a href="/inquiry">문의하기</a></li>
+        </ul>
+
+    </div>
+
+</nav>
+</html>

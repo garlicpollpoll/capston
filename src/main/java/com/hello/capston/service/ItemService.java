@@ -4,6 +4,7 @@ import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.ItemDetail;
 import com.hello.capston.entity.Member;
+import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,14 @@ import java.util.List;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final ItemDetailRepository itemDetailRepository;
 
     public Item findItem(String itemId) {
         return itemRepository.findById(Long.parseLong(itemId)).orElse(new Item());
     }
 
     public Item saveItem(UploadForm form, String imageUrl, Member member) {
-        Item item = new Item(form.getViewName(), form.getItemName(), imageUrl, Integer.parseInt(form.getPrice()), form.getUniqueCode(), member, form.getCategory(), form.getColor(), 0);
+        Item item = new Item(form.getBrandName(), form.getViewName(), form.getItemName(), imageUrl, Integer.parseInt(form.getPrice()), form.getUniqueCode(), member, form.getCategory(), form.getColor(), 0);
 
         itemRepository.save(item);
 
@@ -72,5 +74,16 @@ public class ItemService {
     public void addClick(Item findItem) {
         findItem.addClick();
         log.info("click : {}", findItem.getClick());
+    }
+
+    public boolean checkItemStock(Item findItem, String size) {
+        ItemDetail findItemDetail = itemDetailRepository.findByItemIdAndSize(findItem.getId(), size);
+
+        if (findItemDetail.getStock() == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }

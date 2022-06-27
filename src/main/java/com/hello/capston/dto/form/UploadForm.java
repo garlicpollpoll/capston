@@ -14,6 +14,8 @@ public class UploadForm {
     @NotEmpty
     private String itemName;
     @NotEmpty
+    private String brandName;
+    @NotEmpty
     private String price;
     @NotEmpty
     private String uniqueCode;

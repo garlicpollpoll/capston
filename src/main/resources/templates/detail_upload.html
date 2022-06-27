@@ -1,37 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>상품 업로드</title>
+
+    <meta name="author" content="MOON">
+    <meta name="description" content="의류 쇼핑몰 사이트입니다.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
+
+    <!-- http://ogp.me/ -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="인하쇼핑몰">
+    <meta property="og:title" content="내맘에 쏙드는 의류 사이트">
+    <meta property="og:description" content="다양한 색상의 옷들을 찾을 수 있는 쇼핑몰 사이트">
+    <meta property="og:image" content="img/logo__shop.png">
+    <meta property="og:url" content="#">
+
+    <!-- 파비콘 -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100;400;500;700;900&family=Noto+Serif+KR:wght@200;500;600&family=Song+Myung&display=swap" rel="stylesheet">    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/input-text.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/fixed.css">
+    <link rel="stylesheet" href="/css/detail_upload/detail_upload.css">
+
+
 </head>
 <body>
-<a href="/">홈으로</a>
+<!-- detail_upload.css -->
+
+<h3 class="detail_size">사이즈 / 수량</h3>
+
+<div class="details_upload">
     <form action="/detail_upload" th:action="@{/detail_upload/{itemId}(itemId = ${itemId})}" method="post">
         <div id="detail">
-            사이즈 : <input type="text" name="size"> 수량 : <input type="text" name="stock">
+            <div class="detailWrap">
+                <span>사이즈 : </span><input type="text" name="size">
+            </div>
+            <div class="detailWrap">
+                <span>수량 : </span><input type="text" name="stock">
+            </div>
         </div>
-        <input type="button" value="추가" id="add"> <input type="button" value="삭제" id="remove"> <br>
+        <input type="button" value="추가" id="add">
+        <input type="button" value="삭제" id="remove"> <br>
         <input type="submit" value="업로드">
     </form>
+</div>
 
-    <script type="text/javascript">
-        const add = document.getElementById('add');
 
-        add.addEventListener('click', () => {
-            var newDivHtml = "사이즈 : <input type='text' name='size'> 수량 : <input type='text' name='stock'>";
+<script type="text/javascript">
+    const add = document.getElementById('add');
 
-            var div = parent.document.createElement("div");
-            div.innerHTML = newDivHtml;
+    add.addEventListener('click', () => {
+        var newDivHtml = "<div><div class='detailWrap'><span>사이즈 : </span> <input type='text' name='size'></div> <div class='detailWrap'><span>수량 : </span> <input type='text' name='stock'></div> </div>";
 
-            parent.document.getElementById("detail").append(div);
-        })
+        var div = parent.document.createElement("div");
+        div.innerHTML = newDivHtml;
 
-        const remove = document.getElementById('remove');
+        parent.document.getElementById("detail").append(div);
+    })
 
-        remove.addEventListener('click', () => {
-            const detailDiv = document.getElementById('detail');
-            detailDiv.lastElementChild.remove();
-        })
-    </script>
+    const remove = document.getElementById('remove');
+
+    remove.addEventListener('click', () => {
+        const detailDiv = document.getElementById('detail');
+        detailDiv.lastElementChild.remove();
+    })
+</script>
+
+</div>
+
 </body>
 </html>

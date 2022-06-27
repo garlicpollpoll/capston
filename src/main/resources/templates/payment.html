@@ -2,9 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
     <title>Title</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+
+    <link rel="stylesheet" href="css/payment/payment.css" type="text/css">
+
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+
     <style>
         .error {
             color: red;
@@ -17,84 +32,175 @@
     </style>
 </head>
 <body>
-    <a href="/">홈으로</a> <br>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
 
-    <table>
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <table class="table">
         <thead>
-            <tr>id</tr>
-            <tr>이미지</tr>
-            <tr>상품이름</tr>
-            <tr>수량</tr>
-            <tr>옵션</tr>
-            <tr>가격</tr>
+        <th scope="col">id</th>
+        <th scope="col">이미지</th>
+        <th scope="col">상품이름</th>
+        <th scope="col">수량</th>
+        <th scope="col">옵션</th>
+        <th scope="col">가격</th>
         </thead>
         <tbody>
-            <tr th:each="tOrder : ${tOrder}">
-                <td th:text="${tOrder.bucket.id}" th:value="${tOrder.bucket.id}" class="bucketId"></td>
-                <td><img th:src="${tOrder.bucket.item.itemUrl}" width="70" height="70"></td>
-                <td><label th:text="${tOrder.bucket.item.itemName}"></label></td>
-                <td><label th:text="${tOrder.count}"></label></td>
-                <td><label th:text="${tOrder.size}"></label></td>
-                <td><label th:text="${tOrder.price}"></label></td>
-            </tr>
+        <tr th:each="tOrder : ${tOrder}">
+            <td th:text="${tOrder.bucket.id}" th:value="${tOrder.bucket.id}" class="bucketId">1</td>
+            <td><img th:src="${tOrder.bucket.item.itemUrl}" width="70" height="70"></td>
+            <td><label th:text="${tOrder.bucket.item.itemName}">상품A</label></td>
+            <td><label th:text="${tOrder.count}">2</label></td>
+            <td><label th:text="${tOrder.size}">S</label></td>
+            <td><label th:text="${tOrder.price}">55300</label></td>
+        </tr>
         </tbody>
     </table>
-    <label th:text="|총 가격 : ${orderPrice}|"></label>
 
     <form action="/payment" method="post" th:object="${payment}">
         <div>
-            수령인 : <input type="text" name="recipient" th:field="*{recipient}" th:errorclass="error" id="recipient">
-            <div class="field-error">
+            <div class="recipient_left">
+                <label>수령인</label>
+            </div><div class="recipient_right">
+            <input type="text" name="recipient" th:field="*{recipient}" th:errorclass="error" id="recipient" class="form-control">
+        </div>
+            <!-- <div class="field-error">
                 <p th:errors="*{recipient}"></p>
-            </div>
+            </div> -->
         </div>
         <div>
-            핸드폰 : <input type="text" name="first" th:field="*{first}" th:errorclass="error" size="6" id="first">-
-            <input type="text" name="second" th:field="*{second}" th:errorclass="error" size="6" id="second">-
-            <input type="text" name="third" th:field="*{third}" th:errorclass="error" size="6" id="third">
-            <div class="field-error">
+            <div class="phone_start">
+                <label>핸드폰</label>
+            </div><div class="phone_first">
+            <input type="text" name="first" th:field="*{first}" th:errorclass="error" size="6" id="first" class="form-control">
+        </div><div class="phone_second">
+            <input type="text" name="second" th:field="*{second}" th:errorclass="error" size="6" id="second" class="form-control">
+        </div><div class="phone_third">
+            <input type="text" name="third" th:field="*{third}" th:errorclass="error" size="6" id="third" class="form-control">
+        </div>
+            <!-- <div class="field-error">
                 <p th:errors="*{first}"></p>
                 <p th:errors="*{second}"></p>
                 <p th:errors="*{third}"></p>
-            </div>
+            </div> -->
         </div>
         <div>
-            <input type="text" placeholder="우편번호" name="zipcode" readonly="readonly" id="postNumber" th:field="*{zipcode}" th:errorclass="error">
-            <input type="button" id="post" value="우편번호 찾기">
-            <div class="field-error">
+            <div class="post">
+                <input type="text" placeholder="우편번호" name="zipcode" readonly="readonly" id="postNumber" th:field="*{zipcode}" th:errorclass="error" class="form-control">
+            </div><div class="post">
+            <input type="button" id="post" value="우편번호 찾기" class="btn btn-dark">
+        </div>
+            <!-- <div class="field-error">
                 <p th:errors="*{zipcode}"></p>
-            </div>
+            </div> -->
         </div>
-        <div>
-            <input type="text" placeholder="도로명 주소" name="street" readonly="readonly" id="roadAddress" size="40" th:field="*{street}" th:errorclass="error">
-            <div class="field-error">
+        <div class="text">
+            <input type="text" placeholder="도로명 주소" name="street" readonly="readonly" id="roadAddress" size="40" th:field="*{street}" th:errorclass="error" class="form-control">
+            <!-- <div class="field-error">
                 <p th:errors="*{street}"></p>
-            </div>
+            </div> -->
         </div>
 
         <span id="guide" style="color:#999; display: none"></span>
 
-        <div>
-            <input type="text" name="detailAddress" placeholder="세부 주소" id="detailAddress" th:field="*{detailAddress}" th:errorclass="error">
-            <div class="field-error">
+        <div class="text">
+            <input type="text" name="detailAddress" placeholder="세부 주소" id="detailAddress" th:field="*{detailAddress}" th:errorclass="error" class="form-control">
+            <!-- <div class="field-error">
                 <p th:errors="*{detailAddress}"></p>
+            </div> -->
+        </div>
+
+        <div class="text">
+            <select name="memo" class="form-select">
+                <option value="none">배송 시 요청사항을 선택해주세요</option>
+                <option value="부재 시 경비실에 맡겨주세요">부재 시 경비실에 맡겨주세요</option>
+                <option value="부재 시 택배함에 넣어주세요">부재 시 택배함에 넣어주세요</option>
+                <option value="부재 시 집 앞에 놔주세요">부재 시 집 앞에 놔주세요</option>
+                <option value="배송 전 연락 바랍니다">배송 전 연락 바랍니다</option>
+                <option value="파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요">파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요</option>
+            </select>
+        </div>
+
+        <div class="payment_info">
+            <div class="payment_left">
+                <p>총액</p>
+            </div><div class="payment_right">
+                <p th:text="${orderPrice}">1800</p>
+            </div>
+
+            <div class="payment_left">
+                <p>할인쿠폰</p>
+            </div><div class="payment_right">
+                <select class="form-select" onchange="selectCoupon();" id="coupon">
+                    <option>
+                        ------------------------------------------------------------
+                    </option>
+                    <option th:each="coupon : ${coupon}" th:text="${coupon.coupon.couponDetail}"></option>
+                </select>
+            </div>
+
+            <div class="payment_left">
+                <p>할인금액</p>
+            </div><div class="payment_right">
+                <p class="discount">----------------</p>
+            </div>
+
+            <div class="payment_left">
+                <p>총 결제액</p>
+            </div><div class="payment_right">
+                <p class="result_price">----------------</p>
             </div>
         </div>
-        <select name="memo">
-            <option value="none">배송 시 요청사항을 선택해주세요</option>
-            <option value="부재 시 경비실에 맡겨주세요">부재 시 경비실에 맡겨주세요</option>
-            <option value="부재 시 택배함에 넣어주세요">부재 시 택배함에 넣어주세요</option>
-            <option value="부재 시 집 앞에 놔주세요">부재 시 집 앞에 놔주세요</option>
-            <option value="배송 전 연락 바랍니다">배송 전 연락 바랍니다</option>
-            <option value="파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요">파손의 위험이 있는 상품입니다. 배송 시에 주의해주세요</option>
-        </select>
 
-        <div>
-            <button type="button" id="buy">구매하기</button>
+        <div class="buy">
+            <button type="button" id="buy" class="btn btn-dark btn-lg">구매하기</button>
         </div>
     </form>
+</div>
+<div th:replace="fragment/footer :: footer"></div>
+
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
+    var orderPrice = '[[${orderPrice}]]';
+
+    function selectCoupon() {
+        var coupon = document.getElementById('coupon');
+        var target = coupon.options[coupon.selectedIndex].value;
+        $.ajax({
+            type : "POST",
+            url : "/selectCoupon",
+            contentType : "application/json",
+            dataType : "json",
+            data : JSON.stringify({
+                target: target
+            })
+        }).done(function (data) {
+            orderPrice = data.orderPrice;
+            $(".discount").text(data.discountPrice);
+            $(".result_price").text(data.orderPrice);
+        })
+    }
+
     $(document).ready(function() {
         //결제
         const buy = document.getElementById('buy');
@@ -112,11 +218,13 @@
             var userEmail = '[[${session.userEmail}]]';
             var loginId = '[[${session.loginId}]]';
             var itemName = '[[${itemName}]]' + "외 " + '[[${tOrderSize}]]' + "개";
-            var orderPrice = '[[${orderPrice}]]';   //결제가격
             var giver = recipient.value;        //수령인
             var phone = first.value + "-" + second.value + "-" + third.value;   //핸드폰
             var postNumber = zipcode.value;     //우편번호
             var address = roadAddress.value + " " + detailAddress.value;        //주소
+
+            var coupon = document.getElementById('coupon');
+            var target = coupon.options[coupon.selectedIndex].value;    //쿠폰 선택
 
             console.log(itemName);
             console.log(orderPrice);
@@ -194,7 +302,8 @@
                                         userId : userId,
                                         zipcode : postNumber,
                                         street : roadAddress.value,
-                                        detailAddress : detailAddress.value
+                                        detailAddress : detailAddress.value,
+                                        target : target
                                     })
                                 }).done (function (data) {
                                     if (data.message == '결제가 정상적으로 완료되었습니다.') {

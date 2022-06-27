@@ -29,10 +29,13 @@ public class Likes {
 
     private String recommend;
 
-    public Likes(Member member, User user, Item item, String recommend) {
+    private String size;
+
+    public Likes(Member member, User user, Item item, String recommend, String size) {
         this.member = member;
         this.user = user;
         this.item = item;
         this.recommend = recommend;
+        this.size = size;
     }
 }

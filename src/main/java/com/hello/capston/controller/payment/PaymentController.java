@@ -10,6 +10,7 @@ import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,7 @@ import java.util.Map;
 public class PaymentController {
 
     private final ItemDetailRepository itemDetailRepository;
+    private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
 
     private final DeliveryService deliveryService;
     private final TemporaryOrderService temporaryOrderService;
@@ -68,10 +70,14 @@ public class PaymentController {
             }
 
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
+
+            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserIdAndCheckUsed(findUser.getId(), 0);
+
             model.addAttribute("orderPrice", orderPrice);
             model.addAttribute("tOrder", findTOrder);
             model.addAttribute("tOrderSize", findTOrder.size());
             model.addAttribute("itemName", itemName);
+            model.addAttribute("coupon", findCoupon);
         }
 
         if (findUser == null) {
@@ -90,10 +96,15 @@ public class PaymentController {
             }
 
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
+
+            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberIdAndCheckUsed(findMember.getId(), 0);
+
             model.addAttribute("orderPrice", orderPrice);
             model.addAttribute("tOrder", findTOrder);
             model.addAttribute("tOrderSize", findTOrder.size());
             model.addAttribute("itemName", itemName);
+            model.addAttribute("status", findMember.getRole());
+            model.addAttribute("coupon", findCoupon);
         }
 
         model.addAttribute("member", findMember);
@@ -108,7 +119,7 @@ public class PaymentController {
             if (findTemporaryOrder.getSize().equals(itemDetail.getSize())) {
                 if (itemDetail.getStock() - findTemporaryOrder.getCount() < 0) {
                     alertService.alertAndRedirect(response,
-                            "재고가 남아있지 않습니다. 상품이름 : " + itemDetail.getItem().getItemName() + "/ 남은 재고 : " + itemDetail.getStock(),
+                            "재고가 남아있지 않습니다. 상품이름 : " + itemDetail.getItem().getViewName() + "/ 남은 재고 : " + itemDetail.getStock(),
                             "/bucket");
                 }
             }
@@ -155,18 +166,22 @@ public class PaymentController {
 
     @PostMapping("/paymentComplete")
     @ResponseBody
+    @Transactional
     public synchronized Map<String, String> paymentComplete(@RequestBody PaymentCompleteDto dto) {
         Member findMember = null;
         User findUser = null;
         List<TemporaryOrder> findTOrder = new ArrayList<>();
         Map<String, String> map = new HashMap<>();
+        MemberWhoGetCoupon findMyCoupon = null;
 
         if (dto.getMemberId().equals("")) {
             findUser = userService.findUserById(Long.parseLong(dto.getUserId()));
+            findMyCoupon = memberWhoGetCouponRepository.findByDetailAndUserId(dto.getTarget(), findUser.getId()).orElse(null);
             findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
         }
         else if (dto.getUserId().equals("")) {
             findMember = memberService.findMemberById(Long.parseLong(dto.getMemberId()));
+            findMyCoupon = memberWhoGetCouponRepository.findByDetailAndMemberId(dto.getTarget(), findMember.getId()).orElse(null);
             findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
         }
 
@@ -182,6 +197,8 @@ public class PaymentController {
             Order order = orderService.save(findUser, findMember, delivery, dto);
 
             orderItemService.saveUsingTemporaryOrder(findTOrder, order);
+
+            findMyCoupon.changeCheckUsedToOne();
 
             map.put("message", "결제가 정상적으로 완료되었습니다.");
         }

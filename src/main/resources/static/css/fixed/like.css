@@ -1,0 +1,41 @@
+.heart_wrap {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #aaa;
+    padding-top: 15px;
+    border-radius: 100px;
+    position: fixed;
+    top: 70%;
+    left: 88%;
+}
+
+.heart {
+    width: 70px;
+    height: 70px;
+    background-image: url("../../image/heart_checked.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+.heart a {
+    width: 70px;
+    height: 70px;
+    display: block;
+    border-radius: 100px;
+}
+
+@media screen and (max-width: 420px) {
+    .heart_wrap {
+        width: 70px;
+        height: 70px;
+        padding-top: 10px;
+        top: 90%;
+        left: 80%;
+    }
+
+    .heart {
+        width: 50px;
+        height: 50px;
+    }
+}

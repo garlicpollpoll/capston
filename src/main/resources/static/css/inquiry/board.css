@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.number, .title, .writer, .write-date {
+.number, .writer, .write-date {
     text-align: center;
 }
 
@@ -28,4 +28,13 @@
 
 .container {
     padding: 50px;
+}
+
+.pagination {
+    width: 250px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    justify-content: center;
 }

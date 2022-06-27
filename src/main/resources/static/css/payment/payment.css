@@ -1,0 +1,113 @@
+/* 수령인 */
+.recipient_left, .recipient_right {
+    display: inline-block;
+}
+
+.recipient_left {
+    width: 25%;
+    text-align: center;
+}
+
+.recipient_right {
+    width: 75%;
+    padding: 20px;
+}
+
+/* 핸드폰 */
+.phone_start, .phone_first, .phone_second, .phone_third {
+    display: inline-block;
+}
+
+.phone_start {
+    width: 25%;
+    text-align: center;
+}
+
+.phone_first {
+    width: 25%;
+}
+
+.phone_second {
+    width: 25%;
+}
+
+.phone_third {
+    width: 25%;
+}
+
+.phone_first, .phone_second, .phone_third {
+    padding: 20px;
+}
+
+/* 우편번호 */
+.post:nth-child(1) {
+    width: 80%;
+}
+
+.post:nth-child(2) {
+    text-align: center;
+    width: 20%;
+}
+
+.post {
+    display: inline-block;
+    padding: 20px;
+}
+
+/* 구매하기 */
+.buy {
+    padding: 50px;
+    text-align: center;
+}
+
+.sum {
+    text-align: right;
+}
+
+.text {
+    padding: 20px;
+}
+
+/* 결제 정보 */
+.payment_info p {
+    margin: 0;
+}
+
+.payment_left, .payment_right {
+    display: inline-block;
+    padding: 10px;
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+.payment_left {
+    width: 30%;
+    background-color: black;
+    color: white;
+}
+
+.payment_right {
+    width: 70%;
+}
+
+.payment_info .payment_right:nth-child(4) {
+    padding: 5px;
+}
+
+@media screen and (max-width: 420px) {
+    .phone_first, .phone_second, .phone_third {
+        padding: 10px;
+    }
+
+    .post:nth-child(1) {
+        width: 50%;
+    }
+
+    .post:nth-child(2) {
+        width: 50%;
+    }
+
+    th, td {
+        font-size: 11px;
+    }
+}

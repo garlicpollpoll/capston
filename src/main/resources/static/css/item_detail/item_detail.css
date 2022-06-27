@@ -1,0 +1,204 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.image_wrap, .detail {
+    display: inline-block;
+    overflow: auto;
+}
+
+.img {
+    width: 420px;
+    height: 420px;
+    padding-top: 10px;
+    padding-left: 10px;
+    border: 1px #ddd solid;
+}
+
+.image_wrap {
+    width: 50%;
+}
+
+.detail {
+    width: 50%;
+    height: 350px;
+    margin-bottom: 50px;
+}
+
+.detail label {
+    font-size: 23px;
+    font-weight: 400;
+}
+
+.category {
+    margin-top: 10px;
+}
+
+.detail_category {
+    display: inline-block;
+    padding: 0px 10px;
+    height: 23px;
+    background-color: #ddd;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #aaa;
+    box-shadow: 2px 2px #aaa;
+    color: rgb(130, 127, 127);
+    margin-bottom: 5px;
+}
+
+.heart {
+    margin-top: 10px;
+}
+
+.form-select {
+    margin-top: 20px;
+}
+
+.big_button_wrap {
+    margin-top: 20px;
+    width: 100%;
+    height: 120px;
+}
+
+.big_button {
+    margin: auto 0;
+    height: 120px;
+    display: inline-block;
+    border: 1px solid #ddd;
+    overflow: auto;
+}
+
+.big_button:nth-child(1) {
+    text-align: center;
+    width: 39%;
+    margin-right: 1%;
+}
+
+.big_button:nth-child(2) {
+    width: 39%;
+    text-align: center;
+    margin-right: 1%;
+}
+
+.big_button:nth-child(3) {
+    text-align: center;
+    width: 20%;
+    padding-top: 37px;
+}
+
+.big_button button {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.bucket {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    background-image: url("../../image/bucket.png");
+    background-size: 50px;
+    background-repeat: no-repeat;
+}
+
+.bucket_button {
+    width: 100%;
+    height: 100%;
+    display: block;
+    text-decoration: none;
+    padding-top: 35px;
+}
+
+/* 체크박스 이미지 */
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + input[type="hidden"] + label {
+    width: 50px;
+    height: 50px;
+    background-image: url("../../image/heart_unchecked.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked + input[type="hidden"] + label {
+    background-image: url("../../image/heart_checked.png");
+}
+
+/* 다른색상 아이템 */
+.other_color_english, .other_color_korean {
+    display: inline-block;
+}
+
+.other_color_english {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.other_color_korean {
+    font-size: 15px;
+    color: #ddd;
+}
+
+/* 댓글 */
+.comment {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    padding: 30px;
+}
+
+.comments {
+    margin-top: 30px;
+    border: 1px solid #ddd;
+}
+
+.comment_footer {
+    padding: 10px;
+}
+
+.comment_footer p {
+    margin: 0;
+}
+
+.page {
+    width: 200px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* 미디어 쿼리 */
+@media screen and (max-width: 420px) {
+    .img {
+        display: block;
+        width: 100%;
+        height: 330px;
+        padding: 0;
+    }
+
+    .img img {
+        width: 100%;
+        height: 330px;
+    }
+
+    .detail {
+        display: block;
+        width: 100%;
+        height: 350px;
+    }
+
+    .image_wrap {
+        overflow: hidden;
+        display: block;
+        width: 100%;
+        height: 330px;
+    }
+}

@@ -23,12 +23,20 @@ public class LoginController {
     private final MemberRepository memberRepository;
 
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, HttpSession session) {
         LoginForm form = new LoginForm();
+
+        String loginId = (String) session.getAttribute("loginId");
+
+        Member findMember = memberService.findMember(loginId);
+
+        if (findMember != null) {
+            model.addAttribute("status", findMember.getRole());
+        }
 
         model.addAttribute("login", form);
 
-        return "normal_login";
+        return "login";
     }
 
     @PostMapping("/login")

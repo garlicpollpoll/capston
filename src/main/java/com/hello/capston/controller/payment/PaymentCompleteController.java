@@ -49,6 +49,7 @@ public class PaymentCompleteController {
                 orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
             }
             model.addAttribute("tOrder", findTOrder);
+            model.addAttribute("status", findMember.getRole());
         }
 
         model.addAttribute("orderPrice", orderPrice);

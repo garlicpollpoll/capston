@@ -4,20 +4,77 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
-    <style>
-        .title {
-            border-bottom: #cccccc;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/inquiry_detail/inquiry_detail.css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
 </head>
 <body>
-<a href="/">홈으로</a>
-<div class="container">
-    <h2 th:text="${inquiry.title}" class="title"></h2>
-    <a th:if="${correct == 1}" th:href="@{/inquiry_rewrite/{id}(id = ${inquiry.id})}">수정하기</a>
-    <a th:if="${correct == 1}" id="delete">삭제하기</a>
-    <p th:utext="${inquiry.content}"></p>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
 </div>
+<div class="container">
+    <h2 th:text="${inquiry.title}" class="title">문의하기</h2>
+    <div class="writer_only">
+        <a th:if="${correct == 1}" th:href="@{/inquiry_rewrite/{id}(id = ${inquiry.id})}">수정하기</a>
+        <a th:if="${correct == 1}" id="delete">삭제하기</a>
+    </div>
+    <div class="content">
+        <p th:utext="${inquiry.content}">
+            모든 국민은 소급입법에 의하여 참정권의 제한을 받거나 재산권을 박탈당하지 아니한다. 헌법재판소의 장은 국회의 동의를 얻어 재판관중에서 대통령이 임명한다.
+
+            군인·군무원·경찰공무원 기타 법률이 정하는 자가 전투·훈련등 직무집행과 관련하여 받은 손해에 대하여는 법률이 정하는 보상외에 국가 또는 공공단체에 공무원의 직무상 불법행위로 인한 배상은 청구할 수 없다.
+
+            감사원은 세입·세출의 결산을 매년 검사하여 대통령과 차년도국회에 그 결과를 보고하여야 한다. 모든 국민은 신속한 재판을 받을 권리를 가진다. 형사피고인은 상당한 이유가 없는 한 지체없이 공개재판을 받을 권리를 가진다.
+
+            모든 국민은 인간으로서의 존엄과 가치를 가지며, 행복을 추구할 권리를 가진다. 국가는 개인이 가지는 불가침의 기본적 인권을 확인하고 이를 보장할 의무를 진다.
+
+            한 회계연도를 넘어 계속하여 지출할 필요가 있을 때에는 정부는 연한을 정하여 계속비로서 국회의 의결을 얻어야 한다. 국회에 제출된 법률안 기타의 의안은 회기중에 의결되지 못한 이유로 폐기되지 아니한다. 다만, 국회의원의 임기가 만료된 때에는 그러하지 아니하다.
+
+            형사피의자 또는 형사피고인으로서 구금되었던 자가 법률이 정하는 불기소처분을 받거나 무죄판결을 받은 때에는 법률이 정하는 바에 의하여 국가에 정당한 보상을 청구할 수 있다.
+
+            대법원에 대법관을 둔다. 다만, 법률이 정하는 바에 의하여 대법관이 아닌 법관을 둘 수 있다. 연소자의 근로는 특별한 보호를 받는다. 국무총리는 대통령을 보좌하며, 행정에 관하여 대통령의 명을 받아 행정각부를 통할한다.
+
+            원장은 국회의 동의를 얻어 대통령이 임명하고, 그 임기는 4년으로 하며, 1차에 한하여 중임할 수 있다. 국무총리 또는 행정각부의 장은 소관사무에 관하여 법률이나 대통령령의 위임 또는 직권으로 총리령 또는 부령을 발할 수 있다.
+
+            지방의회의 조직·권한·의원선거와 지방자치단체의 장의 선임방법 기타 지방자치단체의 조직과 운영에 관한 사항은 법률로 정한다. 국민경제자문회의의 조직·직무범위 기타 필요한 사항은 법률로 정한다.
+
+            국가원로자문회의의 의장은 직전대통령이 된다. 다만, 직전대통령이 없을 때에는 대통령이 지명한다. 제3항의 승인을 얻지 못한 때에는 그 처분 또는 명령은 그때부터 효력을 상실한다. 이 경우 그 명령에 의하여 개정 또는 폐지되었던 법률은 그 명령이 승인을 얻지 못한 때부터 당연히 효력을 회복한다.
+        </p>
+    </div>
+    <div th:if="${previousInquiry != null}" class="previous">
+        <span>△다음글</span><a th:href="@{/inquiry_detail/{id}(id = ${previousInquiry.id})}" th:text="${previousInquiry.title}" href="#">이전페이지입니다.</a>
+    </div>
+    <div th:if="${afterInquiry != null}" class="after">
+        <span>▽이전글</span><a th:href="@{/inquiry_detail/{id}(id = ${afterInquiry.id})}" th:text="${afterInquiry.title}" href="#">다음페이지입니다.</a>
+    </div>
+</div>
+
+<div th:replace="fragment/footer :: footer"></div>
+
 </body>
 <script type="text/javascript">
     const clickDelete = document.getElementById('delete');

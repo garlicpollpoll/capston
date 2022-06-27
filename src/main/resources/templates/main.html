@@ -2,18 +2,136 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>인하쇼핑몰</title>
+
+    <meta name="author" content="MOON">
+    <meta name="description" content="의류 쇼핑몰 사이트입니다.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
+
+    <!-- http://ogp.me/ -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="인하쇼핑몰">
+    <meta property="og:title" content="내맘에 쏙드는 의류 사이트">
+    <meta property="og:description" content="다양한 색상의 옷들을 찾을 수 있는 쇼핑몰 사이트">
+    <meta property="og:image" content="img/logo__shop.png">
+    <meta property="og:url" content="#">
+
+    <!-- 파비콘 -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100;400;500;700;900&family=Noto+Serif+KR:wght@200;500;600&family=Song+Myung&display=swap" rel="stylesheet">    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+    <!-- <link rel="stylesheet" href="css/main/section.css"> -->
+
 </head>
+
 <body>
-<a href="/social_login">로그인</a>
-<a href="/item_upload" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_MANAGER or status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">상품 등록</a>
-<a href="/item_list">상품 리스트 (최신)</a>
-<a href="/item_list_popular">상품 리스트 (인기)</a>
-<a href="/admin/member_to_manager" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">매니저 단계로 승급</a>
-<a href="/inquiry">문의하기</a>
-<form action="/find_by_detail_category" method="get">
-    <input type="text" name="category">
-    <input type="submit" value="검색">
-</form>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+
+
+    <!-- section.css -->
+    <!-- 메인이미지 -->
+    <div id="carouselExampleCaptions" class="carousel slide container" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/image/logo__shop.png" class="d-block w-100 carousel_image" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <label>차별화된 쇼핑몰</label>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/image/hanger.jpg" class="d-block w-100 carousel_image" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <label>신선한 고객경험</label>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- 최신 상품 목록 -->
+    <div class="new_product_label container">
+        <label>최신상품</label>
+    </div>
+    <div class="container product_wrap">
+        <div th:each="newItem : ${newItem}" class="new_product_wrap">
+            <div class="new_product">
+                <a th:href="@{/item_detail/{id}(id = ${newItem.id})}"><img th:src="${newItem.itemUrl}" width="300" height="300"></a>
+                <div class="item_info">
+                    <p th:text="${newItem.brandName}">브랜드명</p>
+                    <p th:text="${newItem.viewName}">2 TONE ARCH HOODIE GRAY</p>
+                    <p th:text="${newItem.price}">55,300</p>
+                </div>
+            </div>
+        </div>
+        <div class="product_footer">
+            <a href="/item_list">더보기</a>
+        </div>
+    </div>
+
+    <!-- 인기상품 -->
+    <div class="new_product_label container">
+        <label>인기상품</label>
+    </div>
+    <div class="container product_wrap">
+        <div th:each="popularItem : ${popularItem}" class="popular_product_wrap">
+            <div class="popular_product">
+                <a th:href="@{/item_detail/{id}(id = ${popularItem.id})}"><img src="/image/상의1.jpg" th:src="${popularItem.itemUrl}" width="300" height="300"></a>
+                <div class="item_info">
+                    <p th:text="${popularItem.brandName}">브랜드명</p>
+                    <p th:text="${popularItem.viewName}">2 TONE ARCH HOODIE GRAY</p>
+                    <p th:text="${popularItem.price}">55,300</p>
+                </div>
+            </div>
+        </div>
+        <div class="product_footer">
+            <a href="/item_list_popular">더보기</a>
+        </div>
+    </div>
+</div>
+<div th:replace="fragment/footer :: footer"></div>
 </body>
 </html>

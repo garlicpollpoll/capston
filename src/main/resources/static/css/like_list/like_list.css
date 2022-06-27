@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+}
+
+.like_wrap {
+    width: 49%;
+    height: 350px;
+    display: inline-block;
+}
+
+.card {
+    width: 250px;
+    height: 350px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.like_delete, .like_to_bucket {
+    text-align: right;
+}
+
+.like_delete {
+    margin-top: 20px;
+}
+
+.like_to_bucket {
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 420px) {
+    .like_wrap {
+        display: block;
+        width: 100%;
+        height: 400px;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        width: 350px;
+        height: 380px;
+    }
+
+    .img img {
+        width: 250px;
+        height: 250px;
+    }
+}

@@ -1,0 +1,137 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.row {
+    display: inherit;
+}
+
+.subdiv, .sum, .check, .img, .pname, .basketprice, .num, .updown, .size {
+    display: inline-block;
+}
+
+.head {
+    background-color: #ddd;
+    padding: 10px;
+}
+
+.data {
+    padding: 10px;
+    border-bottom: 1px dashed #000
+}
+
+.data:nth-last-child(1) {
+    border-bottom: 1px solid #000;
+}
+
+.head, .data {
+    text-align: center;
+}
+
+.check {
+    width: 5%;
+}
+
+.img {
+    width: 10%;
+}
+
+.pname {
+    width: 25%;
+}
+
+.size {
+    width: 15%;
+}
+
+.basketprice {
+    width: 10%;
+}
+
+.num {
+    width: 20%;
+}
+
+.sum {
+    width: 15%;
+}
+
+.basketrowcmd {
+    display: block;
+    margin-top: 10px;
+    width: 122px;
+    margin-left: auto;
+}
+
+.sumcount, .summoney {
+    text-align: right;
+    font-weight: 1000;
+    font-size: 20px;
+}
+
+.summoney {
+    color: rgb(40, 85, 190);
+}
+
+.buttongroup {
+    width: 200px;
+    height: 60px;
+    margin: 0 auto;
+    background-color: #ddd;
+    text-align: center;
+    align-items: center;
+}
+
+.buttongroup a {
+    text-decoration: none;
+    color: #000;
+    font-size: 22px;
+    display: block;
+    width: 200px;
+    height: 60px;
+    padding-top: 10px;
+}
+
+/* 미디어 쿼리 */
+
+@media screen and (max-width: 420px) {
+    .head {
+        display: none;
+    }
+
+    input[type=checkbox] {
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+    }
+
+    .check {
+        width: 20%;
+    }
+
+    .img {
+        width: 80%;
+    }
+
+    .img img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .pname {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .basketprice {
+        display: none;
+    }
+
+    .size, .num {
+        width: 30%;
+    }
+}

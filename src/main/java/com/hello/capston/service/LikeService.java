@@ -28,8 +28,8 @@ public class LikeService {
         return likeRepository.findByUserId(userId, itemId).orElse(new Likes());
     }
 
-    public void save(Member member, User user, Item item) {
-        Likes like = new Likes(member, user, item, "좋아요");
+    public void save(Member member, User user, Item item, String size) {
+        Likes like = new Likes(member, user, item, "좋아요", size);
         likeRepository.save(like);
     }
 

@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BucketController {
 
-    private final BucketRepository bucketRepository;
     private final ItemRepository itemRepository;
     private final TemporaryOrderRepository temporaryOrderRepository;
 
@@ -73,7 +72,7 @@ public class BucketController {
         User findUser = userService.findUser(userEmail);
 
         if (findMember == null) {
-            List<Bucket> myBucket = bucketService.findBucketByUserId(findUser.getId());
+            List<TemporaryOrder> myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
 
             Integer totalAmount = bucketService.findTotalAmountByUserId(findUser.getId());
 
@@ -83,13 +82,14 @@ public class BucketController {
         }
 
         if (findUser == null) {
-            List<Bucket> myBucket = bucketService.findBucketByMemberId(findMember.getId());
+            List<TemporaryOrder> myBucket = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
             Integer totalAmount = bucketService.findTotalAmountByMemberId(findMember.getId());
 
             model.addAttribute("bucket", myBucket);
             model.addAttribute("bucketCount", myBucket.size());
             model.addAttribute("totalAmount", totalAmount);
+            model.addAttribute("status", findMember.getRole());
         }
 
         return "bucket";

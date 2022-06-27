@@ -18,6 +18,8 @@ public class Item {
 
     private String itemName;
 
+    private String brandName;
+
     private String itemUrl;
 
     private int price;
@@ -39,7 +41,8 @@ public class Item {
         this.itemUrl = itemUrl;
     }
 
-    public Item(String viewName, String itemName, String itemUrl, int price, String uniqueCode, Member member, String category, String color, int click) {
+    public Item(String brandName, String viewName, String itemName, String itemUrl, int price, String uniqueCode, Member member, String category, String color, int click) {
+        this.brandName = brandName;
         this.viewName = viewName;
         this.itemName = itemName;
         this.itemUrl = itemUrl;

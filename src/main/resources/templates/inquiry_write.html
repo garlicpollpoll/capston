@@ -12,6 +12,14 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+
     <style>
         .field-error {
             color: red;
@@ -24,15 +32,38 @@
 
         .write-footer {
             text-align: right;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
-<a href="/">홈으로</a>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
 <div class="write-wrap">
     <div class="container">
         <form action="/inquiry_write" method="post" th:object="${inquiry}">
-            <input type="text" name="title" class="form-control" th:field="*{title}" th:errorclass="error">
+            <input type="text" name="title" class="form-control" th:field="*{title}" th:errorclass="error" placeholder="제목을 입력해주세요">
             <div class="field-error">
                 <p th:errors="*{title}"></p>
             </div>
@@ -44,6 +75,7 @@
         </form>
     </div>
 </div>
+<div th:replace="fragment/footer :: footer"></div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {

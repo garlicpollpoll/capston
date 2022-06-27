@@ -12,10 +12,10 @@ public interface TemporaryOrderRepository extends JpaRepository<TemporaryOrder, 
     @Query("select t from TemporaryOrder t join fetch t.bucket b join fetch b.item i where t.bucket.id = :bucketId")
     TemporaryOrder findTemporaryOrderByBucketId(@Param("bucketId") Long bucketId);
 
-    @Query("select t from TemporaryOrder t left join t.bucket b on t.bucket.id = b.id left join b.item i on b.item.id = i.id join fetch t.bucket b2 join fetch b2.item i2 where b.member.id = :memberId")
+    @Query("select t from TemporaryOrder t left join t.bucket b on t.bucket.id = b.id left join b.item i on b.item.id = i.id join fetch t.bucket b2 join fetch b2.item i2 where b.member.id = :memberId order by t.bucket.orders asc")
     List<TemporaryOrder> findTemporaryOrderByMemberId(@Param("memberId") Long memberId);
 
-    @Query("select t from TemporaryOrder t left join t.bucket b on t.bucket.id = b.id left join b.item i on b.item.id = i.id join fetch t.bucket b2 join fetch b2.item i2 where b.user.id = :userId")
+    @Query("select t from TemporaryOrder t left join t.bucket b on t.bucket.id = b.id left join b.item i on b.item.id = i.id join fetch t.bucket b2 join fetch b2.item i2 where b.user.id = :userId order by t.bucket.orders asc")
     List<TemporaryOrder> findTemporaryOrderByUserId(@Param("userId") Long userId);
 
     @Query("select t from TemporaryOrder t left join t.bucket b on t.bucket.id = b.id left join b.item i on b.item.id = i.id join fetch t.bucket b2 join fetch b2.item i2 where b.member.id = :memberId or b.user.id = :userId")

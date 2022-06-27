@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <style>
+        .form {
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        span {
+            margin-right: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <form action="/member_to_manager" method="post">
-            승급하고싶은 회원 이름<input type="text" name="loginId">
-            <input type="submit" value="찾기">
-        </form>
-    </div>
+<div class="form">
+    <form action="/member_to_manager" method="post">
+        <span>승급하고싶은 회원 이름</span><input type="text" name="loginId">
+        <input type="submit" value="승급">
+    </form>
+</div>
 </body>
 </html>

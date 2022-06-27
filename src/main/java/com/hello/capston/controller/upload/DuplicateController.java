@@ -39,6 +39,10 @@ public class DuplicateController {
     public String itemNameDuplicatePost(@Validated @ModelAttribute("duplicate")ItemNameDuplicateForm form, BindingResult bindingResult, Model model) {
         List<Item> findItem = itemRepository.findByItemName(form.getItemName());
 
+        if (bindingResult.hasErrors()) {
+            return "item_name_duplicate";
+        }
+
         if (findItem.size() == 0) {
             bindingResult.reject("PassItemNameDuplicate");
             model.addAttribute("result", form.getItemName());
@@ -53,6 +57,10 @@ public class DuplicateController {
     @PostMapping("/unique_code_duplicate")
     public String uniqueCodeDuplicatePost(@Validated @ModelAttribute("duplicate")UniqueCodeDuplicateForm form, BindingResult bindingResult, Model model) {
         Item findItem = itemRepository.findByUniqueCode(form.getUniqueCode()).orElse(null);
+
+        if (bindingResult.hasErrors()) {
+            return "unique_code_duplicate";
+        }
 
         if (findItem == null) {
             bindingResult.reject("PassUniqueCodeDuplicate");

@@ -1,0 +1,72 @@
+header {
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.75); */
+    /* box-shadow: 0 0 3px rgba(0, 0, 0, 0.75); */
+    background: #fff;
+}
+.section {
+    position: relative;
+}
+.section .inner {
+    max-width: 980px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    position: relative;
+}
+header .inner {
+    max-width: 980px;
+    height: 40px;
+    margin: 0 auto;
+}
+header .left-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+/* header .home-logo {
+
+} */
+header .home-logo a {
+    background-image: url("../../image/logo__home.svg");
+    width: 25px;
+    height: 25px;
+    display: block;
+    text-indent: -9999px;
+}
+header .home-logo a:hover {
+    background-image: url("../../image/logo__home__hover.svg");
+}
+
+
+header .right-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+header .right-group li a {
+    display: block;
+    padding: 8px;
+    margin: 2px;
+    color: #3c4146;
+}
+header .right-group li a:hover {
+    color: #4078c0;
+}
+header .logo {
+    padding: 12px 0;
+}
+
+
+/* 헤더태그 밑에 빈공간 살짝 */
+.under {
+    height: 60px;
+}
+
+@media screen and (max-width: 420px) {
+    .section .inner {
+        padding: 30px;
+    }
+
+    .right-group {
+        font-size: 10px;
+    }
+}

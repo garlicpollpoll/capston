@@ -27,7 +27,7 @@ class LikeRepositoryTest {
         //given
         Member member = new Member("임경석", "ks3254", "ks32541007!", "981007", MemberRole.ROLE_ADMIN);
         Item item = new Item("상품A", null);
-        Likes like = new Likes(member, null, item, "좋아요");
+        Likes like = new Likes(member, null, item, "좋아요", "S");
         //when
         memberRepository.save(member);
         itemRepository.save(item);

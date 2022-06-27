@@ -1,6 +1,7 @@
 package com.hello.capston.controller.like;
 
 import com.hello.capston.dto.form.LikeForm;
+import com.hello.capston.dto.form.LikeFormWithSize;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Likes;
 import com.hello.capston.entity.Member;
@@ -33,7 +34,7 @@ public class LIkeController {
     private final LikeService likeService;
 
     @PostMapping("/like")
-    public String like(@RequestBody LikeForm form, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String like(@RequestBody LikeFormWithSize form, HttpSession session, RedirectAttributes redirectAttributes) {
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
 
         String loginId = (String) session.getAttribute("loginId");
@@ -42,7 +43,7 @@ public class LIkeController {
         Member findMember = memberService.findMember(loginId);
         User findUser = userService.findUser(userEmail);
 
-        likeService.save(findMember, findUser, findItem);
+        likeService.save(findMember, findUser, findItem, form.getSize());
 
         redirectAttributes.addAttribute("itemId", form.getId());
 

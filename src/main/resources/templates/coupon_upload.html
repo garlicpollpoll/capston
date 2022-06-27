@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" initial-scale="1.0">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="/css/coupon/coupon_upload.css">
+
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+</head>
+<body>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+<div class="container">
+    <div class="upload_wrap">
+        <form action="/coupon_upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="couponImage" class="btn btn-dark upload">
+            <input type="text" name="couponDetail" placeholder="쿠폰 설명" class="form-control upload">
+            <input type="text" name="couponCode" placeholder="쿠폰 코드" class="form-control upload">
+            <input type="text" name="percentage" placeholder="퍼센티지" class="form-control upload">
+            <input type="text" name="expireDate" placeholder="예시 : 2022-05-23" class="form-control upload">
+            <div class="button">
+                <input type="submit" value="등록" class="btn btn-dark">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="fragment/footer :: footer"></div>
+
+</body>
+</html>

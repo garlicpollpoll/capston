@@ -47,34 +47,6 @@ class PaymentControllerTest {
     @Autowired
     ItemRepository itemRepository;
 
-    @Test
-    public void test() throws Exception {
-        Runnable userA = () -> {
-            Member findMember = memberService.findMemberById(1L);
-            Item findItem = itemRepository.findById(3L).orElse(null);
 
-            Bucket bucket = bucketService.save(findMember, null, findItem, 0);
-            temporaryOrderService.save(bucket, findItem.getPrice(), "L (2개남음)");
-
-            String content = null;
-
-            try {
-                content = objectMapper.writeValueAsString(new PaymentCompleteDto("1", "", "03985", "월드컵로25길 125", "101동 805호"));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                mockMvc.perform(
-                        post("/paymentComplete")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(content))
-                        .andExpect(status().isOk())
-                        .andDo(print());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
-    }
 
 }

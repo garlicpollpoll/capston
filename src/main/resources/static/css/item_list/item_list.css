@@ -1,0 +1,80 @@
+body {
+    height: auto;
+}
+
+h2 {
+    width: 1000px;
+    margin: auto;
+    text-align: center;
+    padding: 80px;
+    box-sizing: border-box;
+    font-size: 40px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.297);
+}
+
+.item_list_img {
+    display: flex;
+    flex-wrap: wrap;
+    width: 1010px;
+    gap: 80px 50px;
+    margin: auto;
+    margin-top: 70px;
+    text-align: center;
+}
+
+.item_list_img .__item {
+    width: 300px;
+}
+
+.item_list_img .__item :nth-child(2){
+    margin-top: 10px;
+    text-align: left;
+}
+
+.page {
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.page a {
+    margin-right: 10px;
+}
+
+/* 420px 이하 */
+@media screen and (max-width:420px){
+    h2 {
+        width: auto;
+        margin: auto;
+        text-align: center;
+        padding: 60px 0;
+        box-sizing: border-box;
+        font-size: 30px;
+        font-weight: 500;
+        border-bottom: .5px solid rgba(0, 0, 0, 0.249);
+    }
+
+
+    .item_list_img {
+        display: block;
+        width: auto;
+        margin: auto;
+        text-align: center;
+    }
+
+    .item_list_img .__item {
+        width: 300px;
+        margin: 0 auto;
+        padding-bottom: 40px;
+    }
+
+    .item_list_img .__item :nth-child(2){
+        margin-top: 10px;
+        text-align: center;
+    }
+
+
+}

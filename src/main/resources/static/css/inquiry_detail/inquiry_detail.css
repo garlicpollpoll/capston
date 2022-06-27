@@ -1,0 +1,40 @@
+a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+
+a:hover {
+    color: black;
+}
+
+.writer_only {
+    text-align: right;
+}
+
+.writer_only a {
+    cursor: pointer;
+}
+
+.content {
+    margin: 30px 0;
+}
+
+.container h2 {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.previous, .after {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+span {
+    margin-right: 15px;
+}
+
+.after {
+    margin-bottom: 30px;
+}

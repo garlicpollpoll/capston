@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/item_detail/item_detail.css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+
     <style>
         .sameItem {
             display: inline-block;
@@ -16,149 +30,207 @@
     </style>
 </head>
 <body>
-<a href="/">홈으로</a>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+<div class="container">
+    <div class="image_wrap">
+        <div class="img">
+            <img th:src="${item.itemUrl}" width="400" height="400">
+        </div>
+    </div><div class="detail">
+        <label th:text="|상품명 / 상품코드 (${item.viewName} / ${item.uniqueCode})|">
+            상품명 / 상품코드 (불라불라 / 불라불라)
+        </label>
+        <div class="category">
+            <!--<label th:each="categories : ${categories}" th:text="${categories}"></label>-->
+            <div class="detail_category" th:each="categories : ${categories}">
+                <p th:text="${categories}"></p>
+            </div>
+        </div>
+        <select name="size" id="size" class="form-select">
+            <option th:each="itemDetail : ${itemDetail}" th:text="${itemDetail.size}" th:value="${itemDetail.size}"></option>
+        </select>
+
+        <div class="big_button_wrap">
+            <div class="big_button">
+                <button type="button" id="bucket">장바구니 담기</button>
+            </div><div class="big_button">
+            <a href="/bucket" class="bucket_button">
+                <div class="bucket">
+
+                </div>
+            </a>
+        </div><div class="big_button">
+                <form th:object="${like}">
+                    <input type="checkbox" id="like" th:field="*{recommend}" th:value="${like.recommend}">
+                    <label for="like"></label>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="other_color_english">
+        <label>Other Color</label>
+    </div><div class="other_color_korean">
+    <label>다른 색상</label>
+</div>
     <div>
-        <img th:src="${item.itemUrl}" width="400" height="400">
-        <label th:text="|상품명 / 상품코드 (${item.itemName} / ${item.uniqueCode})|"></label>
-        <input type="checkbox" id="like" th:field="${like.recommend}" th:value="${like.recommend}"> 좋아요
-        <label th:text="${likeCount}"></label>
-        <div>
-            <label th:each="categories : ${categories}" th:text="${categories}"></label>
-        </div>
-        <div>
-            <label>다른 색상 상품</label>
-        </div>
         <div th:each="items : ${items}" class="sameItem">
             <a th:href="@{/item_detail/{id}(id = ${items.id})}"><img th:src="${items.itemUrl}" width="70" height="70"></a>
         </div>
     </div>
+</div>
 
-    <select name="size" id="size">
-        <option th:each="itemDetail : ${itemDetail}" th:text="${itemDetail.size}" th:value="${itemDetail.size}"></option>
-    </select>
-
+<div class="container comment" th:if="${isLogin == 1}">
     <div>
-        <button type="button" id="bucket">장바구니 담기</button>
-        <a href="/bucket">장바구니 이동</a>
-    </div>
-
-    <div th:if="${isLogin == 1}" class="comment">
         <form th:action="@{/comment/{id}(id = ${item.id})}" method="post" enctype="multipart/form-data">
             <img id="preview-image" src="" style="width: 200px; height: 200px; display: none;">
-            <input type="file" name="commentImage" id="input-image"> <br>
-            <textarea name="comment" rows="5" cols="30"></textarea>
-            <input type="submit" value="댓글달기">
+            <input type="file" name="commentImage" id="input-image" class="btn btn-dark"> <br>
+            <textarea name="comment" rows="5" cols="30" class="form-control"></textarea>
+            <div style="text-align: right;">
+                <input type="submit" value="댓글달기" class="btn btn-primary">
+            </div>
         </form>
     </div>
+</div>
 
-    <div th:each="comment : ${comment}">
+<div class="container comments">
+    <div th:each="comment : ${comment}" class="comment_footer">
         <img th:src="${comment.imageUrl}" width="100" height="100">
-        <p th:text="${comment?.member?.username}"></p>
-        <p th:text="${comment?.user?.name}"></p>
-        <p th:text="${comment.comment}"></p>
+        <p>****</p>
+        <p th:text="${comment.comment}">너무 맘에 들어요 다시 사고싶어요</p>
     </div>
+</div>
 
-    <div class="page">
-        <a th:href="@{/item_detail/{id}(id = ${item.id})/?page=1}"><<</a>
-        <a th:each="page : ${pageCount}" th:href="@{/item_detail/{id}(id = ${item.id})/(page=${page.value})}" th:text="${page.value}">page</a>
-        <a th:href="@{/item_detail/{id}(id = ${item.id})/(page=${lastPage})}">>></a>
-    </div>
+<div class="page">
+    <a th:href="@{/item_detail/{id}(id = ${item.id})/?page=1}"><<</a>
+    <a th:each="page : ${pageCount}" th:href="@{/item_detail/{id}(id = ${item.id})/(page=${page.value})}" th:text="${page.value}">page</a>
+    <a th:href="@{/item_detail/{id}(id = ${item.id})/(page=${lastPage})}">>></a>
+</div>
 
-    <!-- 사진 미리보기 -->
-    <script type="text/javascript">
-        function readImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
+<div th:replace="fragment/footer :: footer"></div>
 
-                reader.onload = e => {
-                    const previewImage = document.getElementById("preview-image");
-                    previewImage.src = e.target.result;
-                }
+<!-- 사진 미리보기 -->
+<script type="text/javascript">
+    function readImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
 
-                reader.readAsDataURL(input.files[0]);
+            reader.onload = e => {
+                const previewImage = document.getElementById("preview-image");
+                previewImage.src = e.target.result;
             }
+
+            reader.readAsDataURL(input.files[0]);
         }
+    }
 
-        const inputImage = document.getElementById("input-image");
-        inputImage.addEventListener("change", e => {
-            document.getElementById("preview-image").style.display = 'block';
-            readImage(e.target);
+    const inputImage = document.getElementById("input-image");
+    inputImage.addEventListener("change", e => {
+        document.getElementById("preview-image").style.display = 'block';
+        readImage(e.target);
+    })
+</script>
+
+<!-- 장바구니 -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        var itemId = '[[${item.id}]]';
+        const bucket = document.getElementById('bucket');
+
+        var userEmail = '[[${session.userEmail}]]';
+        var loginId = '[[${session.loginId}]]';
+
+        bucket.addEventListener('click', () => {
+            var size = document.getElementById('size');
+            var target = size.options[size.selectedIndex].value;
+
+            if (userEmail == "" && loginId == "") {
+                alert("로그인 후에 이용하실 수 있습니다.");
+            }
+            else if (target.includes('품절')) {
+                alert("품절인 상품은 장바구니에 담을 수 없습니다.");
+            }
+            else {
+                $.ajax({
+                    type : "POST",
+                    dataType : "json",
+                    url : "/addBucket",
+                    contentType : "application/json",
+                    data : JSON.stringify({
+                        id : itemId,
+                        size : target
+                    })
+                })
+                console.log(target);
+                alert("장바구니에 담았습니다.");
+            }
         })
-    </script>
+    })
+</script>
 
-    <!-- 장바구니 -->
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var itemId = '[[${item.id}]]';
-            const bucket = document.getElementById('bucket');
+<!-- 좋아요 -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var itemId = '[[${item.id}]]';
+        var email = '[[${session.userEmail}]]';
+        var loginId = '[[${session.loginId}]]';
 
-            var userEmail = '[[${session.userEmail}]]';
-            var loginId = '[[${session.loginId}]]';
-
-            bucket.addEventListener('click', () => {
-                var size = document.getElementById('size');
-                var target = size.options[size.selectedIndex].value;
-
-                if (userEmail == "" && loginId == "") {
-                    alert("로그인 후에 이용하실 수 있습니다.");
-                }
-                else if (target.includes('품절')) {
-                    alert("품절인 상품은 장바구니에 담을 수 없습니다.");
-                }
-                else {
+        if (email == "" && loginId == "") {
+            document.getElementById("like").disable = true;
+        }
+        else {
+            $("#like").change(function () {
+                alert("사이즈를 잘 확인해주세요.");
+                if ($("#like").is(":checked")) {
+                    var target = size.options[size.selectedIndex].value;
                     $.ajax({
                         type : "POST",
                         dataType : "json",
-                        url : "/addBucket",
+                        url : "/like",
                         contentType : "application/json",
                         data : JSON.stringify({
                             id : itemId,
                             size : target
                         })
                     })
-                    console.log(target);
-                    alert("장바구니에 담았습니다.");
+                }
+                else {
+                    $.ajax({
+                        type : "POST",
+                        dataType : "json",
+                        url : "/dislike",
+                        contentType : "application/json",
+                        data : JSON.stringify({
+                            id : itemId
+                        })
+                    })
                 }
             })
-        })
-    </script>
-
-    <!-- 좋아요 -->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var itemId = '[[${item.id}]]';
-            var email = '[[${session.userEmail}]]';
-            var loginId = '[[${session.loginId}]]';
-            if (email == "" && loginId == "") {
-                document.getElementById("like").disable = true;
-            }
-            else {
-                $("#like").change(function () {
-                    if ($("#like").is(":checked")) {
-                        $.ajax({
-                            type : "POST",
-                            dataType : "json",
-                            url : "/like",
-                            contentType : "application/json",
-                            data : JSON.stringify({
-                                id : itemId
-                            })
-                        })
-                    }
-                    else {
-                        $.ajax({
-                            type : "POST",
-                            dataType : "json",
-                            url : "/dislike",
-                            contentType : "application/json",
-                            data : JSON.stringify({
-                                id : itemId
-                            })
-                        })
-                    }
-                })
-            }
-        })
-    </script>
+        }
+    })
+</script>
 </body>
 </html>

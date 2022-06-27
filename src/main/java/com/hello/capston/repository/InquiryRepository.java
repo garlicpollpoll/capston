@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
-    @Query("select iq from Inquiry iq order by iq.id")
+    @Query("select iq from Inquiry iq order by iq.id desc")
     List<Inquiry> findAllInquiry(Pageable pageable);
 
     @Override

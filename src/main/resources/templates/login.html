@@ -1,16 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<a href="/">홈으로</a>
-<a th:href="@{/login}">로그인</a>
+    <title>로그인</title>
+    <meta name="author" content="MOON">
+    <meta name="description" content="의류 쇼핑몰 사이트입니다.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
 
-<a href="/oauth2/authorization/google">Google Login</a>
-<a href="/oauth2/authorization/naver">Naver Login</a>
-<a href="/oauth2/authorization/kakao">Kakao Login</a>
-<a th:href="@{/logout}">로그아웃</a>
+    <!-- http://ogp.me/ -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="인하쇼핑몰">
+    <meta property="og:title" content="내맘에 쏙드는 의류 사이트">
+    <meta property="og:description" content="다양한 색상의 옷들을 찾을 수 있는 쇼핑몰 사이트">
+    <meta property="og:image" content="img/logo__shop.png">
+    <meta property="og:url" content="#">
+
+    <!-- 파비콘 -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100;400;500;700;900&family=Noto+Serif+KR:wght@200;500;600&family=Song+Myung&display=swap" rel="stylesheet">    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/login/login.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+
+</head>
+
+<body>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+
+    <!-- 로그인 login.css -->
+    <div class="login_wrap">
+        <section class="login">
+            <h2>로그인</h2>
+
+            <form action="/auth/loginProc" method="post">
+                <ul>
+                    <li><input type="text" placeholder="아이디" title="아이디입력" class="input--text" name="username"></li>
+                    <li><input type="password" placeholder="비밀번호" title="비밀번호입력" class="input--text" name="password"></li>
+                    <li><button type="submit">로그인</button></li>
+                </ul>
+            </form>
+
+            <div class="social_login">
+                <a href="/oauth2/authorization/google"><img src="/image/icon_google_48.png" alt="구글로그인"></a>
+                <a href="/oauth2/authorization/naver"><img src="/image/icon_naver_48.png" alt="네이버로그인"></a>
+                <a href="/oauth2/authorization/kakao"><img src="/image/icon_kakao_48.png" alt="카카오로그인"></a>
+            </div>
+
+            <div><a href="/join"><button>회원가입</button></a></div>
+        </section>
+    </div>
+</div>
+
+<div th:replace="fragment/footer :: footer"></div>
+
 </body>
+
 </html>

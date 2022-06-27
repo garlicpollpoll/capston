@@ -3,18 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="/css/item_list/item_list.css" type="text/css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/fixed/like.css">
+    <link rel="stylesheet" href="/css/main/main.css">
 </head>
 <body>
-<a href="/">홈으로</a>
-<div th:each="items : ${items}">
-    <a th:href="@{/item_detail/{id}(id = ${items.id})}"><img th:src="${items.itemUrl}" width="200" height="200"></a>
-    <a th:href="@{/item_detail/{id} (id = ${items.id})}" th:text="${items.viewName}"></a>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+<h2>
+    <span id="item_list_name">인기상품</span>
+</h2>
+<div class="item_list_img">
+    <div th:each="items : ${items}" class="__item">
+        <a th:href="@{/item_detail/{id}(id = ${items.id})}"><img th:src="${items.itemUrl}" width="300" height="300"></a>
+        <div>
+            <a th:href="@{/item_detail/{id} (id = ${items.id})}" th:text="${items.viewName}">2 TONE ARCH HOODIE BLACK</a>
+        </div>
+        <div>
+            <label th:text="${items.price}"></label>
+        </div>
+    </div>
 </div>
 
 <div class="page">
     <a href="/item_list_popular/?page=1"><<</a>
-    <a th:each="page : ${pageCount}" th:href="@{/item_list_popular/(page=${page.value})}" th:text="${page.value}">page</a>
+    <a th:each="page : ${pageCount}" th:href="@{/item_list_popular/(page=${page.value})}" th:text="${page.value}"></a>
     <a th:href="@{/item_list_popular/(page=${lastPage})}">>></a>
 </div>
+
+<div th:replace="fragment/footer :: footer"></div>
+
 </body>
 </html>

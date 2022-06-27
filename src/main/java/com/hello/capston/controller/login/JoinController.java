@@ -26,8 +26,16 @@ public class JoinController {
     private final MemberService memberService;
 
     @GetMapping("/join")
-    public String join(Model model) {
+    public String join(Model model, HttpSession session) {
         JoinForm form = new JoinForm();
+
+        String loginId = (String) session.getAttribute("loginId");
+
+        if (loginId != null) {
+            Member findMember = memberService.findMember(loginId);
+            model.addAttribute("status", findMember.getRole());
+        }
+
         model.addAttribute("join", form);
         return "join";
     }

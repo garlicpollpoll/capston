@@ -1,9 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <title>회원가입</title>
+    <meta name="author" content="MOON">
+    <meta name="description" content="의류 쇼핑몰 사이트입니다.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
+
+    <!-- http://ogp.me/ -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="인하쇼핑몰">
+    <meta property="og:title" content="내맘에 쏙드는 의류 사이트">
+    <meta property="og:description" content="다양한 색상의 옷들을 찾을 수 있는 쇼핑몰 사이트">
+    <meta property="og:image" content="img/logo__shop.png">
+    <meta property="og:url" content="#">
+
+    <!-- 파비콘 -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <script src="/js/bootstrap.js"></script>
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100;400;500;700;900&family=Noto+Serif+KR:wght@200;500;600&family=Song+Myung&display=swap"
+            rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css">
+    <link rel="stylesheet" href="/css/common/main.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+    <link rel="stylesheet" href="/css/common/header.css">
+    <link rel="stylesheet" href="/css/common/input-text.css">
+    <link rel="stylesheet" href="/css/common/nav.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+    <link rel="stylesheet" href="/css/join/join.css">
+    <link rel="stylesheet" href="/css/footer/footer.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <style>
         .error {
             color: red;
@@ -25,62 +62,128 @@
 
         #loadingBar {
             position: absolute;
-            display: inline-block;
             z-index: 200;
             width: 50px;
             height: 50px;
         }
 
-        img {
+        #loadingBar img {
             width: 70px;
             height: 50px;
         }
     </style>
 </head>
+
 <body>
-<a href="/">홈으로</a>
+<div th:replace="fragment/like :: like"></div>
+<div class="body__container">
+
+    <!-- 헤더 header.css -->
+    <header th:replace="fragment/header :: header"></header>
+
+    <!-- 빈공간살짝 -->
+    <div class="under">
+
+    </div>
+
+    <form th:replace="fragment/category :: category"></form>
+
+    <!-- 네비게이션 태그 nav.css -->
+    <nav th:replace="fragment/nav :: nav"></nav>
+    <ul class="mini_nav">
+        <li><a href="/item_list">최신상품</a></li>
+        <li><a href="/item_list_popular">인기상품</a></li>
+        <li><a href="/bucket">장바구니</a></li>
+        <li><a href="/inquiry">문의하기</a></li>
+    </ul>
+</div>
+
     <div>
         <form action="/join" method="post" th:object="${join}">
-            아이디 : <input type="text" name="loginId" th:field="*{loginId}" th:errorclass="error" id="loginId">
-            <input type="button" value="중복확인" id="loginIdDuplicate">
-            <div class="field-error">
-                <p th:errors="*{loginId}"></p>
-            </div>
+            <div class="join_wrap">
+                <div class="join_header">
+                    회원가입
+                </div>
+                <div class="wrap">
+                    <div class="join_left">
+                        아이디
+                    </div><div class="join_right">
+                    <input type="text" name="loginId" th:field="*{loginId}" th:errorclass="error" id="loginId" class="form-control">
+                </div>
+                    <div class="button">
+                        <input type="button" value="중복확인" id="loginIdDuplicate" class="btn btn-dark">
+                    </div><div class="field-error">
+                    <label th:errors="*{loginId}">불라불라</label>
+                </div>
+                </div>
 
-            비밀번호 : <input type="password" name="loginPw" th:field="*{loginPw}" th:errorclass="error">
-            <div class="field-error">
-                <p th:errors="*{loginPw}"></p>
-            </div>
+                <div class="wrap">
+                    <div class="join_left">
+                        비밀번호
+                    </div><div class="join_right">
+                    <input type="password" name="loginPw" th:field="*{loginPw}" th:errorclass="error" class="form-control">
+                </div>
+                    <div class="field-error">
+                        <label th:errors="*{loginPw}"></label>
+                    </div>
+                </div>
 
-            <div id="checkEmail">
-                이메일 : <input type="email" name="email" id="email">
-                <input type="button" value="본인확인" id="check">
-            </div>
+                <div id="checkEmail" class="wrap">
+                    <div class="join_left">
+                        이메일
+                    </div><div class="join_right">
+                    <input type="email" name="email" id="email" class="form-control">
+                </div>
+                    <div class="button">
+                        <input type="button" value="본인확인" id="check" class="btn btn-dark">
+                    </div>
+                </div>
 
-            <div id="divAuth" style="display: none;">
-                인증번호 : <input type='text' name='checkNum' id='checkNum'> <input type='button' value='인증' id='auth'>
-            </div>
+                <div id="divAuth" style="display: none;" class="wrap">
+                    <div class="join_left">
+                        인증번호
+                    </div><div class="join_right">
+                    <input type='text' name='checkNum' id='checkNum' class="form-control">
+                </div>
+                    <div class="button">
+                        <input type='button' value='인증' id='auth' class="btn btn-dark">
+                    </div>
+                </div>
 
-            생년월일 : <input type="text" name="birth" th:field="*{birth}" th:errorclass="error">
-            <div class="field-error">
-                <p th:errors="*{birth}"></p>
-            </div>
+                <div class="wrap">
+                    <div class="join_left">
+                        생년월일
+                    </div><div class="join_right">
+                    <input type="text" name="birth" th:field="*{birth}" th:errorclass="error" class="form-control">
+                </div>
+                    <div class="field-error">
+                        <label th:errors="*{birth}"></label>
+                    </div>
+                </div>
 
-            <label for="male">남자</label>
-            <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="male" value="남자">
-            <label for="female">여자</label>
-            <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="female" value="여자">
-            <div class="field-error">
-                <p th:errors="*{gender}"></p>
-            </div>
+                <div class="wrap radio">
+                    <label for="male">남자</label>
+                    <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="male" value="남자" class="form-check-input">
+                    <label for="female">여자</label>
+                    <input type="radio" name="gender" th:field="*{gender}" th:errorclass="error" id="female" value="여자" class="form-check-input">
+                    <div class="field-error">
+                        <label th:errors="*{gender}"></label>
+                    </div>
+                </div>
 
-            <div th:if="${#fields.hasGlobalErrors()}">
-                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-            </div>
+                <div th:if="${#fields.hasGlobalErrors()}">
+                    <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+                </div>
 
-            <input type="submit" value="회원가입">
+                <div class="submit">
+                    <input type="submit" value="회원가입" class="join_submit">
+                </div>
+            </div>
         </form>
     </div>
+
+    <div th:replace="fragment/footer :: footer"></div>
+</div>
 </body>
 <script type="text/javascript">
 
@@ -120,10 +223,10 @@
                 email: email
             }),
             beforeSend: function () {
-                FunLoadingBarStart();
+                $('html').css("cursor", "wait");
             },
             complete: function () {
-                FunLoadingBarEnd();
+                $('html').css("cursor", "auto");
             }
         })
 
@@ -153,27 +256,30 @@
     })
 
     //로딩바
-    function FunLoadingBarStart() {
-        var backHeight = $(document).height();
-        var backWidth = window.document.body.clientWidth;
-
-        var backGroundCover =- "<div id='back'></div>"
-        var loadingBarImage = '';
-
-        loadingBarImage += "<div id='loadingBar'>";
-        loadingBarImage += "    <img src='/image/loading.gif'/>";
-        loadingBarImage += "</div>";
-
-        $('#checkEmail').append(backGroundCover).append(loadingBarImage);
-
-        $('#back').css({'width': backWidth, 'height': backHeight, 'opacity': '0.3'});
-        $('#back').show();
-        $('#loadingBar').show();
-    }
-
-    function FunLoadingBarEnd() {
-        $('#back, #loadingBar').hide();
-        $('#back, #loadingBar').remove();
-    }
+    // function FunLoadingBarStart() {
+    //     var backHeight = $(document).height();
+    //     var backWidth = window.document.body.clientWidth;
+    //
+    //     var backGroundCover =- "<div id='back'></div>"
+    //     var loadingBarImage = '';
+    //
+    //     loadingBarImage += "<div id='loadingBar'>";
+    //     loadingBarImage += "    <img src='/image/loading.gif'/>";
+    //     loadingBarImage += "</div>";
+    //
+    //     $('#checkEmail').append(backGroundCover).append(loadingBarImage);
+    //
+    //     $('#back').css({'width': backWidth, 'height': backHeight, 'opacity': '0.3'});
+    //     $('#back').show();
+    //     $('#loadingBar').show();
+    // }
+    //
+    // function FunLoadingBarEnd() {
+    //     $('#back, #loadingBar').hide();
+    //     $('#back, #loadingBar').remove();
+    // }
 </script>
+
+</div>
+
 </html>
