@@ -1,5 +1,6 @@
 package com.hello.capston.controller.inquiry;
 
+import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.InquiryRepository;
@@ -37,7 +38,7 @@ public class InquiryController {
         PageRequest page = PageRequest.of(pageNow, 10);
         List<Inquiry> findAll = inquiryRepository.findAllInquiry(page);
 
-        pagingService.paging(model, 10, pageNow, inquiryRepository.count());
+        PagingDto pagingDto = pagingService.paging(10, pageNow, inquiryRepository.count());
 
 
         String loginId = (String) session.getAttribute("loginId");
@@ -48,6 +49,8 @@ public class InquiryController {
         }
 
         model.addAttribute("inquiry", findAll);
+        model.addAttribute("pageCount", pagingDto.getMap());
+        model.addAttribute("lastPage", pagingDto.getTotalPage());
 
         return "inquiry_list";
     }

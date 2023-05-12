@@ -1,5 +1,6 @@
 package com.hello.capston.controller.find;
 
+import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.ItemDetail;
 import com.hello.capston.entity.Member;
@@ -54,10 +55,12 @@ public class FindByDetailCategoryController {
         List<Item> items = itemRepository.findByCategory(category, page);
         List<Item> findItems = itemRepository.findByCategoryAll(category);
 
-        pagingService.paging(model, 9, pageNow, findItems.size());
+        PagingDto pagingDto = pagingService.paging(9, pageNow, findItems.size());
 
         model.addAttribute("items", items);
         model.addAttribute("category", category);
+        model.addAttribute("pageCount", pagingDto.getMap());
+        model.addAttribute("lastPage", pagingDto.getTotalPage());
 
         return "find_by_detail_category";
     }

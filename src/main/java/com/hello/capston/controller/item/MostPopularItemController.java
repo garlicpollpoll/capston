@@ -1,5 +1,6 @@
 package com.hello.capston.controller.item;
 
+import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
@@ -44,9 +45,11 @@ public class MostPopularItemController {
         Pageable page = PageRequest.of(pageNow, 9);
         List<Item> findAll = itemRepository.findAllItemByCount(page);
 
-        pagingService.paging(model, 9, pageNow, itemRepository.count());
+        PagingDto pagingDto = pagingService.paging(9, pageNow, itemRepository.count());
 
         model.addAttribute("items", findAll);
+        model.addAttribute("pageCount", pagingDto.getMap());
+        model.addAttribute("lastPage", pagingDto.getTotalPage());
 
         return "item_list_popular";
     }

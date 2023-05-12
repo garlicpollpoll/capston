@@ -3,6 +3,7 @@ package com.hello.capston.controller.home;
 import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
+import com.hello.capston.jwt.JwtUtil;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -23,11 +26,23 @@ public class HomeController {
 
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final JwtUtil jwtUtil;
 
     @GetMapping("/")
-    public String home(Model model, HttpSession session) {
+    public String home(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = memberRepository.findByLoginId(loginId).orElse(null);
+
+//        response.addHeader("Access_Token", "OK");
+        String token = jwtUtil.getHeaderToken(request, "Access");
+        Boolean isRefreshTokenValidate = jwtUtil.refreshTokenValidation(token);
+
+        if (isRefreshTokenValidate) {
+            log.info("success validate");
+        }
+        else {
+            log.info("not success validate");
+        }
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());

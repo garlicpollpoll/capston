@@ -218,9 +218,6 @@ public class PaymentController {
             if (isStockZero) {
                 return false;
             }
-            else {
-                return true;
-            }
         }
         return true;
     }

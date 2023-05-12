@@ -1,5 +1,6 @@
 package com.hello.capston.controller.item;
 
+import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
@@ -49,7 +50,7 @@ public class ItemController {
         PageRequest page = PageRequest.of(pageNow, 9);
         List<Item> findAll = itemRepository.findAllItem(page);
 
-        pagingService.paging(model, 9, pageNow, itemRepository.count());
+        PagingDto pagingDto = pagingService.paging(9, pageNow, itemRepository.count());
 
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = memberService.findMember(loginId);
@@ -59,6 +60,8 @@ public class ItemController {
         }
 
         model.addAttribute("items", findAll);
+        model.addAttribute("pageCount", pagingDto.getMap());
+        model.addAttribute("lastPage", pagingDto.getTotalPage());
 
         return "item_list";
     }
@@ -92,7 +95,10 @@ public class ItemController {
         List<Comment> findComment = commentRepository.findCommentByItemId(id, page);
         List<Comment> commentAllByItemId = commentRepository.findCommentAllByItemId(id);
 
-        pagingService.paging(model, 3, pageNow, commentAllByItemId.size());
+        PagingDto pagingDto = pagingService.paging(3, pageNow, commentAllByItemId.size());
+
+        model.addAttribute("pageCount", pagingDto.getMap());
+        model.addAttribute("lastPage", pagingDto.getTotalPage());
 
         // 페이징 끝
 

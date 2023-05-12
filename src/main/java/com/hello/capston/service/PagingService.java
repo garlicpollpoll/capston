@@ -1,15 +1,11 @@
 package com.hello.capston.service;
 
-import com.hello.capston.entity.Inquiry;
-import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.dto.dto.PagingDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -18,13 +14,12 @@ public class PagingService {
 
     /**
      * 페이징 추상화
-     * @param model             컨트롤러에서 받아온 model
      * @param visiblePage       몇개 보여주고 싶은지 PageRequest.of(0, 이부분);
      * @param pageNow           컨트롤러에서 받아온 현재 페이지
      * @param listSize          totalPage 를 구하기 위한 List<>의 사이즈
      * @return
      */
-    public int paging(Model model, int visiblePage, int pageNow, long listSize) {
+    public PagingDto paging(int visiblePage, int pageNow, long listSize) {
         if (pageNow != 0) {
             pageNow -= 1;
         }
@@ -79,9 +74,11 @@ public class PagingService {
             map.put(i, i);
         }
 
-        model.addAttribute("pageCount", map);
-        model.addAttribute("lastPage", totalPage);
+        PagingDto dto = new PagingDto();
 
-        return pageNow;
+        dto.setTotalPage(totalPage);
+        dto.setMap(map);
+
+        return dto;
     }
 }

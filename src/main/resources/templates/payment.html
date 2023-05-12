@@ -262,36 +262,6 @@
                             url : "/verifyIamport/" + rsp.imp_uid
                         }).done(function (data) {
                             if (rsp.paid_amount == data.response.amount) {
-                                // if (userEmail == '') {
-                                //     $.ajax({
-                                //         type : "POST",
-                                //         url : "/paymentCompleteMember",
-                                //         contentType : "application/json",
-                                //         dataType : "json",
-                                //         data : JSON.stringify({
-                                //             id : memberId,
-                                //             zipcode : postNumber,
-                                //             street : roadAddress.value,
-                                //             detailAddress : detailAddress.value
-                                //         })
-                                //     })
-                                //     location.href = "/paymentComplete";
-                                // }
-                                // else if (loginId == '') {
-                                //     $.ajax({
-                                //         type : "POST",
-                                //         url : "/paymentCompleteUser",
-                                //         contentType : "application/json",
-                                //         dataType : "json",
-                                //         data : JSON.stringify({
-                                //             id : userId,
-                                //             zipcode : postNumber,
-                                //             street : roadAddress.value,
-                                //             detailAddress : detailAddress.value
-                                //         })
-                                //     })
-                                //     location.href = "/paymentComplete";
-                                // }
                                 $.ajax({
                                     type : "POST",
                                     url : "/paymentComplete",

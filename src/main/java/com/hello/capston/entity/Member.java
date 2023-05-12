@@ -24,12 +24,15 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    public Member(String username, String password, String birth, String gender, MemberRole role) {
+    private String email;
+
+    public Member(String username, String password, String birth, String gender, MemberRole role, String email) {
         this.username = username;
         this.password = password;
         this.birth = birth;
         this.gender = gender;
         this.role = role;
+        this.email = email;
     }
 
     public void changeRoleMemberToManager() {
