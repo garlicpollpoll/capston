@@ -31,6 +31,15 @@ public class UploadController {
 
     private final MemberService memberService;
 
+    /**
+     * 아이템 업로드
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @param redirectAttributes
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/upload_item")
     public String uploadItem(@Validated @ModelAttribute("upload")UploadForm form, BindingResult bindingResult, HttpSession session,
                              RedirectAttributes redirectAttributes) throws IOException {

@@ -35,6 +35,13 @@ public class DuplicateController {
         return "unique_code_duplicate";
     }
 
+    /**
+     * 상품 이름으로 중복확인
+     * @param form
+     * @param bindingResult
+     * @param model
+     * @return
+     */
     @PostMapping("/item_name_duplicate")
     public String itemNameDuplicatePost(@Validated @ModelAttribute("duplicate")ItemNameDuplicateForm form, BindingResult bindingResult, Model model) {
         List<Item> findItem = itemRepository.findByItemName(form.getItemName());
@@ -54,6 +61,13 @@ public class DuplicateController {
         return "item_name_duplicate";
     }
 
+    /**
+     * 상품 코드로 중복확인
+     * @param form
+     * @param bindingResult
+     * @param model
+     * @return
+     */
     @PostMapping("/unique_code_duplicate")
     public String uniqueCodeDuplicatePost(@Validated @ModelAttribute("duplicate")UniqueCodeDuplicateForm form, BindingResult bindingResult, Model model) {
         Item findItem = itemRepository.findByUniqueCode(form.getUniqueCode()).orElse(null);

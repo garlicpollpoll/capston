@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 public class DetailUploadController {
 
     private final DetailUploadService detailUploadService;
-    private final ItemDetailRepository itemDetailRepository;
 
     @GetMapping("/detail_upload/{itemId}")
     public String detailUpload(@PathVariable("itemId") Long itemId, Model model) {
@@ -28,6 +27,12 @@ public class DetailUploadController {
         return "detail_upload";
     }
 
+    /**
+     * 상품 세부 정보 업로드
+     * @param itemId
+     * @param request
+     * @return
+     */
     @PostMapping("/detail_upload/{itemId}")
     public String detailUploadPost(@PathVariable("itemId") Long itemId, HttpServletRequest request) {
         String[] sizes = request.getParameterValues("size");

@@ -1,26 +1,19 @@
-package com.hello.capston.jwt.interceptor;
+package com.hello.capston.jwtDeprecated.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hello.capston.jwt.JwtUtil;
-import com.hello.capston.jwt.dto.GlobalResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthInterceptor implements HandlerInterceptor {
-
+public class JwtAuthFilter {
+    /*
     private final JwtUtil jwtUtil;
 
+    // HTTP 요청이 오면 WAS 가 HttpServletRequest, HttpServletResponse 객체를 만들어 줌
+    // 만든 인자 값을 받아온다.
+    // 요청이 들어오면 doFilterInternal 이 딱 한번 실행된다.
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // WebSecurityConfig 에서 보았던 UsernamePasswordAuthenticationFilter 보다 먼저 동작을 하게 된다.
         // Access / Refresh 헤더에서 토큰을 가져옴
         String accessToken = jwtUtil.getHeaderToken(request, "Access");
@@ -49,19 +42,14 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
                 }
                 else {
                     jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST);
-                    return false;
+                    return;
                 }
             }
         }
-
-        return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
     // SecurityContext 에 Authentication 객체를 저장한다.
     public void setAuthentication(String email) {
-        /**
-         * OAuth 로 들어오는 사람은 createAuthentication 을 이용할 수 없다.
-         */
         Authentication authentication = jwtUtil.createAuthentication(email);
         // security 가 만들어 주는 securityContextHolder 그 안에 authentication 을 넣어준다.
         // security 가 securityContextHolder 에서 인증 객체를 확인하는데
@@ -81,4 +69,5 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
             log.error(e.getMessage());
         }
     }
+     */
 }

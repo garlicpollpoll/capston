@@ -1,7 +1,6 @@
 package com.hello.capston.oauth;
 
-import com.hello.capston.jwt.JwtUtil;
-import com.hello.capston.jwt.filter.JwtAuthFilter;
+import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.principal.PrincipalDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,11 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -21,7 +16,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final PrincipalDetailService principalDetailService;
-    private final JwtUtil jwtUtil;
 
     @Bean
     public BCryptPasswordEncoder encodePWD() {

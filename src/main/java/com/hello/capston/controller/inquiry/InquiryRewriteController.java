@@ -5,6 +5,7 @@ import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.InquiryService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
@@ -29,9 +30,15 @@ public class InquiryRewriteController {
     private final InquiryRepository inquiryRepository;
 
     private final MemberService memberService;
-    private final UserService userService;
-    private final InquiryService inquiryService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 문의하기 세부 내용 확인
+     * @param id
+     * @param session
+     * @param model
+     * @return
+     */
     @GetMapping("/inquiry_detail/{id}")
     public String inquiryDetail(@PathVariable("id") Long id, HttpSession session, Model model) {
         Long previousPage = id - 1L;
@@ -44,8 +51,8 @@ public class InquiryRewriteController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             if (findUser != null) {
@@ -75,6 +82,13 @@ public class InquiryRewriteController {
         return "inquiry_detail";
     }
 
+    /**
+     * 문의 수정하기
+     * @param id
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/inquiry_rewrite/{id}")
     public String inquiryRewrite(@PathVariable("id") Long id, Model model, HttpSession session) {
         Inquiry findInquiry = inquiryRepository.findById(id).orElse(null);
@@ -82,7 +96,7 @@ public class InquiryRewriteController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 
@@ -93,6 +107,14 @@ public class InquiryRewriteController {
         return "inquiry_rewrite";
     }
 
+    /**
+     * 문의 수정하기
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/inquiry_rewrite")
     @Transactional
     public String inquiryRewritePost(@Validated @ModelAttribute("inquiry") InquiryForm form, BindingResult bindingResult,

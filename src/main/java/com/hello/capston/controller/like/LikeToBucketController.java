@@ -4,6 +4,7 @@ import com.hello.capston.dto.form.LikeForm;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,16 @@ public class LikeToBucketController {
     private final ItemRepository itemRepository;
 
     private final ItemService itemService;
-    private final MemberService memberService;
-    private final UserService userService;
     private final BucketService bucketService;
     private final TemporaryOrderService temporaryOrderService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 좋아요 리스트에서 장바구니로 이동
+     * @param form
+     * @param session
+     * @return
+     */
     @ResponseBody
     @PostMapping("/go_to_bucket")
     public Map<String, String> goToBucket(@RequestBody LikeForm form, HttpSession session) {
@@ -43,8 +49,8 @@ public class LikeToBucketController {
         String userEmail = (String) session.getAttribute("userEmail");
         Integer orders = 0;
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());

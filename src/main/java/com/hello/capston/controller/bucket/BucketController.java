@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.BucketDto;
 import com.hello.capston.dto.form.BucketForm;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.*;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,11 +25,17 @@ public class BucketController {
     private final ItemRepository itemRepository;
     private final TemporaryOrderRepository temporaryOrderRepository;
 
-    private final MemberService memberService;
-    private final UserService userService;
     private final BucketService bucketService;
     private final TemporaryOrderService temporaryOrderService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 장바구니 추가
+     * @param form
+     * @param session
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/addBucket")
     public String addBucket(@RequestBody BucketForm form, HttpSession session, RedirectAttributes redirectAttributes) {
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
@@ -37,8 +44,8 @@ public class BucketController {
         String userEmail = (String) session.getAttribute("userEmail");
         Integer orders = 0;
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());
@@ -63,13 +70,19 @@ public class BucketController {
         return "redirect:/item_detail/{itemId}";
     }
 
+    /**
+     * 장바구니 조회
+     * @param session
+     * @param model
+     * @return
+     */
     @GetMapping("/bucket")
     public String myBucket(HttpSession session, Model model) {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             List<TemporaryOrder> myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
@@ -95,6 +108,11 @@ public class BucketController {
         return "bucket";
     }
 
+    /**
+     * 장바구니 성택 후 취소
+     * @param form
+     * @return
+     */
     @PostMapping("/cancelBucket")
     public String cancelBucket(@RequestBody BucketForm form) {
         Bucket findBucket = bucketService.findById(Long.parseLong(form.getId()));

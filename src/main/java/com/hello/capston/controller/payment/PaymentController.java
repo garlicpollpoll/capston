@@ -6,6 +6,7 @@ import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.DeliveryStatus;
 import com.hello.capston.entity.enums.OrderStatus;
 import com.hello.capston.repository.*;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,16 @@ public class PaymentController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final AlertService alertService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 결제 페이지로 이동
+     * @param model
+     * @param session
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/payment")
     public String payment(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         PaymentDto dto = new PaymentDto();
@@ -51,8 +61,8 @@ public class PaymentController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());
@@ -164,6 +174,11 @@ public class PaymentController {
 //        return "redirect:/paymentComplete";
 //    }
 
+    /**
+     * 결제 완료 로직
+     * @param dto
+     * @return
+     */
     @PostMapping("/paymentComplete")
     @ResponseBody
     @Transactional

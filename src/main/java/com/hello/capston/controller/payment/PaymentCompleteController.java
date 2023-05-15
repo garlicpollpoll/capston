@@ -5,6 +5,7 @@ import com.hello.capston.entity.OrderItem;
 import com.hello.capston.entity.TemporaryOrder;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.OrderItemRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.TemporaryOrderService;
 import com.hello.capston.service.UserService;
@@ -20,20 +21,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentCompleteController {
 
-    private final MemberService memberService;
-    private final UserService userService;
-    private final TemporaryOrderService temporaryOrderService;
-
     private final OrderItemRepository orderItemRepository;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 결제 완료 페이지로 이동
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/paymentComplete")
     public String paymentComplete(Model model, HttpSession session) {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
         int orderPrice = 0;
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             List<OrderItem> findTOrder = orderItemRepository.findOrdersByUserId(findUser.getId());

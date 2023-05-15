@@ -17,6 +17,12 @@ public class InquiryDeleteController {
 
     private final InquiryService inquiryService;
 
+    /**
+     * 문의하기 세부내용 확인
+     * @param contentId
+     * @param redirectAttributes
+     * @return
+     */
     @GetMapping("/inquiry_delete/{id}")
     public String deleteInquiry(@PathVariable("id") Long contentId, RedirectAttributes redirectAttributes) {
         Inquiry findInquiry = inquiryRepository.findById(contentId).orElse(null);

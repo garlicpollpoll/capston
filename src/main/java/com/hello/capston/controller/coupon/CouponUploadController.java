@@ -20,11 +20,21 @@ public class CouponUploadController {
     private final S3Uploader s3Uploader;
     private final CouponRepository couponRepository;
 
+    /**
+     * 단순 쿠폰 업로드 페이지 redirect
+     * @return
+     */
     @GetMapping("/coupon_upload")
     public String couponUpload() {
         return "coupon_upload";
     }
 
+    /**
+     * ADMIN 등급에 의해 쿠폰 등록
+     * @param dto
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/coupon_upload")
     public String couponUploadPost(@ModelAttribute("coupon")CouponUploadDto dto) throws IOException {
         MultipartFile couponImage = dto.getCouponImage();

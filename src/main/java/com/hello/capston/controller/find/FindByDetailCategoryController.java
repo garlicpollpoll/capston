@@ -7,6 +7,7 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FindByDetailCategoryController {
 
-    private final ItemDetailRepository itemDetailRepository;
     private final ItemRepository itemRepository;
 
-    private final MemberService memberService;
     private final PagingService pagingService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 카테고리별 제품 보는 페이지
+     * @param request
+     * @param model
+     * @param pageNow
+     * @return
+     */
     @GetMapping("/find_by_detail_category")
     public String findDetailCategory(HttpServletRequest request, Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow) {
         if (pageNow != 0) {
@@ -45,7 +52,7 @@ public class FindByDetailCategoryController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 

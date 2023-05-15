@@ -21,6 +21,11 @@ public class LikeCancelController {
 
     private final LikeService likeService;
 
+    /**
+     * 좋아요 취소
+     * @param form
+     * @return
+     */
     @ResponseBody
     @PostMapping("/cancel_like")
     public Map<String, String> cancelLike(@RequestBody LikeForm form) {

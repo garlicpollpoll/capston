@@ -7,6 +7,7 @@ import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.CommentRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.ItemService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
@@ -29,10 +30,19 @@ public class CommentController {
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
-    private final MemberService memberService;
-    private final UserService userService;
     private final ItemService itemService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 댓글 작성
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @param itemId
+     * @param redirectAttributes
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/comment/{id}")
     public String comment(@Validated @ModelAttribute("comment")CommentForm form, BindingResult bindingResult,
                           HttpSession session, @PathVariable("id") String itemId, RedirectAttributes redirectAttributes) throws IOException {
@@ -43,8 +53,8 @@ public class CommentController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
         Item findItem = itemService.findItem(itemId);
 
         String imageUrl = s3Uploader.upload(form.getCommentImage(), "static");

@@ -3,11 +3,16 @@ package com.hello.capston.controller.home;
 import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
-import com.hello.capston.jwt.JwtUtil;
+import com.hello.capston.entity.User;
+import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
+import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.MemberService;
+import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -24,25 +29,21 @@ import java.util.List;
 @Slf4j
 public class HomeController {
 
-    private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-    private final JwtUtil jwtUtil;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 메인 페이지
+     * @param model
+     * @param session
+     * @param request
+     * @param response
+     * @return
+     */
     @GetMapping("/")
     public String home(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         String loginId = (String) session.getAttribute("loginId");
-        Member findMember = memberRepository.findByLoginId(loginId).orElse(null);
-
-//        response.addHeader("Access_Token", "OK");
-        String token = jwtUtil.getHeaderToken(request, "Access");
-        Boolean isRefreshTokenValidate = jwtUtil.refreshTokenValidation(token);
-
-        if (isRefreshTokenValidate) {
-            log.info("success validate");
-        }
-        else {
-            log.info("not success validate");
-        }
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());
@@ -68,12 +69,18 @@ public class HomeController {
         return "login";
     }
 
+    /**
+     * MANAGER 등급에 의해 상품 등록
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/item_upload")
     public String itemUpload(Model model, HttpSession session) {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 
@@ -85,12 +92,5 @@ public class HomeController {
     @GetMapping("/dumy_page")
     public String dumy() {
         return "main";
-    }
-
-    @GetMapping("/test")
-    public String test(Model model) {
-        model.addAttribute("orderPrice", 100000);
-
-        return "payment";
     }
 }

@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,16 @@ public class MostPopularItemController {
 
     private final ItemRepository itemRepository;
 
-    private final MemberService memberService;
     private final PagingService pagingService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 인기 상품 리스트
+     * @param model
+     * @param pageNow
+     * @param session
+     * @return
+     */
     @GetMapping("/item_list_popular")
     public String popularItem(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow,
                               HttpSession session) {
@@ -38,7 +46,7 @@ public class MostPopularItemController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 

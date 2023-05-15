@@ -1,8 +1,6 @@
-package com.hello.capston.jwt.repository;
+package com.hello.capston.jwtDeprecated.repository;
 
-import com.hello.capston.jwt.dto.TokenDto;
-import com.hello.capston.jwt.entity.RefreshToken;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.hello.capston.jwtDeprecated.dto.TokenDto;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

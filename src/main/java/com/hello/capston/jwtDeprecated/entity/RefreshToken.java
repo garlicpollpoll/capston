@@ -1,11 +1,9 @@
-package com.hello.capston.jwt.entity;
+package com.hello.capston.jwtDeprecated.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Getter

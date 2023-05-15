@@ -6,6 +6,7 @@ import com.hello.capston.entity.MemberWhoGetCoupon;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.MemberWhoGetCouponRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.AlertService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
@@ -30,13 +31,20 @@ public class CouponController {
     private final MemberService memberService;
     private final UserService userService;
     private final AlertService alertService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 쿠폰 조회
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/coupon")
     public String coupon(Model model, HttpSession session) {
         List<Coupon> findAllCoupon = couponRepository.findAll();
 
         String loginId = (String) session.getAttribute("loginId");
-        Member findMember = memberService.findMember(loginId);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
 
         model.addAttribute("coupon", findAllCoupon);
         model.addAttribute("status", findMember.getRole());
@@ -44,6 +52,13 @@ public class CouponController {
         return "coupon";
     }
 
+    /**
+     * 쿠폰 저장
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/coupon")
     public String couponPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
@@ -55,7 +70,7 @@ public class CouponController {
         Coupon coupon = couponRepository.findByCode(code).orElse(null);
 
         if (loginId == null) {
-            User findUser = userService.findUser(userEmail);
+            User findUser = cacheRepository.findUserAtCache(userEmail);
             List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserId(findUser.getId());
 
             if (findCoupon.isEmpty()) {
@@ -74,7 +89,7 @@ public class CouponController {
         }
 
         if (userEmail == null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberId(findMember.getId());
 
             if (findCoupon.isEmpty()) {

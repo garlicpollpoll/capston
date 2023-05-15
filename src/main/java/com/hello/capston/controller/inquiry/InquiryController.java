@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,17 @@ public class InquiryController {
 
     private final InquiryRepository inquiryRepository;
 
-    private final MemberService memberService;
 
     private final PagingService pagingService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 문의하기 페이지
+     * @param model
+     * @param pageNow
+     * @param session
+     * @return
+     */
     @GetMapping("/inquiry")
     public String inquiry(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow,
                           HttpSession session) {
@@ -44,7 +52,7 @@ public class InquiryController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 

@@ -4,6 +4,7 @@ import com.hello.capston.dto.form.JoinForm;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.MemberRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +25,14 @@ public class JoinController {
     private final BCryptPasswordEncoder encoder;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 회원가입 페이지로 이동
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/join")
     public String join(Model model, HttpSession session) {
         JoinForm form = new JoinForm();
@@ -32,7 +40,7 @@ public class JoinController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 
@@ -40,6 +48,13 @@ public class JoinController {
         return "join";
     }
 
+    /**
+     * 회원가입
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @return
+     */
     @PostMapping("/join")
     public String joinPost(@Validated @ModelAttribute("join") JoinForm form, BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {

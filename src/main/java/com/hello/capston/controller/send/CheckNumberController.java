@@ -23,6 +23,12 @@ public class CheckNumberController {
 
     private final AlertService alertService;
 
+    /**
+     * 이메일 인증 확인 로직
+     * @param dto
+     * @param session
+     * @return
+     */
     @ResponseBody
     @PostMapping("/checkNumber")
     public Map<String, String> checkNumber(@RequestBody CheckNumberDto dto, HttpSession session) {

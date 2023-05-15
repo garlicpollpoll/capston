@@ -5,6 +5,7 @@ import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.InquiryService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
@@ -25,9 +26,13 @@ import java.time.LocalDateTime;
 public class InquiryWriteController {
 
     private final InquiryService inquiryService;
-    private final MemberService memberService;
-    private final UserService userService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 문의하기 작성 페이지 redirect
+     * @param model
+     * @return
+     */
     @GetMapping("/inquiry_write")
     public String inquiryWrite(Model model) {
         InquiryForm form = new InquiryForm();
@@ -35,6 +40,14 @@ public class InquiryWriteController {
         return "inquiry_write";
     }
 
+    /**
+     * 문의 등록
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @param model
+     * @return
+     */
     @PostMapping("/inquiry_write")
     public String inquiryWritePost(@Validated @ModelAttribute("inquiryForm") InquiryForm form, BindingResult bindingResult,
                                    HttpSession session, Model model) {
@@ -45,8 +58,8 @@ public class InquiryWriteController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         inquiryService.saveInquiry(findMember, findUser, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
 

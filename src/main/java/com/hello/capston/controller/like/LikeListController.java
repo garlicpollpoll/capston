@@ -4,6 +4,7 @@ import com.hello.capston.entity.Likes;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.LikeRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +21,21 @@ public class LikeListController {
 
     private final LikeRepository likeRepository;
 
-    private final UserService userService;
-    private final MemberService memberService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 좋아요 목록 조회
+     * @param session
+     * @param model
+     * @return
+     */
     @GetMapping("/like_list")
     public String likeList(HttpSession session, Model model) {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
 
         if (userEmail == null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
 
             List<Likes> findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
 
@@ -38,7 +44,7 @@ public class LikeListController {
         }
 
         if (loginId == null) {
-            User findUser = userService.findUser(userEmail);
+            User findUser = cacheRepository.findUserAtCache(userEmail);
 
             List<Likes> findLikes = likeRepository.findMyLikesByUserId(findUser.getId());
 

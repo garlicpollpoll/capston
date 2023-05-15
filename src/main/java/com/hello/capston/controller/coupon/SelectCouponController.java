@@ -7,6 +7,7 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.entity.TemporaryOrder;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.CouponRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.TemporaryOrderService;
 import com.hello.capston.service.UserService;
@@ -31,9 +32,14 @@ public class SelectCouponController {
     private final CouponRepository couponRepository;
 
     private final TemporaryOrderService temporaryOrderService;
-    private final MemberService memberService;
-    private final UserService userService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 결제 창에서 쿠폰 선택했을 때
+     * @param dto
+     * @param session
+     * @return
+     */
     @ResponseBody
     @PostMapping("/selectCoupon")
     public Map<String, Double> selectCoupon(@RequestBody SelectCouponDto dto, HttpSession session) {
@@ -44,7 +50,7 @@ public class SelectCouponController {
         double percentage = 0;
 
         if (loginId == null) {
-            User findUser = userService.findUser(userEmail);
+            User findUser = cacheRepository.findUserAtCache(userEmail);
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
 
             for (TemporaryOrder temporaryOrder : findTOrder) {
@@ -60,7 +66,7 @@ public class SelectCouponController {
         }
 
         if (userEmail == null) {
-            Member findMember = memberService.findMember(loginId);
+            Member findMember = cacheRepository.findMemberAtCache(loginId);
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
             for (TemporaryOrder temporaryOrder : findTOrder) {

@@ -1,8 +1,7 @@
-package com.hello.capston.jwt;
+package com.hello.capston.jwtDeprecated;
 
-import com.hello.capston.jwt.dto.TokenDto;
-import com.hello.capston.jwt.entity.RefreshToken;
-import com.hello.capston.jwt.repository.RefreshTokenRepository;
+import com.hello.capston.jwtDeprecated.dto.TokenDto;
+import com.hello.capston.jwtDeprecated.repository.RefreshTokenRepository;
 import com.hello.capston.principal.PrincipalDetailService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

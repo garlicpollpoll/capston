@@ -1,16 +1,11 @@
-package com.hello.capston.jwt.service;
+package com.hello.capston.jwtDeprecated.service;
 
-import com.hello.capston.dto.form.LoginForm;
-import com.hello.capston.entity.Member;
-import com.hello.capston.jwt.JwtUtil;
-import com.hello.capston.jwt.dto.GlobalResDto;
-import com.hello.capston.jwt.dto.TokenDto;
-import com.hello.capston.jwt.repository.RefreshTokenRepository;
-import com.hello.capston.repository.MemberRepository;
-import com.hello.capston.repository.UserRepository;
+import com.hello.capston.jwtDeprecated.JwtUtil;
+import com.hello.capston.jwtDeprecated.dto.GlobalResDto;
+import com.hello.capston.jwtDeprecated.dto.TokenDto;
+import com.hello.capston.jwtDeprecated.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +21,6 @@ public class JwtService {
 
     @Transactional
     public GlobalResDto login(String email, HttpServletResponse response) {
-
         // 아이디 정보로 token 생성
         TokenDto token = jwtUtil.createAllToken(email);
 

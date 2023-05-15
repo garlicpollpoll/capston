@@ -10,6 +10,7 @@ import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.UserRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.ItemService;
 import com.hello.capston.service.LikeService;
 import com.hello.capston.service.MemberService;
@@ -27,12 +28,17 @@ import javax.servlet.http.HttpSession;
 public class LIkeController {
 
     private final ItemRepository itemRepository;
-    private final LikeRepository likeRepository;
 
-    private final MemberService memberService;
-    private final UserService userService;
     private final LikeService likeService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 좋아요 클릭 시 좋아요 목록에 담아짐
+     * @param form
+     * @param session
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/like")
     public String like(@RequestBody LikeFormWithSize form, HttpSession session, RedirectAttributes redirectAttributes) {
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
@@ -40,8 +46,8 @@ public class LIkeController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         likeService.save(findMember, findUser, findItem, form.getSize());
 
@@ -50,13 +56,20 @@ public class LIkeController {
         return "redirect:item_detail/{itemId}";
     }
 
+    /**
+     * 좋아요 취소 시 좋아요 목록에서 없어짐
+     * @param form
+     * @param session
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/dislike")
     public String dislike(@RequestBody LikeForm form, HttpSession session, RedirectAttributes redirectAttributes) {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null) {
             Likes like = likeService.findByUserId(findUser.getId(), Long.parseLong(form.getId()));

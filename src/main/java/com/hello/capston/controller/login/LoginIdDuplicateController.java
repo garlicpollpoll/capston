@@ -19,6 +19,11 @@ public class LoginIdDuplicateController {
 
     private final MemberService memberService;
 
+    /**
+     * 로그인 중복 확인 페이지
+     * @param model
+     * @return
+     */
     @GetMapping("/login_id_duplicate")
     public String loginIdDuplicate(Model model) {
         LoginIdDuplicateForm form = new LoginIdDuplicateForm();
@@ -26,6 +31,11 @@ public class LoginIdDuplicateController {
         return "login_id_duplicate";
     }
 
+    /**
+     * 로그인 아이디 중복 방지 로직
+     * @param form
+     * @return
+     */
     @PostMapping("/login_id_duplicate")
     @ResponseBody
     public Map<String, String> loginIdDuplicatePost(@RequestBody LoginIdDuplicateForm form) {

@@ -18,6 +18,12 @@ public class RefundController {
 
     private final PaymentService paymentService;
 
+    /**
+     * 환불 로직
+     * @param dto
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/payment_cancel")
     @ResponseBody
     public Map<String, String> cancel(@RequestBody CancelDto dto) throws IOException {

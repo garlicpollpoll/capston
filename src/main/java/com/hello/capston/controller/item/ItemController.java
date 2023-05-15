@@ -5,6 +5,7 @@ import com.hello.capston.entity.*;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +34,20 @@ public class ItemController {
     private final ItemDetailRepository itemDetailRepository;
     private final CommentRepository commentRepository;
 
-    private final MemberService memberService;
-    private final UserService userService;
     private final LikeService likeService;
     private final ItemService itemService;
 
     private final ClickDuplicationPreventService clickService;
     private final PagingService pagingService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 아이템 리스트 조회
+     * @param model
+     * @param pageNow
+     * @param session
+     * @return
+     */
     @GetMapping("/item_list")
     public String itemList(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow, HttpSession session) {
         if (pageNow != 0) {
@@ -53,7 +60,7 @@ public class ItemController {
         PagingDto pagingDto = pagingService.paging(9, pageNow, itemRepository.count());
 
         String loginId = (String) session.getAttribute("loginId");
-        Member findMember = memberService.findMember(loginId);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());
@@ -66,6 +73,16 @@ public class ItemController {
         return "item_list";
     }
 
+    /**
+     * 아이템 세부 내용 확인
+     * @param id
+     * @param model
+     * @param session
+     * @param pageNow
+     * @param request
+     * @param response
+     * @return
+     */
     @GetMapping("/item_detail/{id}")
     @Transactional
     public String itemDetail(@PathVariable("id") Long id, Model model, HttpSession session,
@@ -77,8 +94,8 @@ public class ItemController {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
 
-        Member findMember = memberService.findMember(loginId);
-        User findUser = userService.findUser(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        User findUser = cacheRepository.findUserAtCache(userEmail);
         List<Likes> findLikes = likeService.likeCount(id);
 
         List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(id);

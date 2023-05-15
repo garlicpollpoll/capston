@@ -2,12 +2,10 @@ package com.hello.capston.controller.login;
 
 import com.hello.capston.dto.form.LoginForm;
 import com.hello.capston.entity.Member;
-import com.hello.capston.jwt.JwtUtil;
-import com.hello.capston.jwt.dto.GlobalResDto;
-import com.hello.capston.jwt.service.JwtService;
-import com.hello.capston.repository.MemberRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,17 +19,24 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class LoginController {
 
-    private final MemberService memberService;
+    private final CacheRepository cacheRepository;
 
+    /**
+     * 로그인 페이지
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/login")
     public String login(Model model, HttpSession session) {
         LoginForm form = new LoginForm();
 
         String loginId = (String) session.getAttribute("loginId");
 
-        Member findMember = memberService.findMember(loginId);
+        Member findMember = cacheRepository.findMemberAtCache(loginId);
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());

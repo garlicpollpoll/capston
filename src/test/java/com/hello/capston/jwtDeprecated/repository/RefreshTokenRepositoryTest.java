@@ -1,14 +1,12 @@
-package com.hello.capston.jwt.repository;
+package com.hello.capston.jwtDeprecated.repository;
 
-import com.hello.capston.jwt.JwtUtil;
-import com.hello.capston.jwt.dto.TokenDto;
+import com.hello.capston.jwtDeprecated.JwtUtil;
+import com.hello.capston.jwtDeprecated.dto.TokenDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RefreshTokenRepositoryTest {

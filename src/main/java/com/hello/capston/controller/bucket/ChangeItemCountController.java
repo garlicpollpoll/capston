@@ -31,6 +31,12 @@ public class ChangeItemCountController {
     private final TemporaryOrderRepository temporaryOrderRepository;
     private final ItemDetailRepository itemDetailRepository;
 
+    /**
+     * 장바구니 수량 증가
+     * @param dto
+     * @return
+     * @throws JsonProcessingException
+     */
     @PostMapping("/changeCount")
     @ResponseBody
     @Transactional

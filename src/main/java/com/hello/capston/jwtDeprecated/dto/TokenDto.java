@@ -1,4 +1,4 @@
-package com.hello.capston.jwt.dto;
+package com.hello.capston.jwtDeprecated.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
