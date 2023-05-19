@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -61,6 +62,13 @@ public class HomeController {
         model.addAttribute("newItem", findNewItem);
         model.addAttribute("popularItem", findPopularItem);
 
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                System.out.println(cookie.getName());
+            }
+        }
+
         return "main";
     }
 
@@ -87,10 +95,5 @@ public class HomeController {
         UploadForm form = new UploadForm();
         model.addAttribute("upload", form);
         return "upload";
-    }
-
-    @GetMapping("/dumy_page")
-    public String dumy() {
-        return "main";
     }
 }

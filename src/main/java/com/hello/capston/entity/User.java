@@ -30,12 +30,15 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Role role;
 
+    private String roleKey;
+
     @Builder
-    public User(String name, String email, String picture, Role role) {
+    public User(String name, String email, String picture, Role role, String roleKey) {
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
+        this.roleKey = roleKey;
     }
 
     public User update(String name, String picture) {

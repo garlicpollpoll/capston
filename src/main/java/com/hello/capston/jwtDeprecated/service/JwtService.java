@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class JwtService {
 

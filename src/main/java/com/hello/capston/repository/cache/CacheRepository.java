@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class CacheRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final MemberRepository memberRepository;
     private final UserRepository userRepository;
 
     public void addMember(Member member) {

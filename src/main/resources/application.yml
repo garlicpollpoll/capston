@@ -26,12 +26,16 @@ spring:
     port: 587
     username: kyoungsuk3254@gmail.com
     password: cnlgfpagxudlgjzl
+    transport:
+      protocol: smtp
+    debug: true
     properties:
       mail:
         smtp:
           starttls:
             enable: true
           auth: true
+    default-encoding: UTF-8
   data:
     redis:
       host: localhost

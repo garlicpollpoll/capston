@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="/css/footer/footer.css">
     <link rel="stylesheet" href="/css/fixed/like.css">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -64,13 +65,19 @@
         <section class="login">
             <h2>로그인</h2>
 
-            <form action="/auth/loginProc" method="post">
-                <ul>
-                    <li><input type="text" placeholder="아이디" title="아이디입력" class="input--text" name="username"></li>
-                    <li><input type="password" placeholder="비밀번호" title="비밀번호입력" class="input--text" name="password"></li>
-                    <li><button type="submit">로그인</button></li>
-                </ul>
-            </form>
+<!--            <form action="/customize/login" method="post">-->
+<!--                <ul>-->
+<!--                    <li><input type="text" placeholder="아이디" title="아이디입력" class="input&#45;&#45;text" name="loginId" id="loginId"></li>-->
+<!--                    <li><input type="password" placeholder="비밀번호" title="비밀번호입력" class="input&#45;&#45;text" name="loginPw" id="loginPw"></li>-->
+<!--                    <li><button type="submit">로그인</button></li>-->
+<!--                </ul>-->
+<!--            </form>-->
+
+            <ul>
+                <li><input type="text" placeholder="아이디" title="아이디입력" class="input--text" name="loginId" id="loginId"></li>
+                <li><input type="password" placeholder="비밀번호" title="비밀번호입력" class="input--text" name="loginPw" id="loginPw"></li>
+                <li><button type="button" id="button">로그인</button></li>
+            </ul>
 
             <div class="social_login">
                 <a href="/oauth2/authorization/google"><img src="/image/icon_google_48.png" alt="구글로그인"></a>
@@ -86,5 +93,45 @@
 <div th:replace="fragment/footer :: footer"></div>
 
 </body>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const button = document.getElementById('button');
+
+        button.addEventListener('click', () => {
+            var id = document.getElementById('loginId').value;
+            var pw = document.getElementById('loginPw').value;
+
+            if (loginId == "" || loginPw == "") {
+                alert("빈칸을 채워주십시오");
+            }
+            else {
+                $.ajax({
+                    type : "POST",
+                    dataType : "json",
+                    url : "/custom/login",
+                    contentType : "application/json",
+                    data : JSON.stringify({
+                        loginId : id,
+                        loginPw : pw
+                    })
+                }).then(data => {
+                        localStorage.setItem('token', data.accessToken);
+                        console.log(data.accessToken);
+                        $.ajax({
+                            type : "GET",
+                            url : '/protected-endpoint',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader('Content-Type', 'application/json');
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
+                            }
+                        });
+                        location.href = "/";
+                    })
+            }
+        })
+
+    })
+</script>
 
 </html>

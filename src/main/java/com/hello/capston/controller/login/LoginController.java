@@ -2,20 +2,34 @@ package com.hello.capston.controller.login;
 
 import com.hello.capston.dto.form.LoginForm;
 import com.hello.capston.entity.Member;
+import com.hello.capston.jwt.dto.JwtAuthenticationResponse;
+import com.hello.capston.jwt.dto.UserRequestDto;
+import com.hello.capston.jwt.dto.UserResponseDto;
+import com.hello.capston.jwt.service.JwtService;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
-import com.hello.capston.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +37,9 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     private final CacheRepository cacheRepository;
+    private final JwtService jwtService;
+    private final RedisTemplate redisTemplate;
+    private final MemberRepository memberRepository;
 
     /**
      * 로그인 페이지
@@ -47,20 +64,60 @@ public class LoginController {
         return "login";
     }
 
-    @Deprecated
-    @PostMapping("/login")
-    public String login_post(@Validated @ModelAttribute("login") LoginForm form, BindingResult bindingResult, HttpSession session,
-                             HttpServletResponse response) {
-        LoginForm login = new LoginForm();
-        login.setLoginId(form.getLoginId());
-        login.setLoginPw(form.getLoginPw());
+    @ResponseBody
+    @PostMapping("/custom/login")
+    public ResponseEntity<?> login_post(@Validated @RequestBody LoginForm form, BindingResult bindingResult, HttpServletResponse response,
+                                        HttpServletRequest request) {
+        UserRequestDto.Login login = new UserRequestDto.Login();
+        login.setUsername(form.getLoginId());
+        login.setPassword(form.getLoginPw());
 
         if (bindingResult.hasErrors()) {
-            return "normal_login";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디와 비밀번호는 빈칸일 수 없습니다.");
         }
 
-//        session.setAttribute("loginId", findMember.getUsername());
+        String sessionId = request.getSession(true).getId();
 
-        return "redirect:/";
+        UserResponseDto tokenInfo = jwtService.login(login);
+
+        Cookie authCookie = new Cookie("AUTH-TOKEN", tokenInfo.getAccessToken());
+        Cookie sessionCookie = new Cookie("SESSION-TOKEN", sessionId);
+
+        sessionCookie.setHttpOnly(true);
+        authCookie.setHttpOnly(true);
+
+        response.addCookie(authCookie);
+        response.addCookie(sessionCookie);
+
+        ResponseCookie responseSessionCookie =
+                ResponseCookie.from("SESSION-TOKEN", sessionId)
+                        .sameSite("Lax")
+                        .httpOnly(true)
+                        .secure(false)
+                        .path("/")
+                        .maxAge(Duration.ofDays(7))
+                        .build();
+
+        ResponseCookie cookie =
+                ResponseCookie.from("AUTH-TOKEN", tokenInfo.getAccessToken())
+                        .sameSite("Lax")
+                        .httpOnly(true)
+                        .secure(false)
+                        .path("/")
+//                        .domain("localhost")
+                        .maxAge(Duration.ofMinutes(30))
+                        .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+        response.addHeader("Set-Cookie", responseSessionCookie.toString());
+
+        return ResponseEntity.ok(new JwtAuthenticationResponse(tokenInfo.getAccessToken()));
+    }
+
+    @GetMapping("/protected-endpoint")
+    @ResponseBody
+    public String endpoint(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/");
+        return "success";
     }
 }
