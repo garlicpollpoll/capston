@@ -3,9 +3,11 @@ package com.hello.capston.oauth;
 import com.hello.capston.jwt.JwtAuthenticationFilter;
 import com.hello.capston.jwt.JwtTokenProvider;
 import com.hello.capston.jwt.OAuth2LoginSuccessHandler;
+import com.hello.capston.jwt.gitbefore.RedisTokenRepository;
 import com.hello.capston.jwt.service.JwtService;
 import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.principal.PrincipalDetailService;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PrincipalDetailService principalDetailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate redisTemplate;
+    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
+    private final RedisTokenRepository redisTokenRepository;
 
     @Bean
     public BCryptPasswordEncoder encodePWD() {
@@ -47,14 +52,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(
                         "/", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/login", "/item_list/**",
                         "/item_detail/**", "/social_login", "/join", "/login_id_duplicate", "/sendEmail", "/checkNumber",
-                        "/find_by_detail_category/**", "/item_list_popular/**", "/inquiry/**", "/custom/login",
-                        "/oauth2/authorization/google", "/oauth2/authorization/naver", "/oauth2/authorization/kakao"
+                        "/find_by_detail_category/**", "/item_list_popular/**", "/inquiry/**", "/custom/login", "/custom/logout",
+                        "/oauth2/authorization/google", "/oauth2/authorization/naver", "/oauth2/authorization/kakao", "/erase/authToken/authentication"
                 ).permitAll()
                 .antMatchers("/item_upload", "/detail_upload/**").hasAnyRole("MANAGER", "ADMIN")
                 .antMatchers("/admin/**", "/coupon_upload").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate, redisTokenRepository, memberRepository, userRepository), UsernamePasswordAuthenticationFilter.class)
 //                .formLogin().loginPage("/login").loginProcessingUrl("/custom/login").defaultSuccessUrl("/")
 //                .loginProcessingUrl("/auth/loginProc")
 //                .and()
@@ -64,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .oauth2Login().userInfoEndpoint().userService(customOAuth2UserService)
                 .and()
-                .successHandler(new OAuth2LoginSuccessHandler(jwtTokenProvider, redisTemplate));
+                .successHandler(new OAuth2LoginSuccessHandler(jwtTokenProvider, redisTemplate, redisTokenRepository, userRepository));
 
         //중복 로그인
         http.sessionManagement()

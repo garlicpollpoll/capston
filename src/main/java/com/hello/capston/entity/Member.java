@@ -27,13 +27,17 @@ public class Member implements Serializable {
 
     private String email;
 
-    public Member(String username, String password, String birth, String gender, MemberRole role, String email) {
+    // NEW!
+    private String sessionId;
+
+    public Member(String username, String password, String birth, String gender, MemberRole role, String email, String sessionId) {
         this.username = username;
         this.password = password;
         this.birth = birth;
         this.gender = gender;
         this.role = role;
         this.email = email;
+        this.sessionId = sessionId;
     }
 
     public void changeRoleMemberToManager() {
@@ -42,5 +46,10 @@ public class Member implements Serializable {
 
     public void changeRoleManagerToMember() {
         this.role = MemberRole.ROLE_MEMBER;
+    }
+
+    public Member update(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
     }
 }

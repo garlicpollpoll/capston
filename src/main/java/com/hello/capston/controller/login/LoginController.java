@@ -5,6 +5,8 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.jwt.dto.JwtAuthenticationResponse;
 import com.hello.capston.jwt.dto.UserRequestDto;
 import com.hello.capston.jwt.dto.UserResponseDto;
+import com.hello.capston.jwt.gitbefore.RedisAndSession;
+import com.hello.capston.jwt.gitbefore.RedisTokenRepository;
 import com.hello.capston.jwt.service.JwtService;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
@@ -38,7 +40,7 @@ public class LoginController {
 
     private final CacheRepository cacheRepository;
     private final JwtService jwtService;
-    private final RedisTemplate redisTemplate;
+    private final RedisTokenRepository redisTokenRepository;
     private final MemberRepository memberRepository;
 
     /**
@@ -76,19 +78,30 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디와 비밀번호는 빈칸일 수 없습니다.");
         }
 
-        String sessionId = request.getSession(true).getId();
-
         UserResponseDto tokenInfo = jwtService.login(login);
 
         Cookie authCookie = new Cookie("AUTH-TOKEN", tokenInfo.getAccessToken());
-        Cookie sessionCookie = new Cookie("SESSION-TOKEN", sessionId);
 
-        sessionCookie.setHttpOnly(true);
         authCookie.setHttpOnly(true);
 
         response.addCookie(authCookie);
-        response.addCookie(sessionCookie);
 
+        ResponseCookie cookie =
+                ResponseCookie.from("AUTH-TOKEN", tokenInfo.getAccessToken())
+                        .sameSite("Lax")
+                        .httpOnly(true)
+                        .secure(false)
+                        .path("/")
+                        .maxAge(Duration.ofMinutes(30))
+                        .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        // NEW!
+        String sessionId = request.getSession(true).getId();
+        Cookie sessionCookie = new Cookie("SESSION-TOKEN", sessionId);
+        sessionCookie.setHttpOnly(true);
+        response.addCookie(sessionCookie);
         ResponseCookie responseSessionCookie =
                 ResponseCookie.from("SESSION-TOKEN", sessionId)
                         .sameSite("Lax")
@@ -97,19 +110,12 @@ public class LoginController {
                         .path("/")
                         .maxAge(Duration.ofDays(7))
                         .build();
-
-        ResponseCookie cookie =
-                ResponseCookie.from("AUTH-TOKEN", tokenInfo.getAccessToken())
-                        .sameSite("Lax")
-                        .httpOnly(true)
-                        .secure(false)
-                        .path("/")
-//                        .domain("localhost")
-                        .maxAge(Duration.ofMinutes(30))
-                        .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
         response.addHeader("Set-Cookie", responseSessionCookie.toString());
+        RedisAndSession redisAndSession = RedisAndSession.builder().sessionId(sessionId).refreshToken(tokenInfo.getRefreshToken()).build();
+        redisTokenRepository.save(redisAndSession);
+        Member member = memberRepository.findByLoginId(form.getLoginId()).map(entity -> entity.update(sessionId)).orElse(null);
+        memberRepository.save(member);
+        //NEW!
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(tokenInfo.getAccessToken()));
     }

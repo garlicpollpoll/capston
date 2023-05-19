@@ -32,19 +32,28 @@ public class User implements Serializable {
 
     private String roleKey;
 
+    // NEW!
+    private String sessionId;
+
     @Builder
-    public User(String name, String email, String picture, Role role, String roleKey) {
+    public User(String name, String email, String picture, Role role, String roleKey, String sessionId) {
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
         this.roleKey = roleKey;
+        this.sessionId = sessionId;
     }
 
     public User update(String name, String picture) {
         this.name = name;
         this.picture = picture;
 
+        return this;
+    }
+
+    public User updateSessionId(String sessionId) {
+        this.sessionId = sessionId;
         return this;
     }
 

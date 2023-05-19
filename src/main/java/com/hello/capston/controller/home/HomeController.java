@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,7 @@ public class HomeController {
 
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 메인 페이지
@@ -45,6 +48,21 @@ public class HomeController {
     public String home(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        Member findMemberFromAuthentication = memberRepository.findByLoginId(name).orElse(null);
+        if (findMemberFromAuthentication != null) {
+            model.addAttribute("status", findMemberFromAuthentication.getRole());
+            session.setAttribute("loginId", findMemberFromAuthentication.getUsername());
+        }
+        else {
+            if (name != "anonymousUser") {
+                User principal = (User) authentication.getPrincipal();
+                model.addAttribute("status", "Member");
+                session.setAttribute("userEmail", principal.getEmail());
+            }
+        }
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());
@@ -70,6 +88,16 @@ public class HomeController {
         }
 
         return "main";
+    }
+
+    @GetMapping("/erase/authToken/authentication")
+    public String erase(HttpSession session, HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+        Cookie cookie = new Cookie("AUTH-TOKEN", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 
     @GetMapping("/social_login")

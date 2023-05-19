@@ -42,15 +42,13 @@ public class JwtService {
 
         // 2. 실제 검증이 이루어지는 부분
         // authenticate 메서드가 실행될 때 PrincipalDetailService 에서 만든 loadUserByUsername 메서드가 실행
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         UserResponseDto tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         // 4. RefreshToken Redis 저장
-        redisTemplate.opsForValue()
-                .set("RT:" + authentication.getName(), tokenInfo, tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("RT:" + authentication.getName(), tokenInfo, tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
         // Customize 5. Spring Security Context Holder 에 Authentication 객체 삽입
         SecurityContextHolder.getContext().setAuthentication(authentication);

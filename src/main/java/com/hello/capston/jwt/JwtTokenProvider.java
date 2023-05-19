@@ -69,7 +69,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public String remakeRefreshToken(Authentication authentication) {
+    public String remakeAccessToken(Authentication authentication) {
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 

@@ -3,7 +3,6 @@ package com.hello.capston.jwt;
 import com.hello.capston.entity.User;
 import com.hello.capston.entity.enums.Role;
 import com.hello.capston.jwt.dto.UserResponseDto;
-import com.hello.capston.repository.token.RedisTokenRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,6 @@ public class JwtRedisTest {
     RedisTemplate redisTemplate;
 
     @Autowired
-    RedisTokenRepository redisTokenRepository;
 
     @Test
     @DisplayName("키가 아닌 값으로 찾으면 null 이 나와야한다.")
@@ -58,12 +56,12 @@ public class JwtRedisTest {
     }
 
     private Authentication getAuthentication() {
-        User user = new User("임경석", "kyoungsuk3254@naver.com", "picture", Role.GUEST, Role.GUEST.getKey());
+        User user = new User("임경석", "kyoungsuk3254@naver.com", "picture", Role.GUEST, Role.GUEST.getKey(), "sessionId");
         return new UsernamePasswordAuthenticationToken(user, "password");
     }
 
     private Authentication getAuthentication1() {
-        User user = new User("임경석", "kyoungsuk3254@naver.com", "picture", Role.GUEST, Role.GUEST.getKey());
+        User user = new User("임경석", "kyoungsuk3254@naver.com", "picture", Role.GUEST, Role.GUEST.getKey(), "sessionId");
         return new UsernamePasswordAuthenticationToken(user, "password");
     }
 }
