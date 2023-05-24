@@ -2,6 +2,7 @@ package com.hello.capston.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -26,6 +27,14 @@ public class OrderItem {
     private int count;
 
     public OrderItem(Item item, Order order, int orderPrice, int count) {
+        this.item = item;
+        this.order = order;
+        this.orderPrice = orderPrice;
+        this.count = count;
+    }
+
+    public OrderItem(Long id, Item item, Order order, int orderPrice, int count) {
+        this.id = id;
         this.item = item;
         this.order = order;
         this.orderPrice = orderPrice;

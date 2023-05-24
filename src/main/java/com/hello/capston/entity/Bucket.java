@@ -34,4 +34,12 @@ public class Bucket {
         this.user = user;
         this.orders = orders;
     }
+
+    public Bucket(Long id, Member member, Item item, User user, int orders) {
+        this.id = id;
+        this.member = member;
+        this.item = item;
+        this.user = user;
+        this.orders = orders;
+    }
 }

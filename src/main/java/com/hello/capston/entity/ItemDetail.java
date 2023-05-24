@@ -21,14 +21,25 @@ public class ItemDetail{
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @Version
+    private Long version;
+
     public ItemDetail(int stock, String size, Item item) {
         this.stock = stock;
         this.size = size;
         this.item = item;
     }
 
-    public void changeStock(int count) {
+    public ItemDetail(Long id, int stock, String size, Item item) {
+        this.id = id;
+        this.stock = stock;
+        this.size = size;
+        this.item = item;
+    }
+
+    public int changeStock(int count) {
         this.stock -= count;
+        return this.stock;
     }
 
     public void changeStockToSoldOut(String message) {

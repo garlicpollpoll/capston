@@ -35,6 +35,14 @@ public class MemberWhoGetCoupon {
         this.checkUsed = checkUsed;
     }
 
+    public MemberWhoGetCoupon(Long id, User user, Member member, Coupon coupon, int checkUsed) {
+        this.id = id;
+        this.user = user;
+        this.member = member;
+        this.coupon = coupon;
+        this.checkUsed = checkUsed;
+    }
+
     public void changeCheckUsedToOne() {
         this.checkUsed = 1;
     }

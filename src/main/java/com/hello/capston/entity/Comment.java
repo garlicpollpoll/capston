@@ -38,4 +38,13 @@ public class Comment {
         this.comment = comment;
         this.imageUrl = imageUrl;
     }
+
+    public Comment(Long id, Member member, User user, Item item, String comment, String imageUrl) {
+        this.id = id;
+        this.member = member;
+        this.user = user;
+        this.item = item;
+        this.comment = comment;
+        this.imageUrl = imageUrl;
+    }
 }

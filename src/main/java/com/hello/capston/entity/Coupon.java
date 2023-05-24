@@ -32,4 +32,13 @@ public class Coupon {
         this.expirationDate = expirationDate;
         this.code = code;
     }
+
+    public Coupon(Long id, String couponImage, String couponDetail, int percentage, String expirationDate, String code) {
+        this.id = id;
+        this.couponImage = couponImage;
+        this.couponDetail = couponDetail;
+        this.percentage = percentage;
+        this.expirationDate = expirationDate;
+        this.code = code;
+    }
 }

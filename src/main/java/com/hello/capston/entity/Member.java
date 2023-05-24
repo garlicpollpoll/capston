@@ -40,6 +40,17 @@ public class Member implements Serializable {
         this.sessionId = sessionId;
     }
 
+    public Member(Long id, String username, String password, String birth, String gender, MemberRole role, String email, String sessionId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.birth = birth;
+        this.gender = gender;
+        this.role = role;
+        this.email = email;
+        this.sessionId = sessionId;
+    }
+
     public void changeRoleMemberToManager() {
         this.role = MemberRole.ROLE_MANAGER;
     }

@@ -25,7 +25,7 @@ class LikeRepositoryTest {
     @DisplayName("좋아요를 클릭하면 좋아요가 하나 늘어야 한다.")
     public void likeAdd() throws Exception {
         //given
-        Member member = new Member("임경석", "ks3254", "ks32541007!", "981007", MemberRole.ROLE_ADMIN, "kyoungsuk3254@naver.com");
+        Member member = new Member("임경석", "ks3254", "ks32541007!", "981007", MemberRole.ROLE_ADMIN, "kyoungsuk3254@naver.com", "sessionId");
         Item item = new Item("상품A", null);
         Likes like = new Likes(member, null, item, "좋아요", "S");
         //when

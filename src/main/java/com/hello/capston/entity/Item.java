@@ -54,6 +54,20 @@ public class Item {
         this.click = click;
     }
 
+    public Item(Long id, String viewName, String itemName, String brandName, String itemUrl, int price, String uniqueCode, String category, String color, int click, Member member) {
+        this.id = id;
+        this.viewName = viewName;
+        this.itemName = itemName;
+        this.brandName = brandName;
+        this.itemUrl = itemUrl;
+        this.price = price;
+        this.uniqueCode = uniqueCode;
+        this.category = category;
+        this.color = color;
+        this.click = click;
+        this.member = member;
+    }
+
     public void addClick() {
         this.click += 1;
     }

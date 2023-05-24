@@ -48,4 +48,16 @@ public class Order {
         this.zipcode = zipcode;
         this.detailAddress = detailAddress;
     }
+
+    public Order(Long id, Member member, User user, Delivery delivery, LocalDateTime orderDate, OrderStatus status, String zipcode, String street, String detailAddress) {
+        this.id = id;
+        this.member = member;
+        this.user = user;
+        this.delivery = delivery;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.zipcode = zipcode;
+        this.street = street;
+        this.detailAddress = detailAddress;
+    }
 }

@@ -38,4 +38,13 @@ public class Likes {
         this.recommend = recommend;
         this.size = size;
     }
+
+    public Likes(Long id, Member member, User user, Item item, String recommend, String size) {
+        this.id = id;
+        this.member = member;
+        this.user = user;
+        this.item = item;
+        this.recommend = recommend;
+        this.size = size;
+    }
 }

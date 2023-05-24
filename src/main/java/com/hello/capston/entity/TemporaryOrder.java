@@ -30,6 +30,14 @@ public class TemporaryOrder {
         this.size = size;
     }
 
+    public TemporaryOrder(Long id, Bucket bucket, int count, int price, String size) {
+        this.id = id;
+        this.bucket = bucket;
+        this.count = count;
+        this.price = price;
+        this.size = size;
+    }
+
     public void changeCount(int count) {
         this.count = count;
     }

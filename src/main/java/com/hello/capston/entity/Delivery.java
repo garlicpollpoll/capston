@@ -24,4 +24,9 @@ public class Delivery {
     public Delivery(DeliveryStatus status) {
         this.status = status;
     }
+
+    public Delivery(Long id, DeliveryStatus status) {
+        this.id = id;
+        this.status = status;
+    }
 }

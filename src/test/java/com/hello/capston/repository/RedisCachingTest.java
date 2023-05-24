@@ -29,7 +29,7 @@ public class RedisCachingTest {
     @Test
     public void addCacheTest() throws Exception {
         //given
-        Member member = new Member("username", "password", "981007", "Man", MemberRole.ROLE_MEMBER, "k@k.com");
+        Member member = new Member("username", "password", "981007", "Man", MemberRole.ROLE_MEMBER, "k@k.com", "sessionId");
         //when
         Member saveMember = memberRepository.save(member);
         cacheRepository.addMember(saveMember);

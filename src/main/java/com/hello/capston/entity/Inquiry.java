@@ -38,6 +38,15 @@ public class Inquiry {
         this.writeDate = writeDate;
     }
 
+    public Inquiry(Long id, Member member, User user, String title, String writeDate, String content) {
+        this.id = id;
+        this.member = member;
+        this.user = user;
+        this.title = title;
+        this.writeDate = writeDate;
+        this.content = content;
+    }
+
     public void changeTitle(String title) {
         this.title = title;
     }

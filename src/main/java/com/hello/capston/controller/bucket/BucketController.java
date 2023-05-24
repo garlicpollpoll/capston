@@ -109,7 +109,7 @@ public class BucketController {
     }
 
     /**
-     * 장바구니 성택 후 취소
+     * 장바구니 선택 후 취소
      * @param form
      * @return
      */

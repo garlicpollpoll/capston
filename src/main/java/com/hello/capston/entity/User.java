@@ -45,6 +45,16 @@ public class User implements Serializable {
         this.sessionId = sessionId;
     }
 
+    public User(Long id, String name, String email, String picture, Role role, String roleKey, String sessionId) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.role = role;
+        this.roleKey = roleKey;
+        this.sessionId = sessionId;
+    }
+
     public User update(String name, String picture) {
         this.name = name;
         this.picture = picture;
