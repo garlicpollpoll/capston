@@ -2,6 +2,7 @@ package com.hello.capston.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.persistence.*;
 
@@ -66,6 +67,13 @@ public class Item {
         this.color = color;
         this.click = click;
         this.member = member;
+    }
+
+    @PersistenceConstructor
+    public Item(String viewName, String itemName, String brandName) {
+        this.viewName = viewName;
+        this.itemName = itemName;
+        this.brandName = brandName;
     }
 
     public void addClick() {
