@@ -1,5 +1,6 @@
 package com.hello.capston.controller.home;
 
+import com.hello.capston.dto.dto.HomeDto;
 import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
@@ -8,6 +9,7 @@ import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.HomeService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class HomeController {
 
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+    private final HomeService homeService;
 
     /**
      * 메인 페이지
@@ -49,29 +51,16 @@ public class HomeController {
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        Member findMemberFromAuthentication = memberRepository.findByLoginId(name).orElse(null);
-        if (findMemberFromAuthentication != null) {
-            model.addAttribute("status", findMemberFromAuthentication.getRole());
-            session.setAttribute("loginId", findMemberFromAuthentication.getUsername());
+        HomeDto dto = homeService.homeSetting();
+
+        if (dto.getIsMemberOrUser().equals("loginId")) {
+            session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
         }
         else {
-            if (name != "anonymousUser") {
-                User principal = (User) authentication.getPrincipal();
-                model.addAttribute("status", "Member");
-                session.setAttribute("userEmail", principal.getEmail());
-            }
+            session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
         }
 
-        if (findMember != null) {
-            model.addAttribute("status", findMember.getRole());
-            log.info("MemberStatus = {}", findMember.getRole());
-        }
-        else {
-            model.addAttribute("status", "Member");
-            log.info("NotLogin");
-        }
+        model.addAttribute("status", dto.getRole());
 
         Pageable page = PageRequest.of(0, 8);
         List<Item> findNewItem = itemRepository.findAllItem(page);

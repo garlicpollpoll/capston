@@ -8,6 +8,7 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.CommentService;
 import com.hello.capston.service.ItemService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
@@ -27,11 +28,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentRepository commentRepository;
-    private final S3Uploader s3Uploader;
-
-    private final ItemService itemService;
-    private final CacheRepository cacheRepository;
+    private final CommentService commentService;
 
     /**
      * 댓글 작성
@@ -53,21 +50,7 @@ public class CommentController {
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-        User findUser = cacheRepository.findUserAtCache(userEmail);
-        Item findItem = itemService.findItem(itemId);
-
-        String imageUrl = s3Uploader.upload(form.getCommentImage(), "static");
-
-        if (findMember == null) {
-            Comment comment = new Comment(null, findUser, findItem, form.getComment(), imageUrl);
-            commentRepository.save(comment);
-        }
-
-        if (findUser == null) {
-            Comment comment = new Comment(findMember, null, findItem, form.getComment(), imageUrl);
-            commentRepository.save(comment);
-        }
+        commentService.saveComment(itemId, form, loginId, userEmail);
 
         redirectAttributes.addAttribute("itemId", itemId);
 

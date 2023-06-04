@@ -33,6 +33,8 @@ public class Item {
 
     private int click;
 
+    private int monthClick;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -42,7 +44,7 @@ public class Item {
         this.itemUrl = itemUrl;
     }
 
-    public Item(String brandName, String viewName, String itemName, String itemUrl, int price, String uniqueCode, Member member, String category, String color, int click) {
+    public Item(String brandName, String viewName, String itemName, String itemUrl, int price, String uniqueCode, Member member, String category, String color, int click, int monthClick) {
         this.brandName = brandName;
         this.viewName = viewName;
         this.itemName = itemName;
@@ -53,6 +55,7 @@ public class Item {
         this.category = category;
         this.color = color;
         this.click = click;
+        this.monthClick = monthClick;
     }
 
     public Item(Long id, String viewName, String itemName, String brandName, String itemUrl, int price, String uniqueCode, String category, String color, int click, Member member) {
@@ -78,5 +81,10 @@ public class Item {
 
     public void addClick() {
         this.click += 1;
+    }
+
+    public Item clickToZero() {
+        this.monthClick = 0;
+        return this;
     }
 }

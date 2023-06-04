@@ -41,10 +41,10 @@ public class LIkeController {
      */
     @PostMapping("/like")
     public String like(@RequestBody LikeFormWithSize form, HttpSession session, RedirectAttributes redirectAttributes) {
-        Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
-
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
+
+        Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);

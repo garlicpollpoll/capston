@@ -38,7 +38,8 @@ public class TemporaryOrder {
         this.size = size;
     }
 
-    public void changeCount(int count) {
+    public TemporaryOrder changeCount(int count) {
         this.count = count;
+        return this;
     }
 }

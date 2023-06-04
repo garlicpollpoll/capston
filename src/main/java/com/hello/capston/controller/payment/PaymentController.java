@@ -1,13 +1,13 @@
 package com.hello.capston.controller.payment;
 
-import com.hello.capston.dto.dto.PaymentCompleteDto;
-import com.hello.capston.dto.dto.PaymentDto;
+import com.hello.capston.dto.dto.payment.LookUpPaymentDto;
+import com.hello.capston.dto.dto.payment.PaymentCompleteDto;
+import com.hello.capston.dto.dto.payment.PaymentDto;
 import com.hello.capston.entity.*;
-import com.hello.capston.entity.enums.DeliveryStatus;
-import com.hello.capston.entity.enums.OrderStatus;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
+import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,8 @@ public class PaymentController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final AlertService alertService;
-    private final CacheRepository cacheRepository;
+
+    private final PaymentService paymentService;
 
     /**
      * 결제 페이지로 이동
@@ -55,85 +55,31 @@ public class PaymentController {
      */
     @GetMapping("/payment")
     public String payment(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        PaymentDto dto = new PaymentDto();
-        int orderPrice = 0;
-
+        PaymentDto paymentDto = new PaymentDto();
         String loginId = (String) session.getAttribute("loginId");
         String userEmail = (String) session.getAttribute("userEmail");
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-        User findUser = cacheRepository.findUserAtCache(userEmail);
+        LookUpPaymentDto dto = paymentService.lookUpPayment(loginId, userEmail);
 
-        if (findMember == null) {
-            List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());
-            String itemName = null;
-
-            for (Bucket bucket : findBucket) {
-                TemporaryOrder findTemporaryOrder = temporaryOrderService.findByBucketId(bucket.getId());
-
-                List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(bucket.getItem().getId());
-
-                checkStockAndRedirect(findTemporaryOrder, findItemDetail, response);
-
-                orderPrice += findTemporaryOrder.getCount() * findTemporaryOrder.getPrice();
-                itemName = bucket.getItem().getItemName();
-            }
-
-            List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
-
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserIdAndCheckUsed(findUser.getId(), 0);
-
-            model.addAttribute("orderPrice", orderPrice);
-            model.addAttribute("tOrder", findTOrder);
-            model.addAttribute("tOrderSize", findTOrder.size());
-            model.addAttribute("itemName", itemName);
-            model.addAttribute("coupon", findCoupon);
+        if (!dto.getCheckStock()) {
+            checkStockAndRedirect(response, dto.getMessage());
         }
 
-        if (findUser == null) {
-            List<Bucket> findBucket = bucketService.findBucketByMemberId(findMember.getId());
-            String itemName = null;
-
-            for (Bucket bucket : findBucket) {
-                TemporaryOrder findTemporaryOrder = temporaryOrderService.findByBucketId(bucket.getId());
-
-                List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(bucket.getItem().getId());
-
-                checkStockAndRedirect(findTemporaryOrder, findItemDetail, response);
-
-                orderPrice += findTemporaryOrder.getCount() * findTemporaryOrder.getPrice();
-                itemName = bucket.getItem().getItemName();
-            }
-
-            List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
-
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberIdAndCheckUsed(findMember.getId(), 0);
-
-            model.addAttribute("orderPrice", orderPrice);
-            model.addAttribute("tOrder", findTOrder);
-            model.addAttribute("tOrderSize", findTOrder.size());
-            model.addAttribute("itemName", itemName);
-            model.addAttribute("status", findMember.getRole());
-            model.addAttribute("coupon", findCoupon);
-        }
-
-        model.addAttribute("member", findMember);
-        model.addAttribute("user", findUser);
-        model.addAttribute("payment", dto);
+        model.addAttribute("orderPrice", dto.getOrderPrice());
+        model.addAttribute("tOrder", dto.getFindTOrder());
+        model.addAttribute("tOrderSize", dto.getFindTOrderSize());
+        model.addAttribute("itemName", dto.getItemName());
+        model.addAttribute("status", dto.getRole());
+        model.addAttribute("coupon", dto.getFindCoupon());
+        model.addAttribute("member", dto.getMember());
+        model.addAttribute("user", dto.getUser());
+        model.addAttribute("payment", paymentDto);
 
         return "payment";
     }
 
-    private void checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail, HttpServletResponse response) throws IOException {
-        for (ItemDetail itemDetail : findItemDetail) {
-            if (findTemporaryOrder.getSize().equals(itemDetail.getSize())) {
-                if (itemDetail.getStock() - findTemporaryOrder.getCount() < 0) {
-                    alertService.alertAndRedirect(response,
-                            "재고가 남아있지 않습니다. 상품이름 : " + itemDetail.getItem().getViewName() + "/ 남은 재고 : " + itemDetail.getStock(),
-                            "/bucket");
-                }
-            }
-        }
+    private void checkStockAndRedirect(HttpServletResponse response, String message) throws IOException {
+        alertService.alertAndRedirect(response, message, "/bucket");
     }
 
 //    @PostMapping("/paymentCompleteMember")
@@ -182,7 +128,7 @@ public class PaymentController {
     @PostMapping("/paymentComplete")
     @ResponseBody
     @Transactional
-    public synchronized Map<String, String> paymentComplete(@RequestBody PaymentCompleteDto dto) {
+    public Map<String, String> paymentComplete(@RequestBody PaymentCompleteDto dto) {
         Member findMember = null;
         User findUser = null;
         List<TemporaryOrder> findTOrder = new ArrayList<>();
@@ -208,9 +154,7 @@ public class PaymentController {
                 bucketService.delete(temporaryOrder.getBucket());
             }
             Delivery delivery = deliveryService.save();
-
             Order order = orderService.save(findUser, findMember, delivery, dto);
-
             orderItemService.saveUsingTemporaryOrder(findTOrder, order);
 
             findMyCoupon.changeCheckUsedToOne();

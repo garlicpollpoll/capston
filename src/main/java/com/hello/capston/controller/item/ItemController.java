@@ -99,7 +99,7 @@ public class ItemController {
         List<Likes> findLikes = likeService.likeCount(id);
 
         List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(id);
-        List<Item> items = itemRepository.itemListByItemName(findItem.getItemName());
+        List<Item> items = itemRepository.findByItemName(findItem.getItemName());
 
         /**
          * 리뷰 페이징

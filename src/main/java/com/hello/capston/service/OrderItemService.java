@@ -27,7 +27,7 @@ public class OrderItemService {
     private boolean flag = true;
     private Map<String, String> map = new ConcurrentHashMap<>();
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public Map<String, String> saveUsingTemporaryOrder(List<TemporaryOrder> tOrder, Order order) {
         for (TemporaryOrder temporaryOrder : tOrder) {
             Item findItem = temporaryOrder.getBucket().getItem();

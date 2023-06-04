@@ -19,9 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select i from Item  i order by i.click desc")
     List<Item> findAllItemByCount(Pageable pageable);
 
-    @Query("select i from Item i where i.category = :category order by i.click desc")
-    List<Item> findMostClickByCategory(Pageable pageable, @Param("category") String category);
-
     @Query("select i from Item i where i.uniqueCode = :uniqueCode")
     Optional<Item> findByUniqueCode(@Param("uniqueCode") String uniqueCode);
 
@@ -33,7 +30,4 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select i from Item i where i.category like concat('%', :category, '%') ")
     List<Item> findByCategoryAll(@Param("category") String category);
-
-    @Query("select i from Item i where i.itemName = :itemName")
-    List<Item> itemListByItemName(@Param("itemName") String itemName);
 }

@@ -39,15 +39,16 @@ public class LikeToBucketController {
     @ResponseBody
     @PostMapping("/go_to_bucket")
     public Map<String, String> goToBucket(@RequestBody LikeForm form, HttpSession session) {
+        String loginId = (String) session.getAttribute("loginId");
+        String userEmail = (String) session.getAttribute("userEmail");
+
         Map<String, String> map = new HashMap<>();
 
         Likes findLike = likeRepository.findById(Long.parseLong(form.getId())).orElse(null);
 
         Item findItem = itemRepository.findById(findLike.getItem().getId()).orElse(null);
 
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
-        Integer orders = 0;
+        Integer orders = null;
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);

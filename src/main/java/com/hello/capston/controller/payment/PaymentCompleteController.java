@@ -1,5 +1,6 @@
 package com.hello.capston.controller.payment;
 
+import com.hello.capston.dto.dto.payment.LookUpPaymentCompleteDto;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.OrderItem;
 import com.hello.capston.entity.TemporaryOrder;
@@ -9,6 +10,7 @@ import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.TemporaryOrderService;
 import com.hello.capston.service.UserService;
+import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentCompleteController {
 
-    private final OrderItemRepository orderItemRepository;
-    private final CacheRepository cacheRepository;
+    private final PaymentService paymentService;
 
     /**
      * 결제 완료 페이지로 이동
@@ -34,29 +35,12 @@ public class PaymentCompleteController {
     public String paymentComplete(Model model, HttpSession session) {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
-        int orderPrice = 0;
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-        User findUser = cacheRepository.findUserAtCache(userEmail);
+        LookUpPaymentCompleteDto dto = paymentService.paymentComplete(loginId, userEmail);
 
-        if (findMember == null) {
-            List<OrderItem> findTOrder = orderItemRepository.findOrdersByUserId(findUser.getId());
-            for (OrderItem orderItem : findTOrder) {
-                orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
-            }
-            model.addAttribute("tOrder", findTOrder);
-        }
-
-        if (findUser == null) {
-            List<OrderItem> findTOrder = orderItemRepository.findOrdersByMemberId(findMember.getId());
-            for (OrderItem orderItem : findTOrder) {
-                orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
-            }
-            model.addAttribute("tOrder", findTOrder);
-            model.addAttribute("status", findMember.getRole());
-        }
-
-        model.addAttribute("orderPrice", orderPrice);
+        model.addAttribute("tOrder", dto.getFindOrderItem());
+        model.addAttribute("status", dto.getRole());
+        model.addAttribute("orderPrice", dto.getOrderPrice());
 
         return "payment_complete";
     }

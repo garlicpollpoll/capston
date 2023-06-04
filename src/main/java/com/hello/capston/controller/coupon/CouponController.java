@@ -1,5 +1,6 @@
 package com.hello.capston.controller.coupon;
 
+import com.hello.capston.dto.dto.CouponDto;
 import com.hello.capston.entity.Coupon;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.MemberWhoGetCoupon;
@@ -8,6 +9,7 @@ import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.MemberWhoGetCouponRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.AlertService;
+import com.hello.capston.service.CouponService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CouponController {
 
+    private final CouponService couponService;
     private final CouponRepository couponRepository;
-    private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
-    private final MemberService memberService;
-    private final UserService userService;
     private final AlertService alertService;
     private final CacheRepository cacheRepository;
 
@@ -67,47 +67,17 @@ public class CouponController {
         String userEmail = (String) session.getAttribute("userEmail");
         String code = request.getParameter("code");
 
-        Coupon coupon = couponRepository.findByCode(code).orElse(null);
+        CouponDto coupon = couponService.isCoupon(loginId, userEmail, code);
+        boolean isCouponHas = coupon.isCoupon();
+        String message = coupon.getMap().get("message");
+        String url = coupon.getMap().get("url");
 
-        if (loginId == null) {
-            User findUser = cacheRepository.findUserAtCache(userEmail);
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserId(findUser.getId());
-
-            if (findCoupon.isEmpty()) {
-                memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(findUser, null, coupon, 0));
-            }
-
-            for (MemberWhoGetCoupon memberWhoGetCoupon : findCoupon) {
-                if (memberWhoGetCoupon.getCoupon().getCode().equals(code)) {
-                    alertService.alertAndRedirect(response, "이미 가지고있는 쿠폰입니다.", "/coupon");
-                    return "coupon";
-                }
-                else {
-                    memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(findUser, null, coupon, 0));
-                }
-            }
+        if (isCouponHas) {
+            alertService.alertAndRedirect(response, message, url);
         }
-
-        if (userEmail == null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberId(findMember.getId());
-
-            if (findCoupon.isEmpty()) {
-                memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(null, findMember, coupon, 0));
-            }
-
-            for (MemberWhoGetCoupon memberWhoGetCoupon : findCoupon) {
-                if (memberWhoGetCoupon.getCoupon().getCode().equals(code)) {
-                    alertService.alertAndRedirect(response, "이미 가지고있는 쿠폰입니다.", "/coupon");
-                    return "coupon";
-                }
-                else {
-                    memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(null, findMember, coupon, 0));
-                }
-            }
+        else {
+            alertService.alertAndRedirect(response, message, "/");
         }
-
-        alertService.alertAndRedirect(response, "쿠폰이 등록되었습니다.", "/");
 
         return "coupon";
     }

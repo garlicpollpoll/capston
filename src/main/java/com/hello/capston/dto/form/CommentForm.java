@@ -12,4 +12,9 @@ public class CommentForm {
 
     @NotEmpty
     private String comment;
+
+    public CommentForm(MultipartFile commentImage, String comment) {
+        this.commentImage = commentImage;
+        this.comment = comment;
+    }
 }

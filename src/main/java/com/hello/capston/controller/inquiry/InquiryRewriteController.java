@@ -54,22 +54,18 @@ public class InquiryRewriteController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null) {
-            if (findUser != null) {
-                if (findInquiry.getUser() != null) {
-                    if (findUser.getId() == findInquiry.getUser().getId()) {
-                        model.addAttribute("correct", 1);
-                    }
+        if (findMember == null && findUser != null) {
+            if (findInquiry.getUser() != null) {
+                if (findUser.getId() == findInquiry.getUser().getId()) {
+                    model.addAttribute("correct", 1);
                 }
             }
         }
 
-        if (findUser == null) {
-            if (findMember != null) {
-                if (findInquiry.getMember() != null) {
-                    if (findMember.getId() == findInquiry.getMember().getId()) {
-                        model.addAttribute("correct", 1);
-                    }
+        if (findUser == null && findMember != null) {
+            if (findInquiry.getMember() != null) {
+                if (findMember.getId() == findInquiry.getMember().getId()) {
+                    model.addAttribute("correct", 1);
                 }
             }
             model.addAttribute("status", findMember.getRole());

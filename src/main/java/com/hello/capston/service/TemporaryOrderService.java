@@ -26,13 +26,9 @@ public class TemporaryOrderService {
         return temporaryOrderRepository.findTemporaryOrderByUserId(userId);
     }
 
-    public List<TemporaryOrder> findTOrder(Long memberId, Long userId) {
-        return temporaryOrderRepository.findTemporaryOrderByMemberIdOrUserId(memberId, userId);
-    }
-
-    public void save(Bucket bucket, int price, String size) {
+    public TemporaryOrder save(Bucket bucket, int price, String size) {
         TemporaryOrder tOrder = new TemporaryOrder(bucket, 1, price, size);
-        temporaryOrderRepository.save(tOrder);
+        return temporaryOrderRepository.save(tOrder);
     }
 
     public void delete(TemporaryOrder temporaryOrder) {
