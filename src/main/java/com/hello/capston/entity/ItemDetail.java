@@ -21,9 +21,6 @@ public class ItemDetail{
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @Version
-    private Long version;
-
     public ItemDetail(int stock, String size, Item item) {
         this.stock = stock;
         this.size = size;
