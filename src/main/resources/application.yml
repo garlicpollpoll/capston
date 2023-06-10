@@ -10,13 +10,13 @@ spring:
     active: local
     include: google, naver, kakao
   datasource:
-    url: jdbc:mysql://43.201.47.110:3306/capston?serverTimezone=UTC&chyaracterEncoding=UTF-8
+    url: jdbc:mysql://43.201.47.110:3306/capston?serverTimezone=UTC&characterEncoding=UTF-8
     username: kyoungsuk
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
@@ -44,6 +44,8 @@ spring:
       host: 43.201.47.110
       port: 6379
       password: root
+      cache:
+        expiration-after-write-policy: 1h
     session:
       store-type: redis
   main:

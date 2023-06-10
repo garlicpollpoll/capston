@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "members")
 public class Member implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
