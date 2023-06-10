@@ -39,8 +39,8 @@ out/
 ### SMTP information ###
 !**/src/main/**/config/
 
-!**/src/test/
-!**/src/main/resources/application.yml
-!**/src/main/resources/application-google.properties
-!**/src/main/resources/application-kakao.properties
-!**/src/main/resources/application-naver.properties
+src/test/
+src/main/resources/application.yml
+src/main/resources/application-google.properties
+src/main/resources/application-kakao.properties
+src/main/resources/application-naver.properties
