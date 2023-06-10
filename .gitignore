@@ -40,6 +40,7 @@ out/
 !**/src/main/**/config/
 
 src/test/
+test/
 src/main/resources/application.yml
 src/main/resources/application-google.properties
 src/main/resources/application-kakao.properties
