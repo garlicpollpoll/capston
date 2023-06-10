@@ -53,11 +53,13 @@ public class HomeController {
 
         HomeDto dto = homeService.homeSetting();
 
-        if (dto.getIsMemberOrUser().equals("loginId")) {
-            session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
-        }
-        else {
-            session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
+        if (dto.getIsMemberOrUser() != null && dto.getSessionAttribute() != null && dto.getRole() != null) {
+            if (dto.getIsMemberOrUser().equals("loginId")) {
+                session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
+            }
+            else {
+                session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
+            }
         }
 
         model.addAttribute("status", dto.getRole());

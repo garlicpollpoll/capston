@@ -1,4 +1,7 @@
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always
   servlet:
     multipart:
       max-file-size: 10MB
@@ -37,12 +40,10 @@ spring:
           auth: true
     default-encoding: UTF-8
   data:
-    elasticsearch:
-      host: localhost
-      port: 9200
     redis:
-      host: localhost
+      host: 43.201.47.110
       port: 6379
+      password: root
     session:
       store-type: redis
   main:

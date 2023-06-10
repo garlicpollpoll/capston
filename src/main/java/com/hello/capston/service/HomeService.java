@@ -25,15 +25,15 @@ public class HomeService {
 
         if (authentication.isAuthenticated()) {
             String name = authentication.getName();
-            Member findMemberFromAuthentication = memberRepository.findByLoginId(name).orElse(null);
 
-            if (findMemberFromAuthentication != null) {
-                sessionAttribute = findMemberFromAuthentication.getUsername();
-                role = findMemberFromAuthentication.getRole();
-                isMemberOrUser = "loginId";
-            }
-            else {
-                if (name != "anonymousUser") {
+            if (name != "anonymousUser") {
+                Member findMemberFromAuthentication = memberRepository.findByLoginId(name).orElse(null);
+                if (findMemberFromAuthentication != null) {
+                    sessionAttribute = findMemberFromAuthentication.getUsername();
+                    role = findMemberFromAuthentication.getRole();
+                    isMemberOrUser = "loginId";
+                }
+                else {
                     User principal = (User) authentication.getPrincipal();
                     sessionAttribute = principal.getEmail();
                     isMemberOrUser = "userEmail";
