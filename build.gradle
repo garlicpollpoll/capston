@@ -30,6 +30,11 @@ repositories {
 	maven { url 'https://jitpack.io' }
 }
 
+tasks.withType(Test) {
+	scanForTestClasses = false
+	include "**/*Test.class"
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
