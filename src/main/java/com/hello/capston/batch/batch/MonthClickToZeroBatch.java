@@ -37,7 +37,6 @@ public class MonthClickToZeroBatch {
 
     private static final int PAGE_SIZE = 1000;
 
-    @Bean
     public Job clickToZeroBatchJob() {
         return jobBuilderFactory
                 .get("MonthClickToZeroBatchJob")
@@ -46,7 +45,6 @@ public class MonthClickToZeroBatch {
                 .build();
     }
 
-    @Bean
     public Step clickToZeroBatchStep() {
         return stepBuilderFactory
                 .get("MonthClickToZeroBatchStep")
@@ -58,7 +56,6 @@ public class MonthClickToZeroBatch {
                 .build();
     }
 
-    @Bean
     public QuerydslNoOffsetPagingItemReader<Item> itemReader() {
 //        QuerydslNoOffsetNumberOptions<Item, Long> options = new QuerydslNoOffsetNumberOptions<>(item.id, Expression.ASC);
         QuerydslNoOffsetStringOptions<Item> options = new QuerydslNoOffsetStringOptions<>(item.itemName, Expression.ASC);
@@ -67,14 +64,12 @@ public class MonthClickToZeroBatch {
         });
     }
 
-    @Bean
     public ItemProcessor<Item, Item> itemProcessor() {
         return item -> {
             return item.clickToZero();
         };
     }
 
-    @Bean
     public JpaItemWriter<Item> jdbcBatchItemWriter() {
         return new JpaItemWriterBuilder<Item>()
                 .entityManagerFactory(emf)
