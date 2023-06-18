@@ -11,8 +11,8 @@ spring:
     include: google, naver, kakao
   datasource:
     url: jdbc:mysql://43.201.251.176:3306/capston?serverTimezone=UTC&characterEncoding=UTF-8
-    username: kyoungsuk
-    password: password
+    username: root
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
