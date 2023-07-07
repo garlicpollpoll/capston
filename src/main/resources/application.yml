@@ -70,3 +70,5 @@ jwt:
 logging:
   level:
     org.hibernate.SQL: debug
+server:
+  shutdown: graceful
