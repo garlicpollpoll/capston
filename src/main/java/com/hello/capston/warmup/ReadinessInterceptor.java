@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-@Slf4j
 public class ReadinessInterceptor implements HandlerInterceptor {
 
     private boolean isReady = false;
