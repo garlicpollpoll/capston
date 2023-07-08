@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/item_detail/**", "/social_login", "/join", "/login_id_duplicate", "/sendEmail", "/checkNumber",
                         "/find_by_detail_category/**", "/item_list_popular/**", "/inquiry/**", "/custom/login", "/custom/logout",
                         "/oauth2/authorization/google", "/oauth2/authorization/naver", "/oauth2/authorization/kakao", "/erase/authToken/authentication",
-                        "/log/test/**"
+                        "/log/test/**", "/warmup/**"
                 ).permitAll()
                 .antMatchers("/item_upload", "/detail_upload/**").hasAnyRole("MANAGER", "ADMIN")
                 .antMatchers("/admin/**", "/coupon_upload").hasRole("ADMIN")
