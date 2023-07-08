@@ -22,12 +22,12 @@ public class WarmUpController {
     private final ReadinessInterceptor interceptor;
 
     @PostMapping("/warmup/item/list")
-    public ResponseEntity<Item> warmupItemList() {
+    public ResponseEntity<?> warmupItemList() {
         PageRequest page = PageRequest.of(0, 9);
         List<Item> findAllItem = itemRepository.findAllItem(page);
         itemRepository.count();
 
-        return new ResponseEntity<>(findAllItem.get(0), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(new WarmupDto("warmup execute"), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/warmup/completed")
