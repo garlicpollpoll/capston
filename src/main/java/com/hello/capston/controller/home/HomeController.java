@@ -4,20 +4,13 @@ import com.hello.capston.dto.dto.HomeDto;
 import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
-import com.hello.capston.entity.User;
-import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.repository.ItemRepository;
-import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.HomeService;
-import com.hello.capston.service.MemberService;
-import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,7 +71,7 @@ public class HomeController {
             }
         }
 
-        return "main";
+        return "index";
     }
 
     @GetMapping("/erase/authToken/authentication")
