@@ -33,6 +33,7 @@ public class WarmUpController {
     @PostMapping("/warmup/completed")
     public ResponseEntity<?> warmupComplete() {
         interceptor.setReady(true);
+        log.info("health check process");
         return ResponseEntity.ok(new WarmupDto("warmup success"));
     }
 }
