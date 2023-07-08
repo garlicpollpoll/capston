@@ -24,7 +24,7 @@
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/bc242e4a-591a-4684-9f24-15150d868217">
 
 ## 배포 방식
-EC2에 Docker를 활용해 배포항녔습니다. 
+EC2에 Docker를 활용해 배포하였습니다. 
 
 배포할 때 단순히 배포하기 보단 부정적인 사용자 경험을 줄이기 위해 Blue / Green 배포를 진행했습니다. 
 
