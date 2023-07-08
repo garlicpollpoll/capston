@@ -30,7 +30,7 @@ public class WarmUpController {
         return new ResponseEntity<>(new WarmupDto("warmup execute"), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/warmup/completed")
+    @GetMapping("/warmup/completed")
     public ResponseEntity<?> warmupComplete() {
         interceptor.setReady(true);
         log.info("health check process");
