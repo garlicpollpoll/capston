@@ -1,5 +1,6 @@
 package com.hello.capston.warmup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@Slf4j
 public class ReadinessInterceptor implements HandlerInterceptor {
 
     private boolean isReady = false;
@@ -21,6 +23,6 @@ public class ReadinessInterceptor implements HandlerInterceptor {
     }
 
     public void setReady(boolean ready) {
-        this.isReady = ready;
+        isReady = ready;
     }
 }
