@@ -9,6 +9,6 @@ public class WarmupConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new ReadinessInterceptor()).excludePathPatterns("/css/**", "/image/**", "/js/**");
+        registry.addInterceptor(new ReadinessInterceptor()).excludePathPatterns("/css/**", "/image/**", "/js/**", "/warmup/completed");
     }
 }
