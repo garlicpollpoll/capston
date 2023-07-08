@@ -30,7 +30,7 @@ public class WarmUpController {
         return new ResponseEntity<>(findAllItem.get(0), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/warmup/complete")
+    @PostMapping("/warmup/completed")
     public ResponseEntity<?> warmupComplete() {
         interceptor.setReady(true);
         return ResponseEntity.ok(new WarmupDto("warmup success"));
