@@ -14,9 +14,10 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select i from Item i order by i.id desc")
+    @EntityGraph(attributePaths = "member")
     List<Item> findAllItem(Pageable pageable);
 
-    @Query("select i from Item  i order by i.click desc")
+    @Query("select i from Item i order by i.click desc")
     List<Item> findAllItemByCount(Pageable pageable);
 
     @Query("select i from Item i where i.uniqueCode = :uniqueCode")
