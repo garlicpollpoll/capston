@@ -13,7 +13,7 @@ public class ReadinessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!isReady && !request.getRequestURI().equals("/warmup/complete")) {
+        if (!isReady && !request.getRequestURI().equals("/warmup/completed")) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Application is not ready yet");
             return false;
         }
