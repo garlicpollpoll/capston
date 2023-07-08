@@ -91,6 +91,8 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 
 그러기위해 객체지향 원칙을 지키도록 리팩토링 하였고 애플리케이션의 신뢰도를 높이기 위해 테스트케이스를 작성했습니다. 
 
+ver.1 에 대해 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91)를 클릭해주세요. 
+
 ---
 
 ## ver.2 에서 개선한 점
@@ -132,6 +134,8 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 
 실제로 스프링이 구동되는 시간인 0.35초를 빼고 나면 Elasticsearch는 0.021초 기존 풀 스캔은 0.434초가 걸리는 것을 확인했습니다. 
 
+ver.2에 대해 더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91%20ver.2)를 확인해주세요. 
+
 ---
 
 ## ver.3 에서 개선한 점
@@ -162,6 +166,8 @@ JVM의 특성상 한번 배포가 된 다음부터는 제 성능을 보여주지
 이를 해결하기위해 ClassLoader Warmup은 스프링의 ApplicationRunner를 구현함으로써 개선하였고, JIT 컴파일러 Warmup은 Jenkins 파이프라인에 warmup 과정을 추가하여 개선하였습니다. 
 
 JIT 컴파일러가 warmup 되는 과정에서 발생할 수 있는 서버 부하는 warmup이 진행되는 중간에는 400코드를 내려보내고 모두 완료된 다음엔 200코드를 내려보냄으로써 개선하였습니다. 
+
+ver.3에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91%20ver.3)를 확인해주세요. 
 
 ---
 
