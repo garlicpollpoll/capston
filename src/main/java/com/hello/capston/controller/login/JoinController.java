@@ -12,13 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -58,31 +58,35 @@ public class JoinController {
      * @return
      */
     @PostMapping("/join")
-    public String joinPost(@Validated @ModelAttribute("join") JoinForm form, BindingResult bindingResult, HttpSession session, HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public Map<String, String> joinPost(@Validated @RequestBody JoinForm form, BindingResult bindingResult, HttpSession session, HttpServletResponse response) throws IOException {
+        Map<String, String> map = new HashMap<>();
+
         if (bindingResult.hasErrors()) {
-            return "join";
+            map.put("message", "빈칸이 있어서는 안됩니다.");
+            return map;
         }
 
         boolean isDuplicate = memberService.findByLoginId(form.getLoginId());
 
         if (!isDuplicate) {
-            bindingResult.reject("LoginIdDuplicate");
-            return "join";
+            map.put("message", "아이디가 중복되었습니다.");
+            return map;
         }
 
         String passOrNot = (String) session.getAttribute("passOrNot");
 
         if (passOrNot == null || passOrNot.equals("false")) {
-            bindingResult.reject("NotPassAuth");
-            return "join";
+            map.put("message", "이메일 인증을 진행해주세요.");
+            return map;
         }
 
         String encode = encoder.encode(form.getLoginPw());
 
-        Member member = new Member(form.getLoginId(), encode, form.getBirth(), form.getGender(), MemberRole.ROLE_ADMIN, form.getEmail(), "");
+        Member member = new Member(form.getLoginId(), encode, form.getBirth(), "null", MemberRole.ROLE_ADMIN, form.getEmail(), "");
         memberRepository.save(member);
 
-        response.sendRedirect("https://www.shopfiesta.kr/login");
-        return "redirect:/login";
+        map.put("message", "환영합니다!");
+        return map;
     }
 }

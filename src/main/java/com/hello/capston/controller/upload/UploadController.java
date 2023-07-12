@@ -67,7 +67,6 @@ public class UploadController {
 
         redirectAttributes.addAttribute("itemId", item.getId());
 
-        response.sendRedirect("https://www.shopfiesta.kr/detail_upload/" + item.getId());
-        return "redirect:/detail_upload/{itemId}";
+        return "redirect:https://www.shopfiesta.kr/detail_upload/{itemId}";
     }
 }

@@ -121,7 +121,7 @@
                     <div class="join_left">
                         비밀번호
                     </div><div class="join_right">
-                    <input type="password" name="loginPw" th:field="*{loginPw}" th:errorclass="error" class="form-control">
+                    <input type="password" name="loginPw" th:field="*{loginPw}" th:errorclass="error" class="form-control" id="password">
                 </div>
                     <div class="field-error">
                         <label th:errors="*{loginPw}"></label>
@@ -154,7 +154,7 @@
                     <div class="join_left">
                         생년월일
                     </div><div class="join_right">
-                    <input type="text" name="birth" th:field="*{birth}" th:errorclass="error" class="form-control">
+                    <input type="text" name="birth" th:field="*{birth}" th:errorclass="error" class="form-control" id="birth">
                 </div>
                     <div class="field-error">
                         <label th:errors="*{birth}"></label>
@@ -253,6 +253,27 @@
         }).done(function (data){
             alert(data.message);
         })
+    })
+
+    const memberId = document.getElementById("loginId");
+    const memberPw = document.getElementById("password");
+    const memberEmail = document.getElementById("email");
+    const memberBirth = document.getElementById("birth");
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url : "/join",
+        contentType : "application/json",
+        data : JSON.stringify({
+            loginId: memberId,
+            password: memberPw,
+            email: memberEmail,
+            birth: memberBirth
+        })
+    }).done(function (data){
+        alert(data.message);
+        window.location.href = "https://www.shopfiesta.kr/login";
     })
 
     //로딩바
