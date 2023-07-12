@@ -9,13 +9,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @Slf4j
 public class LogoutController {
 
     @GetMapping("/custom/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
         HttpSession session = request.getSession(false);
         Cookie cookie = new Cookie("AUTH-TOKEN", null);
@@ -35,6 +36,6 @@ public class LogoutController {
         session.removeAttribute("loginId");
         session.removeAttribute("userEmail");
         log.info("remove cookie and remove session");
-        return "redirect:/";
+        response.sendRedirect("https://www.shopfiesta.kr/");
     }
 }
