@@ -77,7 +77,7 @@ public class JoinController {
 
         String encode = encoder.encode(form.getLoginPw());
 
-        Member member = new Member(form.getLoginId(), encode, form.getBirth(), form.getGender(), MemberRole.ROLE_MEMBER, form.getEmail(), "");
+        Member member = new Member(form.getLoginId(), encode, form.getBirth(), form.getGender(), MemberRole.ROLE_ADMIN, form.getEmail(), "");
         memberRepository.save(member);
 
         return "redirect:/login";
