@@ -134,6 +134,9 @@ ver.1 에 대해 자세한 내용은 [여기](https://coding-review.tistory.com/
 
 실제로 스프링이 구동되는 시간인 0.35초를 빼고 나면 Elasticsearch는 0.021초 기존 풀 스캔은 0.434초가 걸리는 것을 확인했습니다. 
 
+### ETC
+이 외에도 스프링 배치 NoOffset 쿼리를 이용한 ItemReader 성능 27배 개선, SMTP를 비동기 통신으로 변경후 고객 경험 90배 개선, 스프링 시큐리티와 JWT를 합쳐 인증 레이어를 추가하여 보안 문제 개선 등이 있습니다. 
+
 ver.2에 대해 더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91%20ver.2)를 확인해주세요. 
 
 ---
