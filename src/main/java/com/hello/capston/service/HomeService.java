@@ -33,11 +33,11 @@ public class HomeService {
                     role = findMemberFromAuthentication.getRole();
                     isMemberOrUser = "loginId";
                 }
-                else {
-                    User principal = (User) authentication.getPrincipal();
-                    sessionAttribute = principal.getEmail();
-                    isMemberOrUser = "userEmail";
-                }
+//                else {
+//                    User principal = (User) authentication.getPrincipal();
+//                    sessionAttribute = principal.getEmail();
+//                    isMemberOrUser = "userEmail";
+//                }
             }
         }
         return new HomeDto(sessionAttribute, isMemberOrUser, role);
