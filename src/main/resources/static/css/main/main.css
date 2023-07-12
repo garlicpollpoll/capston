@@ -55,7 +55,7 @@ a {
 
 .new_product_wrap {
     padding: 10px;
-    width: 24%;
+    width: 310px;
     height: 460px;
     display: inline-block;
     text-align: center;
@@ -97,7 +97,7 @@ a {
 /* popular product */
 .popular_product_wrap {
     padding: 10px;
-    width: 330px;
+    width: 310px;
     height: 460px;
     display: inline-block;
     text-align: center;
