@@ -72,3 +72,4 @@ logging:
     org.hibernate.SQL: debug
 server:
   shutdown: graceful
+  port: 443
