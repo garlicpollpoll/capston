@@ -85,6 +85,9 @@ dependencies {
 	// excel to database
 	implementation 'org.apache.poi:poi:5.0.0'
 	implementation 'org.apache.poi:poi-ooxml:5.0.0'
+
+	// AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {
