@@ -42,7 +42,7 @@ public class UploadController {
      */
     @PostMapping("/upload_item")
     public String uploadItem(@Validated @ModelAttribute("upload")UploadForm form, BindingResult bindingResult, HttpSession session,
-                             RedirectAttributes redirectAttributes) throws IOException {
+                             RedirectAttributes redirectAttributes, HttpServletResponse response) throws IOException {
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = memberService.findMember(loginId);
         Item findItemByUniqueCode = itemService.findByUniqueCode(form.getUniqueCode());
@@ -67,6 +67,7 @@ public class UploadController {
 
         redirectAttributes.addAttribute("itemId", item.getId());
 
+        response.sendRedirect("https://www.shopfiesta.kr/detail_upload/" + item.getId());
         return "redirect:/detail_upload/{itemId}";
     }
 }

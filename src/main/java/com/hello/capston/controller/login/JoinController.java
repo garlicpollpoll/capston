@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class JoinController {
      * @return
      */
     @PostMapping("/join")
-    public String joinPost(@Validated @ModelAttribute("join") JoinForm form, BindingResult bindingResult, HttpSession session) {
+    public String joinPost(@Validated @ModelAttribute("join") JoinForm form, BindingResult bindingResult, HttpSession session, HttpServletResponse response) throws IOException {
         if (bindingResult.hasErrors()) {
             return "join";
         }
@@ -80,6 +82,7 @@ public class JoinController {
         Member member = new Member(form.getLoginId(), encode, form.getBirth(), form.getGender(), MemberRole.ROLE_ADMIN, form.getEmail(), "");
         memberRepository.save(member);
 
+        response.sendRedirect("https://www.shopfiesta.kr/login");
         return "redirect:/login";
     }
 }
