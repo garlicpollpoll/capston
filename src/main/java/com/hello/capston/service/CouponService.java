@@ -91,7 +91,7 @@ public class CouponService {
         int totalPrice = 0;
         double percentage = 0;
 
-        if (loginId == null) {
+        if (loginId == null && userEmail != null) {
             User findUser = cacheRepository.findUserAtCache(userEmail);
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
 
@@ -107,7 +107,7 @@ public class CouponService {
             map.put("discountPrice", totalPrice - (totalPrice * percentage));
         }
 
-        if (userEmail == null) {
+        if (userEmail == null && loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 

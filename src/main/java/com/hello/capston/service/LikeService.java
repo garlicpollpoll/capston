@@ -9,6 +9,7 @@ import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.BucketRepository;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class LikeService {
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
     private final BucketRepository bucketRepository;
+    private final MemberRepository memberRepository;
 
     public List<Likes> likeCount(Long itemId) {
         return likeRepository.likeCount(itemId);
@@ -71,6 +73,11 @@ public class LikeService {
 
         if (userEmail == null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
+
+            if (findMember == null && loginId != null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
 
             findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
             role = findMember.getRole();

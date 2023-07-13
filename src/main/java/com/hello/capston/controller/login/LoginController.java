@@ -57,9 +57,11 @@ public class LoginController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
 
-        if (findMember == null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
+        if (findMember == null && loginId != null) {
+            if (loginId != null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
         }
 
         if (findMember != null) {

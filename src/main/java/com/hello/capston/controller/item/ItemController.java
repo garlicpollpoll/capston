@@ -64,7 +64,7 @@ public class ItemController {
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
 
-        if (findMember == null){
+        if (findMember == null && loginId != null){
             findMember = memberRepository.findByLoginId(loginId).orElse(null);
             cacheRepository.addMember(findMember);
         }

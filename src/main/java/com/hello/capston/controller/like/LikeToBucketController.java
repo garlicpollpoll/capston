@@ -56,8 +56,10 @@ public class LikeToBucketController {
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
         if (findMember == null && findUser == null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
+            if (loginId != null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
         }
 
         if (findMember == null) {

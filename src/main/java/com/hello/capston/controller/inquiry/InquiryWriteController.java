@@ -63,7 +63,7 @@ public class InquiryWriteController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null) {
+        if (findMember == null && loginId != null) {
             findMember = memberRepository.findByLoginId(loginId).orElse(null);
             cacheRepository.addMember(findMember);
         }

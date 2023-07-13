@@ -120,7 +120,7 @@ public class PaymentService {
         List<OrderItem> findOrderItem = new ArrayList<>();
         MemberRole role = null;
 
-        if (loginId == null) {
+        if (loginId == null && userEmail != null) {
             findUser = cacheRepository.findUserAtCache(userEmail);
             findOrderItem = orderItemRepository.findOrdersByUserId(findUser.getId());
             for (OrderItem orderItem : findOrderItem) {
@@ -128,7 +128,7 @@ public class PaymentService {
             }
         }
 
-        if (userEmail == null) {
+        if (userEmail == null && loginId != null) {
             findMember = cacheRepository.findMemberAtCache(loginId);
             findOrderItem = orderItemRepository.findOrdersByMemberId(findMember.getId());
             for (OrderItem orderItem : findOrderItem) {
@@ -151,7 +151,7 @@ public class PaymentService {
         String message = null;
         MemberRole role = null;
 
-        if (loginId == null) {
+        if (loginId == null && userEmail != null) {
             findUser = cacheRepository.findUserAtCache(userEmail);
             List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
 
@@ -173,7 +173,7 @@ public class PaymentService {
             findCoupon = memberWhoGetCouponRepository.findCouponByUserIdAndCheckUsed(findUser.getId(), 0);
         }
 
-        if (userEmail == null) {
+        if (userEmail == null && loginId != null) {
             findMember = cacheRepository.findMemberAtCache(loginId);
             List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
 
