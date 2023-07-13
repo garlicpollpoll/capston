@@ -5,6 +5,7 @@ import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.InquiryService;
 import com.hello.capston.service.MemberService;
@@ -29,7 +30,7 @@ public class InquiryRewriteController {
 
     private final InquiryRepository inquiryRepository;
 
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final CacheRepository cacheRepository;
 
     /**
@@ -53,6 +54,11 @@ public class InquiryRewriteController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
+
+        if (findMember == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         if (findMember == null && findUser != null) {
             if (findInquiry.getUser() != null) {

@@ -34,6 +34,7 @@ public class FindByDetailCategoryController {
 
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 카테고리별 제품 보는 페이지
@@ -53,6 +54,10 @@ public class FindByDetailCategoryController {
 
         if (loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
+            if (findMember == null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
             model.addAttribute("status", findMember.getRole());
         }
 

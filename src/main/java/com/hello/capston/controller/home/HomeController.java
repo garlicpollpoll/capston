@@ -5,6 +5,7 @@ import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class HomeController {
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
     private final HomeService homeService;
+    private final MemberRepository memberRepository;
 
     /**
      * 메인 페이지
@@ -101,6 +103,10 @@ public class HomeController {
 
         if (loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
+            if (findMember == null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
             model.addAttribute("status", findMember.getRole());
         }
 

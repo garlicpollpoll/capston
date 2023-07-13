@@ -5,6 +5,7 @@ import com.hello.capston.entity.*;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class ItemController {
     private final ClickDuplicationPreventService clickService;
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 아이템 리스트 조회
@@ -61,6 +63,11 @@ public class ItemController {
 
         String loginId = (String) session.getAttribute("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
+
+        if (findMember == null){
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());

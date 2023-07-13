@@ -5,6 +5,7 @@ import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.InquiryService;
 import com.hello.capston.service.MemberService;
@@ -27,6 +28,7 @@ public class InquiryWriteController {
 
     private final InquiryService inquiryService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 문의하기 작성 페이지 redirect
@@ -60,6 +62,11 @@ public class InquiryWriteController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
+
+        if (findMember == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         inquiryService.saveInquiry(findMember, findUser, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
 

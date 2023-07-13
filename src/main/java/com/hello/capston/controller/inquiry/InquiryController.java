@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.InquiryRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
@@ -28,6 +29,7 @@ public class InquiryController {
 
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 문의하기 페이지
@@ -53,6 +55,10 @@ public class InquiryController {
 
         if (loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
+            if (findMember == null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
             model.addAttribute("status", findMember.getRole());
         }
 

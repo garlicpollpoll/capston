@@ -15,4 +15,6 @@ public class JoinForm {
     private String email;
     @NotEmpty
     private String birth;
+    @NotEmpty
+    private String gender;
 }

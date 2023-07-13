@@ -1,6 +1,7 @@
 package com.hello.capston.controller.member;
 
 import com.hello.capston.entity.Member;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MemberToManagerController {
 
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/admin/member_to_manager")
     public String memberToManager() {
@@ -32,6 +34,11 @@ public class MemberToManagerController {
     public String memberToManagerPost(HttpServletRequest request) {
         String loginId = request.getParameter("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
+
+        if (findMember == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         findMember.changeRoleMemberToManager();
 

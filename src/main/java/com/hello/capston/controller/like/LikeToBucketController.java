@@ -4,6 +4,7 @@ import com.hello.capston.dto.form.LikeForm;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class LikeToBucketController {
     private final BucketService bucketService;
     private final TemporaryOrderService temporaryOrderService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 좋아요 리스트에서 장바구니로 이동
@@ -52,6 +54,11 @@ public class LikeToBucketController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
+
+        if (findMember == null && findUser == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         if (findMember == null) {
             List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());

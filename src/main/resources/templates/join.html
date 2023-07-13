@@ -255,27 +255,6 @@
         })
     })
 
-    const memberId = document.getElementById("loginId");
-    const memberPw = document.getElementById("password");
-    const memberEmail = document.getElementById("email");
-    const memberBirth = document.getElementById("birth");
-
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        url : "/join",
-        contentType : "application/json",
-        data : JSON.stringify({
-            loginId: memberId,
-            password: memberPw,
-            email: memberEmail,
-            birth: memberBirth
-        })
-    }).done(function (data){
-        alert(data.message);
-        window.location.href = "https://www.shopfiesta.kr/login";
-    })
-
     //로딩바
     // function FunLoadingBarStart() {
     //     var backHeight = $(document).height();

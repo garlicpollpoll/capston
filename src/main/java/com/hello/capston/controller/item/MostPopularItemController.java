@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.PagingDto;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
+import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
@@ -28,6 +29,7 @@ public class MostPopularItemController {
 
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 인기 상품 리스트
@@ -47,6 +49,10 @@ public class MostPopularItemController {
 
         if (loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
+            if (findMember == null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+                cacheRepository.addMember(findMember);
+            }
             model.addAttribute("status", findMember.getRole());
         }
 

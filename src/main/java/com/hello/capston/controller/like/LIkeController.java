@@ -31,6 +31,7 @@ public class LIkeController {
 
     private final LikeService likeService;
     private final CacheRepository cacheRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 좋아요 클릭 시 좋아요 목록에 담아짐
@@ -48,6 +49,11 @@ public class LIkeController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
+
+        if (findMember == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         likeService.save(findMember, findUser, findItem, form.getSize());
 
@@ -70,6 +76,11 @@ public class LIkeController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
+
+        if (findMember == null && findUser == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
 
         if (findMember == null) {
             Likes like = likeService.findByUserId(findUser.getId(), Long.parseLong(form.getId()));

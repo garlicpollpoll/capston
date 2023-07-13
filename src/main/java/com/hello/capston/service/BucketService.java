@@ -5,10 +5,7 @@ import com.hello.capston.dto.dto.bucket.LookUpBucketDto;
 import com.hello.capston.dto.form.BucketForm;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
-import com.hello.capston.repository.BucketRepository;
-import com.hello.capston.repository.ItemDetailRepository;
-import com.hello.capston.repository.ItemRepository;
-import com.hello.capston.repository.TemporaryOrderRepository;
+import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +24,7 @@ public class BucketService {
     private final CacheRepository cacheRepository;
     private final ItemRepository itemRepository;
     private final TemporaryOrderService temporaryOrderService;
+    private final MemberRepository memberRepository;
 
     public List<Bucket> findBucketByMemberId(Long memberId) {
         return bucketRepository.findByMemberId(memberId);
@@ -127,10 +125,11 @@ public class BucketService {
             myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
 
             totalAmount = findTotalAmountByUserId(findUser.getId());
-        }
-
-        if (userEmail == null) {
+        } else if (userEmail == null) {
             findMember = cacheRepository.findMemberAtCache(loginId);
+            if (findMember == null) {
+                findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            }
             myBucket = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
             totalAmount = findTotalAmountByMemberId(findMember.getId());

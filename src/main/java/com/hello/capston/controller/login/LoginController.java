@@ -57,6 +57,11 @@ public class LoginController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
 
+        if (findMember == null) {
+            findMember = memberRepository.findByLoginId(loginId).orElse(null);
+            cacheRepository.addMember(findMember);
+        }
+
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());
         }
