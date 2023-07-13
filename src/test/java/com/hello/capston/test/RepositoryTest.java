@@ -26,4 +26,19 @@ public class RepositoryTest {
         //then
         Assertions.assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
     }
+
+    @Test
+    public void test2() throws Exception {
+        //given
+        Member member = createMember();
+        //when
+        memberRepository.save(member);
+        Member findMemberBySession = memberRepository.findBySessionId("session").orElse(null);
+        //then
+        Assertions.assertThat(findMemberBySession.getUsername()).isEqualTo(member.getUsername());
+    }
+
+    private Member createMember() {
+        return new Member("username", "password", "birth", "gender", MemberRole.ROLE_MEMBER, "email", "session");
+    }
 }
