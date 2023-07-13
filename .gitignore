@@ -39,5 +39,5 @@ out/
 ### SMTP information ###
 !**/src/main/**/config/
 
-
+##
 /src/test/*
