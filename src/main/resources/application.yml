@@ -10,7 +10,7 @@ spring:
     active: local
     include: google, naver, kakao
   datasource:
-    url: jdbc:mysql://52.78.193.25:3306/capston?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://43.201.250.145:3306/capston?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -41,7 +41,7 @@ spring:
     default-encoding: UTF-8
   data:
     redis:
-      host: 52.78.193.25
+      host: 43.201.250.145
       port: 6379
       password: root
       cache:
