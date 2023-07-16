@@ -116,9 +116,10 @@
                 data : JSON.stringify({
                     id : likeId
                 })
+            }).done(function (data) {
+                alert(data.message);
             })
         })
-        alert("삭제되었습니다.");
     })
 </script>
 </html>

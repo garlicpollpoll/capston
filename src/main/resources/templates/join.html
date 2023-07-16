@@ -192,15 +192,15 @@
 
     loginIdDuplicate.addEventListener('click', () => {
         // window.open("login_id_duplicate", "popup", "width=500, height=500, top=50, left=50");
-        var loginId = document.getElementById('loginId').value;
+        var id = document.getElementById('loginId').value;
 
         $.ajax({
             type : "POST",
             dataType : "json",
             url : "/login_id_duplicate",
-            contentType : "application/json",
+            contentType: "application/json",
             data : JSON.stringify({
-                loginId : loginId
+                loginId : id
             })
         }).done(function (data){
             alert(data.message);
