@@ -78,9 +78,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
 
-	// excel to database
-	implementation 'org.apache.poi:poi:5.0.0'
-	implementation 'org.apache.poi:poi-ooxml:5.0.0'
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
 }
 
