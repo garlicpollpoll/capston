@@ -13,6 +13,7 @@ import com.hello.capston.service.TemporaryOrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletResponse;
@@ -113,6 +114,7 @@ public class PaymentService {
         conn.disconnect();
     }
 
+    @Transactional
     public LookUpPaymentCompleteDto paymentComplete(String loginId, String userEmail) {
         int orderPrice = 0;
         Member findMember = null;
@@ -140,6 +142,7 @@ public class PaymentService {
         return new LookUpPaymentCompleteDto(findOrderItem, role, orderPrice);
     }
 
+    @Transactional
     public LookUpPaymentDto lookUpPayment(String loginId, String userEmail) {
         int orderPrice = 0;
         boolean checkStock = true;
