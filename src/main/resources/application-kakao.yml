@@ -5,7 +5,7 @@ spring:
         registration:
           kakao:
             client-id: cvfo8ednayfT9bD72cvDAHjRVZLfKq91
-            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}" # http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: http://shopfiesta.kr/login/oauth2/code/kakao # http://localhost:8080/login/oauth2/code/kakao
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
