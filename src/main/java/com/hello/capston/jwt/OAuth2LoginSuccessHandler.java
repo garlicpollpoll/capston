@@ -12,6 +12,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
