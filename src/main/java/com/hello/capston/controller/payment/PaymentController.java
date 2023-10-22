@@ -157,7 +157,9 @@ public class PaymentController {
             Order order = orderService.save(findUser, findMember, delivery, dto);
             orderItemService.saveUsingTemporaryOrder(findTOrder, order);
 
-            findMyCoupon.changeCheckUsedToOne();
+            if (findMyCoupon != null) {
+                findMyCoupon.changeCheckUsedToOne();
+            }
 
             map.put("message", "결제가 정상적으로 완료되었습니다.");
         }
