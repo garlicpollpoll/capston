@@ -49,8 +49,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .build();
         response.setHeader("Set-Cookie", responseSessionCookie.toString());
         response.addCookie(sessionCookie);
-        User principal = (User) authentication.getPrincipal();
-        User user = userRepository.findByEmail(principal.getEmail()).map(entity -> entity.updateSessionId(sessionId)).orElse(principal);
+        DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
+        String email = principal.getAttribute("email");
+        User user = userRepository.findByEmail(email).map(entity -> entity.updateSessionId(sessionId)).orElse(principal);
         userRepository.save(user);
         // NEW!
 
