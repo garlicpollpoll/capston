@@ -195,6 +195,7 @@
                 target: target
             })
         }).done(function (data) {
+            console.log("test");
             orderPrice = data.orderPrice;
             $(".discount").text(data.discountPrice);
             $(".result_price").text(data.orderPrice);

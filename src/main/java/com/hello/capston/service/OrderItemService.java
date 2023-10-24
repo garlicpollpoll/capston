@@ -6,6 +6,7 @@ import com.hello.capston.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TransactionException;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,10 +44,11 @@ public class OrderItemService {
                         itemDetail.changeStock(temporaryOrder.getCount());
                         itemDetailRepository.save(itemDetail);
                     }
-                    else {
+                    else if (temporaryOrder.getSize().equals(itemDetail.getSize()) && itemDetail.getStock() <= 0) {
                         flag = false;
                     }
                 }
+
                 if (flag) {
                     orderItemRepository.save(orderItem);
                 }

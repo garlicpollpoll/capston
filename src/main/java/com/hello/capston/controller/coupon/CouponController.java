@@ -76,7 +76,7 @@ public class CouponController {
             alertService.alertAndRedirect(response, message, url);
         }
         else {
-            alertService.alertAndRedirect(response, message, "/");
+            alertService.alertAndRedirect(response, message, url);
         }
 
         return "coupon";

@@ -39,6 +39,7 @@ public class PaymentCompleteController {
         LookUpPaymentCompleteDto dto = paymentService.paymentComplete(loginId, userEmail);
 
         model.addAttribute("tOrder", dto.getFindOrderItem());
+        // TODO 이거 Order 에 있는 Delivery 기준 status 보고 가져 와야 할 것 같다.
         model.addAttribute("status", dto.getRole());
         model.addAttribute("orderPrice", dto.getOrderPrice());
 

@@ -44,7 +44,8 @@ public class FindByDetailCategoryController {
      * @return
      */
     @GetMapping("/find_by_detail_category")
-    public String findDetailCategory(HttpServletRequest request, Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow) {
+    public String findDetailCategory(HttpServletRequest request, Model model,
+                                     @RequestParam(value = "page", defaultValue = "0") Integer pageNow) {
         if (pageNow != 0) {
             pageNow -= 1;
         }

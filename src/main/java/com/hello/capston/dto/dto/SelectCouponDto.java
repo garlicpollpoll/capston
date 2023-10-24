@@ -7,7 +7,4 @@ public class SelectCouponDto {
 
     private String target;
 
-    public SelectCouponDto(String target) {
-        this.target = target;
-    }
 }

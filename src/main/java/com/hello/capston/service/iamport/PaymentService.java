@@ -6,6 +6,7 @@ import com.hello.capston.dto.dto.payment.LookUpPaymentCompleteDto;
 import com.hello.capston.dto.dto.payment.LookUpPaymentDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
+import com.hello.capston.entity.enums.OrderStatus;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.BucketService;

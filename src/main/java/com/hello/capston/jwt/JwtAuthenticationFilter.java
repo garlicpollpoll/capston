@@ -18,7 +18,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -39,9 +38,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_TYPE = "Bearer";
-
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate redisTemplate;
     private final RedisTokenRepository redisTokenRepository;
@@ -54,31 +50,26 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String token = resolveToken((HttpServletRequest) request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         // 2. validateToken 으로 토큰 유효성 검사
-        if (token != null  && isValidJwtFormat(token) && jwtTokenProvider.validateToken(token)) {
+        if (isTokenValidate(token)) {
             // Redis 에 해당 accessToken logout 여부 확인
             String isLogout = (String) redisTemplate.opsForValue().get(token);
 
-            if (ObjectUtils.isEmpty(isLogout)) {
-                // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
-                Authentication getAuthentication = jwtTokenProvider.getAuthentication(token);
-                HttpSession session = httpRequest.getSession();
-                session.setAttribute("loginId", getAuthentication.getName());
-                SecurityContextHolder.getContext().setAuthentication(getAuthentication);
-            }
+            Authentication validatedAuthentication = validAuthentication(isLogout, token);
+            setSession(httpRequest, validatedAuthentication);
         }
-        else if (authentication != null && authentication.isAuthenticated()) {  // 3. access token 이 만료된 상황
+        else if (isAuthenticated(authentication)) {  // 3. access token 이 만료된 상황
             // token 은 만료 되었으나 인증이 되어있는 사용자 = 아직 페이지를 안벗어났지만 token 의 유효시간은 끝난 사용자
             UserResponseDto tokenInfo = (UserResponseDto) redisTemplate.opsForValue().get("RT:" + authentication.getName());
             if (tokenInfo != null) {
-                setNewAuthentication((HttpServletResponse) response, authentication);
+                setCookieWithAuthentication((HttpServletResponse) response, authentication);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
         else { // 4. access token 만료되고 Authentication 객체도 null 인 상황
-            String sessionId = getSessionId((HttpServletRequest) request);
-            Authentication authenticationFromSessionId = null;
+            String sessionId = getSessionId(httpRequest);
             RedisAndSession redisAndSession = null;
             if (sessionId != null) {
                 redisAndSession = redisTokenRepository.findBySessionId(sessionId).orElse(null);
@@ -89,34 +80,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 User findUser = userRepository.findBySessionId(sessionId).orElse(null);
 
                 if (findMember == null && findUser != null) {   // User 객체만 존재할 경우
-                    Collection<? extends GrantedAuthority> authorities =
-                            Arrays.stream(findUser.getRole().toString().split(","))
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList());
-                    UserDetails principal = new org.springframework.security.core.userdetails.User(findUser.getEmail(), "", authorities);
-                    authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-                    setNewAuthentication((HttpServletResponse) response, authenticationFromSessionId);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
+                    setAuthenticationWithUser(httpResponse, findUser);
                 }
-                else if (findUser == null && findMember != null) {  // Member 객체만 존재할 경우
-                    Collection<? extends GrantedAuthority> authorities =
-                            Arrays.stream(findMember.getRole().toString().split(","))
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList());
-                    UserDetails principal = new org.springframework.security.core.userdetails.User(findMember.getUsername(), "", authorities);
-                    authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-                    setNewAuthentication((HttpServletResponse) response, authenticationFromSessionId);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
+                else if (findMember != null && findUser == null) {  // Member 객체만 존재할 경우
+                    setAuthenticationWithMember(httpResponse, findMember);
                 }
                 else if (findMember != null && findUser != null) {  // 둘 다 존재하는 경우 우선순위는 Member
-                    Collection<? extends GrantedAuthority> authorities =
-                            Arrays.stream(findMember.getRole().toString().split(","))
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList());
-                    UserDetails principal = new org.springframework.security.core.userdetails.User(findMember.getUsername(), "", authorities);
-                    authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-                    setNewAuthentication((HttpServletResponse) response, authenticationFromSessionId);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
+                    setAuthenticationWithMember(httpResponse, findMember);
                 }
                 else {  // 둘 다 null 인 경우 에는 로그인이 풀린다.
                     chain.doFilter(request, response);
@@ -126,7 +96,55 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
-    private void setNewAuthentication(HttpServletResponse response, Authentication authentication) {
+    private boolean isAuthenticated(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated();
+    }
+
+    private boolean isTokenValidate(String token) {
+        return token != null && isValidJwtFormat(token) && jwtTokenProvider.validateToken(token);
+    }
+
+    private void setAuthenticationWithMember(HttpServletResponse response, Member findMember) {
+        Authentication authenticationFromSessionId;
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(findMember.getRole().toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        UserDetails principal = new org.springframework.security.core.userdetails.User(findMember.getUsername(), "", authorities);
+        authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        setCookieWithAuthentication(response, authenticationFromSessionId);
+        SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
+    }
+
+    private void setAuthenticationWithUser(HttpServletResponse response, User findUser) {
+        Authentication authenticationFromSessionId;
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(findUser.getRole().toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        UserDetails principal = new org.springframework.security.core.userdetails.User(findUser.getEmail(), "", authorities);
+        authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        setCookieWithAuthentication(response, authenticationFromSessionId);
+        SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
+    }
+
+    private Authentication validAuthentication(String isLogout, String token) {
+        if (ObjectUtils.isEmpty(isLogout)) {
+            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
+            Authentication getAuthentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(getAuthentication);
+            return getAuthentication;
+        }
+        return null;
+    }
+
+    private void setSession(HttpServletRequest request, Authentication getAuthentication) {
+        HttpSession session = request.getSession();
+        session.setAttribute("loginId", getAuthentication.getName());
+    }
+
+
+    private void setCookieWithAuthentication(HttpServletResponse response, Authentication authentication) {
         String remakeAccessToken = jwtTokenProvider.remakeAccessToken(authentication);
         Cookie cookie = new Cookie("AUTH-TOKEN", remakeAccessToken);
         ResponseCookie responseCookie =

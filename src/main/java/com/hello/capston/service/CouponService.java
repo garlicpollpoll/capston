@@ -29,6 +29,12 @@ public class CouponService {
         Coupon coupon = couponRepository.findByCode(code).orElse(null);
         boolean isCouponHas = false;
 
+        if (coupon == null) {
+            map.put("message", "존재하지 않는 쿠폰입니다.");
+            map.put("url", "/coupon");
+            return new CouponDto(map, isCouponHas);
+        }
+
         if (loginId == null) {
             User findUser = cacheRepository.findUserAtCache(userEmail);
             List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserId(findUser.getId());

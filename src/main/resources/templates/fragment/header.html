@@ -14,6 +14,7 @@
             <li><a href="/login" th:if="${session.loginId == null and session.userEmail == null}">로그인</a></li>
             <li><a href="/custom/logout" th:if="${session.loginId != null or session.userEmail != null}">로그아웃</a></li>
             <li><a href="/coupon" th:if="${session.loginId != null or session.userEmail != null}">쿠폰</a></li>
+            <li><a href="/paymentComplete" th:if="${session.loginId != null or session.userEmail != null}">구매내역</a></li>
             <li><a href="/item_upload" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_MANAGER or status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">상품 등록</a></li>
             <li><a href="/admin/member_to_manager" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">매니저승급</a></li>
             <li><a href="/coupon_upload" th:if="${status == T(com.hello.capston.entity.enums.MemberRole).ROLE_ADMIN}">쿠폰등록</a></li>
