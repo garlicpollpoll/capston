@@ -16,6 +16,7 @@ public class CacheRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     public void addMember(Member member) {
         String key = KeyGenerator.memberKeyGenerate(member.getUsername());
@@ -39,12 +40,28 @@ public class CacheRepository {
 
     public Member findMemberAtCache(String loginId) {
         String key = KeyGenerator.memberKeyGenerate(loginId);
-        return (Member) redisTemplate.opsForValue().get(key);
+        Member findMemberAtCache = (Member) redisTemplate.opsForValue().get(key);
+        if (findMemberAtCache == null) {
+            Member findMemberAtDB = memberRepository.findByLoginId(loginId).orElse(null);
+            addMember(findMemberAtDB);
+            return findMemberAtDB;
+        }
+        else {
+            return findMemberAtCache;
+        }
     }
 
     public User findUserAtCache(String email) {
         String key = KeyGenerator.userKeyGenerate(email);
-        return (User) redisTemplate.opsForValue().get(key);
+        User findUserAtCache = (User) redisTemplate.opsForValue().get(key);
+        if (findUserAtCache == null) {
+            User findUserAtDB = userRepository.findByEmail(email).orElse(null);
+            addUser(findUserAtDB.getId());
+            return findUserAtDB;
+        }
+        else {
+            return findUserAtCache;
+        }
     }
 
     private boolean isMemberWasFound(String loginId) {
