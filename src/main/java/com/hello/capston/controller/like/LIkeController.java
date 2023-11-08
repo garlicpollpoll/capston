@@ -50,11 +50,6 @@ public class LIkeController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
-        }
-
         likeService.save(findMember, findUser, findItem, form.getSize());
 
         redirectAttributes.addAttribute("itemId", form.getId());
@@ -76,13 +71,6 @@ public class LIkeController {
 
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
-
-        if (findMember == null && findUser == null) {
-            if (loginId != null) {
-                findMember = memberRepository.findByLoginId(loginId).orElse(null);
-                cacheRepository.addMember(findMember);
-            }
-        }
 
         if (findMember == null) {
             Likes like = likeService.findByUserId(findUser.getId(), Long.parseLong(form.getId()));

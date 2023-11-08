@@ -44,10 +44,6 @@ public class JoinController {
 
         if (loginId != null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
-            if (findMember == null) {
-                findMember = memberRepository.findByLoginId(loginId).orElse(null);
-                cacheRepository.addMember(findMember);
-            }
             model.addAttribute("status", findMember.getRole());
         }
 

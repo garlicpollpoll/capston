@@ -74,11 +74,6 @@ public class LikeService {
         if (userEmail == null) {
             Member findMember = cacheRepository.findMemberAtCache(loginId);
 
-            if (findMember == null && loginId != null) {
-                findMember = memberRepository.findByLoginId(loginId).orElse(null);
-                cacheRepository.addMember(findMember);
-            }
-
             findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
             role = findMember.getRole();
         }

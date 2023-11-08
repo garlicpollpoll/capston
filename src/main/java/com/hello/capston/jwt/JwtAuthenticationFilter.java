@@ -53,14 +53,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         // 2. validateToken 으로 토큰 유효성 검사
-        if (isTokenValidate(token)) {
-            // Redis 에 해당 accessToken logout 여부 확인
-            String isLogout = (String) redisTemplate.opsForValue().get(token);
-
-            Authentication validatedAuthentication = validAuthentication(isLogout, token);
-            setSession(httpRequest, validatedAuthentication);
-        }
-        else if (isAuthenticated(authentication)) {  // 3. access token 이 만료된 상황
+        if (isAuthenticated(authentication)) {  // 3. access token 이 만료된 상황
             // token 은 만료 되었으나 인증이 되어있는 사용자 = 아직 페이지를 안벗어났지만 token 의 유효시간은 끝난 사용자
             UserResponseDto tokenInfo = (UserResponseDto) redisTemplate.opsForValue().get("RT:" + authentication.getName());
             if (tokenInfo != null) {

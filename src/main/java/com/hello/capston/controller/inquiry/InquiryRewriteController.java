@@ -55,11 +55,6 @@ public class InquiryRewriteController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null && loginId != null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
-        }
-
         if (findMember == null && findUser != null) {
             if (findInquiry.getUser() != null) {
                 if (findUser.getId() == findInquiry.getUser().getId()) {

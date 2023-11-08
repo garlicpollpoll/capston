@@ -21,10 +21,8 @@ public class CacheRepository {
     public void addMember(Member member) {
         String key = KeyGenerator.memberKeyGenerate(member.getUsername());
 
-        if (!isMemberWasFound(member.getUsername())) {
-            redisTemplate.opsForValue().set(key, member);
-            redisTemplate.expire(key, 60, TimeUnit.MINUTES);
-        }
+        redisTemplate.opsForValue().set(key, member);
+        redisTemplate.expire(key, 60, TimeUnit.MINUTES);
     }
 
     public void addUser(Long userId) {
@@ -32,35 +30,38 @@ public class CacheRepository {
                 () -> new RuntimeException("Not Found User")
         );
         String key = KeyGenerator.userKeyGenerate(findUser.getEmail());
-        if (!isUserWasFound(findUser.getEmail())) {
-            redisTemplate.opsForValue().set(key, findUser);
-            redisTemplate.expire(key, 60, TimeUnit.MINUTES);
-        }
+
+        redisTemplate.opsForValue().set(key, findUser);
+        redisTemplate.expire(key, 60, TimeUnit.MINUTES);
     }
 
     public Member findMemberAtCache(String loginId) {
         String key = KeyGenerator.memberKeyGenerate(loginId);
-        return (Member) redisTemplate.opsForValue().get(key);
+        Member findMemberAtCache = (Member) redisTemplate.opsForValue().get(key);
+        Member capsule = findMemberAtCache;
+
+        if (loginId != null && findMemberAtCache == null) {
+            Member findMemberAtDB = memberRepository.findByLoginId(loginId).orElse(null);
+            addMember(findMemberAtDB);
+            capsule = findMemberAtDB;
+        }
+
+        return capsule;
+//        return (Member) redisTemplate.opsForValue().get(key);
     }
 
     public User findUserAtCache(String email) {
         String key = KeyGenerator.userKeyGenerate(email);
-        return (User) redisTemplate.opsForValue().get(key);
-    }
+        User findUserAtCache = (User) redisTemplate.opsForValue().get(key);
+        User capsule = findUserAtCache;
 
-    private boolean isMemberWasFound(String loginId) {
-        Member findMember = findMemberAtCache(loginId);
-        if (findMember != null) {
-            return true;
+        if (email != null && findUserAtCache == null) {
+            User findUserAtDB = userRepository.findByEmail(email).orElse(null);
+            addUser(findUserAtDB.getId());
+            capsule = findUserAtDB;
         }
-        return false;
-    }
 
-    private boolean isUserWasFound(String email) {
-        User findUser = findUserAtCache(email);
-        if (findUser != null) {
-            return true;
-        }
-        return false;
+        return capsule;
+//        return (User) redisTemplate.opsForValue().get(key);
     }
 }

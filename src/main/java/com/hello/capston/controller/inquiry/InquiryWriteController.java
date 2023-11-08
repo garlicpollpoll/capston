@@ -63,11 +63,6 @@ public class InquiryWriteController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null && loginId != null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
-        }
-
         inquiryService.saveInquiry(findMember, findUser, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
 
         return "redirect:/inquiry";

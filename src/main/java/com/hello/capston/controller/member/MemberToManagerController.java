@@ -35,11 +35,6 @@ public class MemberToManagerController {
         String loginId = request.getParameter("loginId");
         Member findMember = cacheRepository.findMemberAtCache(loginId);
 
-        if (findMember == null && loginId != null) {
-            findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            cacheRepository.addMember(findMember);
-        }
-
         findMember.changeRoleMemberToManager();
 
         return "redirect:/";

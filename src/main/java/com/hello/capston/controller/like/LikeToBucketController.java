@@ -55,13 +55,6 @@ public class LikeToBucketController {
         Member findMember = cacheRepository.findMemberAtCache(loginId);
         User findUser = cacheRepository.findUserAtCache(userEmail);
 
-        if (findMember == null && findUser == null) {
-            if (loginId != null) {
-                findMember = memberRepository.findByLoginId(loginId).orElse(null);
-                cacheRepository.addMember(findMember);
-            }
-        }
-
         if (findMember == null) {
             List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());
             orders = findBucket.size();
