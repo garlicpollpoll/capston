@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,109 +40,47 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate redisTemplate;
-    private final RedisTokenRepository redisTokenRepository;
-    private final MemberRepository memberRepository;
-    private final UserRepository userRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final String SESSIONID = "SESSIONID";
+    private static final String ACCESS_TOKEN = "AUTH-TOKEN";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // 1. Request Header 에서 JWT 토큰 추출
-        String token = resolveToken((HttpServletRequest) request);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        boolean isAccessTokenPresent = Arrays.stream(httpRequest.getCookies()).anyMatch((cookie) -> cookie.getName().equals(ACCESS_TOKEN));
 
-        // 2. validateToken 으로 토큰 유효성 검사
-        if (isAuthenticated(authentication)) {  // 3. access token 이 만료된 상황
-            // token 은 만료 되었으나 인증이 되어있는 사용자 = 아직 페이지를 안벗어났지만 token 의 유효시간은 끝난 사용자
-            UserResponseDto tokenInfo = (UserResponseDto) redisTemplate.opsForValue().get("RT:" + authentication.getName());
-            if (tokenInfo != null) {
-                setCookieWithAuthentication((HttpServletResponse) response, authentication);
+        if (isAccessTokenPresent) {
+            chain.doFilter(request, response);
+        }
+        else {
+            Cookie sessionCookie = Arrays.stream(httpRequest.getCookies()).filter((cookie) -> cookie.getName().equals(SESSIONID)).findAny().orElseThrow();
+            String sessionId = sessionCookie.getValue();
+
+            String refreshToken = (String) redisTemplate.opsForValue().get(sessionId);
+
+            if (isTokenValidate(refreshToken)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                setCookieWithAuthentication(httpResponse, authentication);
             }
         }
-        else { // 4. access token 만료되고 Authentication 객체도 null 인 상황
-            String sessionId = getSessionId(httpRequest);
-            RedisAndSession redisAndSession = null;
-            if (sessionId != null) {
-                redisAndSession = redisTokenRepository.findBySessionId(sessionId).orElse(null);
-            }
+        // 2. validateToken 으로 토큰 유효성 검사
 
-            if (redisAndSession != null) {  // refresh token 이 존재하는 경우 존재하지 않으면 로그인이 풀린다.
-                Member findMember = memberRepository.findBySessionId(sessionId).orElse(null);
-                User findUser = userRepository.findBySessionId(sessionId).orElse(null);
-
-                if (findMember == null && findUser != null) {   // User 객체만 존재할 경우
-                    setAuthenticationWithUser(httpResponse, findUser);
-                }
-                else if (findMember != null && findUser == null) {  // Member 객체만 존재할 경우
-                    setAuthenticationWithMember(httpResponse, findMember);
-                }
-                else if (findMember != null && findUser != null) {  // 둘 다 존재하는 경우 우선순위는 Member
-                    setAuthenticationWithMember(httpResponse, findMember);
-                }
-                else {  // 둘 다 null 인 경우 에는 로그인이 풀린다.
-                    chain.doFilter(request, response);
-                }
-            }
-        }
         chain.doFilter(request, response);
-    }
-
-    private boolean isAuthenticated(Authentication authentication) {
-        return authentication != null && authentication.isAuthenticated();
     }
 
     private boolean isTokenValidate(String token) {
         return token != null && isValidJwtFormat(token) && jwtTokenProvider.validateToken(token);
     }
 
-    private void setAuthenticationWithMember(HttpServletResponse response, Member findMember) {
-        Authentication authenticationFromSessionId;
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(findMember.getRole().toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-        UserDetails principal = new org.springframework.security.core.userdetails.User(findMember.getUsername(), "", authorities);
-        authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-        setCookieWithAuthentication(response, authenticationFromSessionId);
-        SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
-    }
-
-    private void setAuthenticationWithUser(HttpServletResponse response, User findUser) {
-        Authentication authenticationFromSessionId;
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(findUser.getRole().toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-        UserDetails principal = new org.springframework.security.core.userdetails.User(findUser.getEmail(), "", authorities);
-        authenticationFromSessionId = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-        setCookieWithAuthentication(response, authenticationFromSessionId);
-        SecurityContextHolder.getContext().setAuthentication(authenticationFromSessionId);
-    }
-
-    private Authentication validAuthentication(String isLogout, String token) {
-        if (ObjectUtils.isEmpty(isLogout)) {
-            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
-            Authentication getAuthentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(getAuthentication);
-            return getAuthentication;
-        }
-        return null;
-    }
-
-    private void setSession(HttpServletRequest request, Authentication getAuthentication) {
-        HttpSession session = request.getSession();
-        session.setAttribute("loginId", getAuthentication.getName());
-    }
-
-
     private void setCookieWithAuthentication(HttpServletResponse response, Authentication authentication) {
         String remakeAccessToken = jwtTokenProvider.remakeAccessToken(authentication);
-        Cookie cookie = new Cookie("AUTH-TOKEN", remakeAccessToken);
+        Cookie cookie = new Cookie(ACCESS_TOKEN, remakeAccessToken);
         ResponseCookie responseCookie =
-                ResponseCookie.from("AUTH-TOKEN", remakeAccessToken)
+                ResponseCookie.from(ACCESS_TOKEN, remakeAccessToken)
                         .httpOnly(true)
                         .path("/")
                         .maxAge(Duration.ofMinutes(30))
@@ -149,32 +88,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                         .build();
         response.addCookie(cookie);
         response.addHeader("Set-cookie", responseCookie.toString());
-    }
-
-    private String getSessionId(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                String cookieName = cookie.getName();
-                if (cookieName.equals("SESSION-TOKEN")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    private String resolveToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                String cookieName = cookie.getName();
-                if (cookieName.equals("AUTH-TOKEN")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
     }
 
     private boolean isValidJwtFormat(String token) {

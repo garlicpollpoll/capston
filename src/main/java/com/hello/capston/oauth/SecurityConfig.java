@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**", "/coupon_upload").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate, redisTokenRepository, memberRepository, userRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class)
 //                .formLogin().loginPage("/login").loginProcessingUrl("/custom/login").defaultSuccessUrl("/")
 //                .loginProcessingUrl("/auth/loginProc")
 //                .and()

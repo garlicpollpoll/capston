@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class JwtService {
 
     private final MemberRepository memberRepository;
-    private final Response response;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate redisTemplate;
