@@ -11,8 +11,11 @@ import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.BucketService;
 import com.hello.capston.service.TemporaryOrderService;
+import com.hello.capston.service.WhatIsRoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,7 @@ public class PaymentService {
     private final TemporaryOrderRepository temporaryOrderRepository;
     private final ItemDetailRepository itemDetailRepository;
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
+    private final WhatIsRoleService roleService;
 
     public String getToken() throws IOException {
         HttpsURLConnection conn = null;
@@ -116,23 +120,27 @@ public class PaymentService {
     }
 
     @Transactional
-    public LookUpPaymentCompleteDto paymentComplete(String loginId, String userEmail) {
+    public LookUpPaymentCompleteDto paymentComplete(Authentication authentication) {
         int orderPrice = 0;
         Member findMember = null;
         User findUser = null;
         List<OrderItem> findOrderItem = new ArrayList<>();
         MemberRole role = null;
 
-        if (loginId == null && userEmail != null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            findUser = cacheRepository.findUserAtCache(username);
             findOrderItem = orderItemRepository.findOrdersByUserId(findUser.getId());
             for (OrderItem orderItem : findOrderItem) {
                 orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
             }
         }
 
-        if (userEmail == null && loginId != null) {
-            findMember = cacheRepository.findMemberAtCache(loginId);
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            findMember = cacheRepository.findMemberAtCache(username);
             findOrderItem = orderItemRepository.findOrdersByMemberId(findMember.getId());
             for (OrderItem orderItem : findOrderItem) {
                 orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
@@ -144,7 +152,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public LookUpPaymentDto lookUpPayment(String loginId, String userEmail) {
+    public LookUpPaymentDto lookUpPayment(Authentication authentication) {
         int orderPrice = 0;
         boolean checkStock = true;
         Member findMember = null;
@@ -155,8 +163,12 @@ public class PaymentService {
         String message = null;
         MemberRole role = null;
 
-        if (loginId == null && userEmail != null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            findUser = cacheRepository.findUserAtCache(username);
             List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
 
             for (Bucket bucket : findBucket) {
@@ -177,8 +189,8 @@ public class PaymentService {
             findCoupon = memberWhoGetCouponRepository.findCouponByUserIdAndCheckUsed(findUser.getId(), 0);
         }
 
-        if (userEmail == null && loginId != null) {
-            findMember = cacheRepository.findMemberAtCache(loginId);
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            findMember = cacheRepository.findMemberAtCache(username);
             List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
 
             for (Bucket bucket : findBucket) {

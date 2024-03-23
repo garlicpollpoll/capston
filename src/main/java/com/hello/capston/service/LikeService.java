@@ -12,6 +12,9 @@ import com.hello.capston.repository.LikeRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +28,7 @@ public class LikeService {
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
     private final BucketRepository bucketRepository;
-    private final MemberRepository memberRepository;
+    private final WhatIsRoleService roleService;
 
     public List<Likes> likeCount(Long itemId) {
         return likeRepository.likeCount(itemId);
@@ -49,17 +52,22 @@ public class LikeService {
         likeRepository.delete(like);
     }
 
-    public Likes saveLike(LikeFormWithSize form, String loginId, String userEmail) {
+    public Likes saveLike(LikeFormWithSize form, Authentication authentication) {
         Member findMember = null;
         User findUser = null;
 
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
 
-        if (loginId == null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            findMember = cacheRepository.findMemberAtCache(username);
         }
-        else {
-            findMember = cacheRepository.findMemberAtCache(loginId);
+
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            findUser = cacheRepository.findUserAtCache(username);
         }
 
         Likes like = new Likes(findMember, findUser, findItem, "좋아요", form.getSize());
@@ -67,19 +75,21 @@ public class LikeService {
         return likeRepository.save(like);
     }
 
-    public LookUpLikeDto lookUpLikeList(String loginId, String userEmail) {
+    public LookUpLikeDto lookUpLikeList(Authentication authentication) {
         List<Likes> findLikes = new ArrayList<>();
         MemberRole role = null;
 
-        if (userEmail == null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
+        boolean isRoleMember = authentication.getAuthorities().stream().anyMatch(r -> r.equals("ROLE_MEMBER"));
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+
+        if (isRoleMember) {
+            Member findMember = cacheRepository.findMemberAtCache(principal.getUsername());
 
             findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
             role = findMember.getRole();
         }
-
-        if (loginId == null) {
-            User findUser = cacheRepository.findUserAtCache(userEmail);
+        else {
+            User findUser = cacheRepository.findUserAtCache(principal.getUsername());
 
             findLikes = likeRepository.findMyLikesByUserId(findUser.getId());
         }
@@ -88,24 +98,26 @@ public class LikeService {
     }
 
     // TODO return 값은 findMember, findUser, findItem, orders, findLike
-    public LikeToBucketDto likeToBucket(LikeForm form, String loginId, String userEmail) {
+    public LikeToBucketDto likeToBucket(LikeForm form, Authentication authentication) {
         Likes findLike = likeRepository.findById(Long.parseLong(form.getId())).orElse(null);
         Item findItem = itemRepository.findById(findLike.getItem().getId()).orElse(null);
 
         Member findMember = null;
         User findUser = null;
 
+        boolean isRoleMember = authentication.getAuthorities().stream().anyMatch(r -> r.equals("ROLE_MEMBER"));
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+
         Integer orders = 0;
 
-        if (loginId == null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
-            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
+        if (isRoleMember) {
+            findMember = cacheRepository.findMemberAtCache(principal.getUsername());
+            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
             orders = findBucket.size();
         }
-
-        if (userEmail == null) {
-            findMember = cacheRepository.findMemberAtCache(loginId);
-            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
+        else {
+            findUser = cacheRepository.findUserAtCache(principal.getUsername());
+            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
             orders = findBucket.size();
         }
 

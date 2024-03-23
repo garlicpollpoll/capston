@@ -10,6 +10,7 @@ import com.hello.capston.service.*;
 import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -48,18 +49,15 @@ public class PaymentController {
     /**
      * 결제 페이지로 이동
      * @param model
-     * @param session
      * @param response
      * @return
      * @throws IOException
      */
     @GetMapping("/payment")
-    public String payment(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+    public String payment(Model model, HttpServletResponse response, Authentication authentication) throws IOException {
         PaymentDto paymentDto = new PaymentDto();
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
 
-        LookUpPaymentDto dto = paymentService.lookUpPayment(loginId, userEmail);
+        LookUpPaymentDto dto = paymentService.lookUpPayment(authentication);
 
         if (!dto.getCheckStock()) {
             checkStockAndRedirect(response, dto.getMessage());

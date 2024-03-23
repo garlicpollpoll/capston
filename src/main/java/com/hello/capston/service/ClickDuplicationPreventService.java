@@ -1,6 +1,8 @@
 package com.hello.capston.service;
 
 import com.hello.capston.entity.Item;
+import com.hello.capston.repository.ItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,9 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
+@RequiredArgsConstructor
 public class ClickDuplicationPreventService {
 
-    @Transactional
+    private final ItemRepository itemRepository;
+
     public void viewCountUp(Item item, HttpServletRequest request, HttpServletResponse response) {
         Cookie oldCookie = null;
         Cookie[] cookies = request.getCookies();
@@ -31,6 +35,7 @@ public class ClickDuplicationPreventService {
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(60 * 10);
                 response.addCookie(oldCookie);
+                itemRepository.save(item);
             }
         }
         else {

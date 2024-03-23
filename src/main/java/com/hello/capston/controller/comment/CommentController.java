@@ -13,6 +13,7 @@ import com.hello.capston.service.ItemService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -34,23 +35,19 @@ public class CommentController {
      * 댓글 작성
      * @param form
      * @param bindingResult
-     * @param session
      * @param itemId
      * @param redirectAttributes
      * @return
      * @throws IOException
      */
     @PostMapping("/comment/{id}")
-    public String comment(@Validated @ModelAttribute("comment")CommentForm form, BindingResult bindingResult,
-                          HttpSession session, @PathVariable("id") String itemId, RedirectAttributes redirectAttributes) throws IOException {
+    public String comment(@Validated @ModelAttribute("comment")CommentForm form, BindingResult bindingResult, Authentication authentication,
+                          @PathVariable("id") String itemId, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "item_detail";
         }
 
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
-
-        commentService.saveComment(itemId, form, loginId, userEmail);
+        commentService.saveComment(itemId, form, authentication);
 
         redirectAttributes.addAttribute("itemId", itemId);
 

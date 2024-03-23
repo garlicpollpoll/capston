@@ -13,6 +13,7 @@ import com.hello.capston.service.CouponService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,14 +61,10 @@ public class CouponController {
      * @throws IOException
      */
     @PostMapping("/coupon")
-    public String couponPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
+    public String couponPost(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String code = request.getParameter("code");
 
-        CouponDto coupon = couponService.isCoupon(loginId, userEmail, code);
+        CouponDto coupon = couponService.isCoupon(authentication, code);
         boolean isCouponHas = coupon.isCoupon();
         String message = coupon.getMap().get("message");
         String url = coupon.getMap().get("url");

@@ -6,6 +6,7 @@ import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +26,12 @@ public class BucketController {
     /**
      * 장바구니 추가
      * @param form
-     * @param session
      * @param redirectAttributes
      * @return
      */
     @PostMapping("/addBucket")
-    public String addBucket(@RequestBody BucketForm form, HttpSession session, RedirectAttributes redirectAttributes) {
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
-
-        bucketService.addBucket(loginId, userEmail, form);
+    public String addBucket(@RequestBody BucketForm form, RedirectAttributes redirectAttributes, Authentication authentication) {
+        bucketService.addBucket(authentication, form);
 
         redirectAttributes.addAttribute("itemId", form.getId());
 
@@ -43,16 +40,12 @@ public class BucketController {
 
     /**
      * 장바구니 조회
-     * @param session
      * @param model
      * @return
      */
     @GetMapping("/bucket")
-    public String myBucket(HttpSession session, Model model) {
-        String userEmail = (String) session.getAttribute("userEmail");
-        String loginId = (String) session.getAttribute("loginId");
-
-        LookUpBucketDto dto = bucketService.lookUpMyBucket(loginId, userEmail);
+    public String myBucket(Model model, Authentication authentication) {
+        LookUpBucketDto dto = bucketService.lookUpMyBucket(authentication);
 
         model.addAttribute("bucket", dto.getMyBucket());
         model.addAttribute("bucketCount", dto.getBucketSize());

@@ -4,6 +4,7 @@ import com.hello.capston.dto.dto.SelectCouponDto;
 import com.hello.capston.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,16 +23,13 @@ public class SelectCouponController {
     /**
      * 결제 창에서 쿠폰 선택했을 때
      * @param dto
-     * @param session
      * @return
      */
     @ResponseBody
     @PostMapping("/selectCoupon")
-    public Map<String, Double> selectCoupon(@RequestBody SelectCouponDto dto, HttpSession session) {
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
+    public Map<String, Double> selectCoupon(@RequestBody SelectCouponDto dto, Authentication authentication) {
 
-        Map<String, Double> map = couponService.selectCoupon(loginId, userEmail, dto);
+        Map<String, Double> map = couponService.selectCoupon(authentication, dto);
 
         return map;
     }

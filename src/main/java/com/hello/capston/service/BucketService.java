@@ -8,6 +8,8 @@ import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,7 @@ public class BucketService {
     private final CacheRepository cacheRepository;
     private final ItemRepository itemRepository;
     private final TemporaryOrderService temporaryOrderService;
-    private final MemberRepository memberRepository;
+    private final WhatIsRoleService roleService;
 
     public List<Bucket> findBucketByMemberId(Long memberId) {
         return bucketRepository.findByMemberId(memberId);
@@ -81,22 +83,26 @@ public class BucketService {
         return map;
     }
 
-    public Bucket addBucket(String loginId, String userEmail, BucketForm form) {
+    public Bucket addBucket(Authentication authentication, BucketForm form) {
         Integer orders = 0;
         User findUser = null;
         Member findMember = null;
 
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
 
-        if (loginId == null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
-            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            findMember = cacheRepository.findMemberAtCache(username);
+            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
             orders = findBucket.size();
         }
 
-        if (userEmail == null) {
-            findMember = cacheRepository.findMemberAtCache(loginId);
-            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            findUser = cacheRepository.findUserAtCache(username);
+            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
             orders = findBucket.size();
         }
 
@@ -112,7 +118,7 @@ public class BucketService {
     }
 
     // TODO bucket, bucketCount, totalAmount, status
-    public LookUpBucketDto lookUpMyBucket(String loginId, String userEmail) {
+    public LookUpBucketDto lookUpMyBucket(Authentication authentication) {
         Map<String, Object> map = new HashMap<>();
         User findUser = null;
         Member findMember = null;
@@ -120,20 +126,23 @@ public class BucketService {
         Integer totalAmount = null;
         MemberRole role = null;
 
-        if (loginId == null) {
-            findUser = cacheRepository.findUserAtCache(userEmail);
-            myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
-            totalAmount = findTotalAmountByUserId(findUser.getId());
-        } else if (userEmail == null) {
-            findMember = cacheRepository.findMemberAtCache(loginId);
-            if (findMember == null) {
-                findMember = memberRepository.findByLoginId(loginId).orElse(null);
-            }
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            findMember = cacheRepository.findMemberAtCache(username);
             myBucket = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
             totalAmount = findTotalAmountByMemberId(findMember.getId());
             role = findMember.getRole();
+        }
+
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            findUser = cacheRepository.findUserAtCache(username);
+            myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
+
+            totalAmount = findTotalAmountByUserId(findUser.getId());
         }
 
         return new LookUpBucketDto(myBucket, myBucket.size(), totalAmount, role);

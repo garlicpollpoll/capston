@@ -6,10 +6,14 @@ import com.hello.capston.entity.Comment;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
+import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -21,8 +25,10 @@ public class CommentService {
     private final S3Uploader s3Uploader;
     private final CacheRepository cacheRepository;
     private final CommentRepository commentRepository;
+    private final WhatIsRoleService roleService;
 
-    public Comment saveComment(String itemId, CommentForm form, String loginId, String userEmail) {
+    @Transactional
+    public Comment saveComment(String itemId, CommentForm form, Authentication authentication) {
         Item findItem = itemService.findItem(itemId);
         Comment saveComment = null;
 
@@ -33,14 +39,18 @@ public class CommentService {
             throw new RuntimeException(e);
         }
 
-        if (loginId == null) {
-            User findUser = cacheRepository.findUserAtCache(userEmail);
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            User findUser = cacheRepository.findUserAtCache(username);
             Comment comment = new Comment(null, findUser, findItem, form.getComment(), imageUrl);
             saveComment = commentRepository.save(comment);
         }
 
-        if (userEmail == null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
+        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            Member findMember = cacheRepository.findMemberAtCache(username);
             Comment comment = new Comment(findMember, null, findItem, form.getComment(), imageUrl);
             saveComment = commentRepository.save(comment);
         }
