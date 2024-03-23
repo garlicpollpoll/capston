@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
@@ -98,12 +99,12 @@ public class LoginController {
         response.addHeader("Set-Cookie", cookie.toString());
 
         // NEW!
-        String sessionId = request.getSession(true).getId();
-        Cookie sessionCookie = new Cookie("SESSION-TOKEN", sessionId);
+        String uuid = UUID.randomUUID().toString();
+        Cookie sessionCookie = new Cookie("SESSIONID", uuid);
         sessionCookie.setHttpOnly(true);
         response.addCookie(sessionCookie);
         ResponseCookie responseSessionCookie =
-                ResponseCookie.from("SESSION-TOKEN", sessionId)
+                ResponseCookie.from("SESSIONID", uuid)
                         .sameSite("Lax")
                         .httpOnly(true)
                         .secure(false)
@@ -111,10 +112,6 @@ public class LoginController {
                         .maxAge(Duration.ofDays(7))
                         .build();
         response.addHeader("Set-Cookie", responseSessionCookie.toString());
-        RedisAndSession redisAndSession = RedisAndSession.builder().sessionId(sessionId).refreshToken(tokenInfo.getRefreshToken()).build();
-        redisTokenRepository.save(redisAndSession);
-        Member member = memberRepository.findByLoginId(form.getLoginId()).map(entity -> entity.update(sessionId)).orElse(null);
-        memberRepository.save(member);
         //NEW!
 
         return ResponseEntity.ok(new JwtAuthenticationResponse(tokenInfo.getAccessToken()));
