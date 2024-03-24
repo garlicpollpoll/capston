@@ -111,23 +111,7 @@ public class CouponService {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            User findUser = cacheRepository.findUserAtCache(username);
-            List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
-
-            for (TemporaryOrder temporaryOrder : findTOrder) {
-                totalPrice += temporaryOrder.getPrice() * temporaryOrder.getCount();
-            }
-
-            Coupon coupon = couponRepository.findByDetail(dto.getTarget()).orElse(null);
-
-            percentage = 1 - (coupon.getPercentage() * 0.01);
-
-            map.put("orderPrice", totalPrice * percentage);
-            map.put("discountPrice", totalPrice - (totalPrice * percentage));
-        }
-
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+        if (isRoleMember(memberRole)) {
             Member findMember = cacheRepository.findMemberAtCache(username);
             List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
@@ -144,5 +128,9 @@ public class CouponService {
         }
 
         return map;
+    }
+
+    private static boolean isRoleMember(MemberRole memberRole) {
+        return memberRole.equals(MemberRole.ROLE_MEMBER) || memberRole.equals(MemberRole.ROLE_SOCIAL);
     }
 }

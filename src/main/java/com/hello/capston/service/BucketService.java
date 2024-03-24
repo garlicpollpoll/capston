@@ -94,15 +94,9 @@ public class BucketService {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+        if (isRoleMember(memberRole)) {
             findMember = cacheRepository.findMemberAtCache(username);
             List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
-            orders = findBucket.size();
-        }
-
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            findUser = cacheRepository.findUserAtCache(username);
-            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
             orders = findBucket.size();
         }
 
@@ -130,7 +124,7 @@ public class BucketService {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+        if (isRoleMember(memberRole)) {
             findMember = cacheRepository.findMemberAtCache(username);
             myBucket = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
@@ -138,14 +132,11 @@ public class BucketService {
             role = findMember.getRole();
         }
 
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            findUser = cacheRepository.findUserAtCache(username);
-            myBucket = temporaryOrderService.findTOrderListByUserId(findUser.getId());
-
-            totalAmount = findTotalAmountByUserId(findUser.getId());
-        }
-
         return new LookUpBucketDto(myBucket, myBucket.size(), totalAmount, role);
+    }
+
+    private boolean isRoleMember(MemberRole memberRole) {
+        return memberRole.equals(MemberRole.ROLE_MEMBER) || memberRole.equals(MemberRole.ROLE_SOCIAL);
     }
 
     public void cancelBucket(BucketForm form) {

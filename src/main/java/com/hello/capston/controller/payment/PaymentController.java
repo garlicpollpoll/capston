@@ -80,44 +80,6 @@ public class PaymentController {
         alertService.alertAndRedirect(response, message, "/bucket");
     }
 
-//    @PostMapping("/paymentCompleteMember")
-//    public synchronized String paymentCompleteMember(@RequestBody PaymentCompleteDto dto) {
-//        Member findMember = memberService.findMemberById(Long.parseLong(dto.getMemberId()));
-//        Delivery delivery = deliveryService.save();
-//
-//        Order order = orderService.saveUsingMember(findMember, delivery, dto);
-//
-//        List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
-//
-//        orderItemService.saveUsingTemporaryOrder(findTOrder, order);
-//
-//        for (TemporaryOrder temporaryOrder : findTOrder) {
-//            temporaryOrderService.delete(temporaryOrder);
-//            bucketService.delete(temporaryOrder.getBucket());
-//        }
-//
-//        return "redirect:/paymentComplete";
-//    }
-//
-//    @PostMapping("/paymentCompleteUser")
-//    public synchronized String paymentCompleteUser(@RequestBody PaymentCompleteDto dto) {
-//        User findUser = userService.findUserById(Long.parseLong(dto.getUserId()));
-//        Delivery delivery = deliveryService.save();
-//
-//        Order order = orderService.saveUsingUser(findUser, delivery, dto);
-//
-//        List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
-//
-//        orderItemService.saveUsingTemporaryOrder(findTOrder, order);
-//
-//        for (TemporaryOrder temporaryOrder : findTOrder) {
-//            temporaryOrderService.delete(temporaryOrder);
-//            bucketService.delete(temporaryOrder.getBucket());
-//        }
-//
-//        return "redirect:/paymentComplete";
-//    }
-
     /**
      * 결제 완료 로직
      * @param dto
@@ -127,22 +89,11 @@ public class PaymentController {
     @ResponseBody
     @Transactional
     public Map<String, String> paymentComplete(@RequestBody PaymentCompleteDto dto) {
-        Member findMember = null;
-        User findUser = null;
-        List<TemporaryOrder> findTOrder = new ArrayList<>();
         Map<String, String> map = new HashMap<>();
-        MemberWhoGetCoupon findMyCoupon = null;
 
-        if (dto.getMemberId().equals("")) {
-            findUser = userService.findUserById(Long.parseLong(dto.getUserId()));
-            findMyCoupon = memberWhoGetCouponRepository.findByDetailAndUserId(dto.getTarget(), findUser.getId()).orElse(null);
-            findTOrder = temporaryOrderService.findTOrderListByUserId(findUser.getId());
-        }
-        else if (dto.getUserId().equals("")) {
-            findMember = memberService.findMemberById(Long.parseLong(dto.getMemberId()));
-            findMyCoupon = memberWhoGetCouponRepository.findByDetailAndMemberId(dto.getTarget(), findMember.getId()).orElse(null);
-            findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
-        }
+        Member findMember = memberService.findMemberById(Long.parseLong(dto.getMemberId()));
+        MemberWhoGetCoupon findMyCoupon = memberWhoGetCouponRepository.findByDetailAndMemberId(dto.getTarget(), findMember.getId()).orElse(null);
+        List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
         boolean checkDelete = checkDeleteTOrderAndBucket(findTOrder);
 
@@ -152,7 +103,7 @@ public class PaymentController {
                 bucketService.delete(temporaryOrder.getBucket());
             }
             Delivery delivery = deliveryService.save();
-            Order order = orderService.save(findUser, findMember, delivery, dto);
+            Order order = orderService.save(null, findMember, delivery, dto);
             orderItemService.saveUsingTemporaryOrder(findTOrder, order);
 
             if (findMyCoupon != null) {

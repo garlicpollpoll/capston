@@ -43,12 +43,6 @@ public class CommentService {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            User findUser = cacheRepository.findUserAtCache(username);
-            Comment comment = new Comment(null, findUser, findItem, form.getComment(), imageUrl);
-            saveComment = commentRepository.save(comment);
-        }
-
         if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
             Member findMember = cacheRepository.findMemberAtCache(username);
             Comment comment = new Comment(findMember, null, findItem, form.getComment(), imageUrl);

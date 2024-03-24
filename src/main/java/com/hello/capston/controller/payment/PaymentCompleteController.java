@@ -12,6 +12,8 @@ import com.hello.capston.service.TemporaryOrderService;
 import com.hello.capston.service.UserService;
 import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,15 +30,11 @@ public class PaymentCompleteController {
     /**
      * 결제 완료 페이지로 이동
      * @param model
-     * @param session
      * @return
      */
     @GetMapping("/paymentComplete")
-    public String paymentComplete(Model model, HttpSession session) {
-        String userEmail = (String) session.getAttribute("userEmail");
-        String loginId = (String) session.getAttribute("loginId");
-
-        LookUpPaymentCompleteDto dto = paymentService.paymentComplete(loginId, userEmail);
+    public String paymentComplete(Model model, Authentication authentication) {
+        LookUpPaymentCompleteDto dto = paymentService.paymentComplete(authentication);
 
         model.addAttribute("tOrder", dto.getFindOrderItem());
         // TODO 이거 Order 에 있는 Delivery 기준 status 보고 가져 와야 할 것 같다.

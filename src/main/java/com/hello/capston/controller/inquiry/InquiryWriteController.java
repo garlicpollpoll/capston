@@ -11,6 +11,8 @@ import com.hello.capston.service.InquiryService;
 import com.hello.capston.service.MemberService;
 import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,7 +30,6 @@ public class InquiryWriteController {
 
     private final InquiryService inquiryService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 문의하기 작성 페이지 redirect
@@ -46,24 +47,20 @@ public class InquiryWriteController {
      * 문의 등록
      * @param form
      * @param bindingResult
-     * @param session
-     * @param model
      * @return
      */
     @PostMapping("/inquiry_write")
     public String inquiryWritePost(@Validated @ModelAttribute("inquiryForm") InquiryForm form, BindingResult bindingResult,
-                                   HttpSession session, Model model) {
+                                   Authentication authentication) {
         if (bindingResult.hasErrors()) {
             return "inquiry_write";
         }
 
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-        User findUser = cacheRepository.findUserAtCache(userEmail);
-
-        inquiryService.saveInquiry(findMember, findUser, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
+        inquiryService.saveInquiry(findMemberAtCache, null, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
 
         return "redirect:/inquiry";
     }

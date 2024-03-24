@@ -44,19 +44,15 @@ public class ItemService {
     public void changeSizeToSoldOut(List<ItemDetail> findItemDetail) {
         for (ItemDetail itemDetail : findItemDetail) {
             // n개 남음 -> 0개 남음
-            if (itemDetail.getSize().contains("개남음")) {
-                if (itemDetail.getStock() == 0) {
-                    String substring = itemDetail.getSize().substring(0, 1);
-                    itemDetail.changeStockToSoldOut(substring + " (품절)");
-                }
+            if (itemDetail.getSize().contains("개남음") && itemDetail.getStock() == 0) {
+                String substring = itemDetail.getSize().substring(0, 1);
+                itemDetail.changeStockToSoldOut(substring + " (품절)");
             }
 
             // 0개 남음 -> 환불해서 n개 남음
-            if (itemDetail.getSize().contains("품절")) {
-                if (itemDetail.getStock() > 0) {
-                    String substring = itemDetail.getSize().substring(0, 1);
-                    itemDetail.changeStockToSoldOut(substring + " (" + itemDetail.getStock() + "개남음)");
-                }
+            if (itemDetail.getSize().contains("품절") && itemDetail.getStock() > 0) {
+                String substring = itemDetail.getSize().substring(0, 1);
+                itemDetail.changeStockToSoldOut(substring + " (" + itemDetail.getStock() + "개남음)");
             }
 
             // 아무것도 안붙어있는 것들이 10개 이하로 떨어지거나 0개가 되었을 때

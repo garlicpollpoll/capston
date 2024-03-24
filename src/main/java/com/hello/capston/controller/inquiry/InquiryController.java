@@ -10,6 +10,8 @@ import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +42,7 @@ public class InquiryController {
      */
     @GetMapping("/inquiry")
     public String inquiry(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow,
-                          HttpSession session) {
+                          Authentication authentication) {
         if (pageNow != 0) {
             pageNow -= 1;
         }
@@ -50,14 +52,12 @@ public class InquiryController {
 
         PagingDto pagingDto = pagingService.paging(10, pageNow, inquiryRepository.count());
 
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
-        String loginId = (String) session.getAttribute("loginId");
+        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
 
-        if (loginId != null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
-            model.addAttribute("status", findMember.getRole());
-        }
-
+        model.addAttribute("status", findMemberAtCache.getRole());
         model.addAttribute("inquiry", findAll);
         model.addAttribute("pageCount", pagingDto.getMap());
         model.addAttribute("lastPage", pagingDto.getTotalPage());

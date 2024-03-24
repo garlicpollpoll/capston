@@ -8,6 +8,8 @@ import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,9 +42,9 @@ public class LikeToBucketController {
      */
     @ResponseBody
     @PostMapping("/go_to_bucket")
-    public Map<String, String> goToBucket(@RequestBody LikeForm form, HttpSession session) {
-        String loginId = (String) session.getAttribute("loginId");
-        String userEmail = (String) session.getAttribute("userEmail");
+    public Map<String, String> goToBucket(@RequestBody LikeForm form, Authentication authentication) {
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
         Map<String, String> map = new HashMap<>();
 
@@ -52,18 +54,10 @@ public class LikeToBucketController {
 
         Integer orders = null;
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-        User findUser = cacheRepository.findUserAtCache(userEmail);
+        Member findMember = cacheRepository.findMemberAtCache(username);
 
-        if (findMember == null) {
-            List<Bucket> findBucket = bucketService.findBucketByUserId(findUser.getId());
-            orders = findBucket.size();
-        }
-
-        if (findUser == null) {
-            List<Bucket> findBucket = bucketService.findBucketByMemberId(findMember.getId());
-            orders = findBucket.size();
-        }
+        List<Bucket> findBucket = bucketService.findBucketByMemberId(findMember.getId());
+        orders = findBucket.size();
 
         if (orders == null) {
             orders = 1;
@@ -72,7 +66,7 @@ public class LikeToBucketController {
         boolean isStockZero = itemService.checkItemStock(findItem, findLike.getSize());
 
         if (isStockZero) {
-            Bucket bucket = bucketService.save(findMember, findUser, findItem, orders);
+            Bucket bucket = bucketService.save(findMember, null, findItem, orders);
 
             temporaryOrderService.save(bucket, findItem.getPrice(), findLike.getSize());
 

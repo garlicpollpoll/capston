@@ -23,9 +23,7 @@ public class LikeListController {
      * @return
      */
     @GetMapping("/like_list")
-    public String likeList(HttpSession session, Model model, Authentication authentication) {
-        String userEmail = (String) session.getAttribute("userEmail");
-        String loginId = (String) session.getAttribute("loginId");
+    public String likeList(Model model, Authentication authentication) {
 
         LookUpLikeDto dto = likeService.lookUpLikeList(authentication);
 

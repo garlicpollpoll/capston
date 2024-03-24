@@ -11,6 +11,8 @@ import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,17 +42,16 @@ public class MostPopularItemController {
      */
     @GetMapping("/item_list_popular")
     public String popularItem(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow,
-                              HttpSession session) {
+                              Authentication authentication) {
         if (pageNow != 0) {
             pageNow -= 1;
         }
 
-        String loginId = (String) session.getAttribute("loginId");
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
-        if (loginId != null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
-            model.addAttribute("status", findMember.getRole());
-        }
+        Member findMember = cacheRepository.findMemberAtCache(username);
+        model.addAttribute("status", findMember.getRole());
 
         Pageable page = PageRequest.of(pageNow, 9);
         List<Item> findAll = itemRepository.findAllItemByCount(page);

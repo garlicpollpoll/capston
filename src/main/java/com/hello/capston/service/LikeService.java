@@ -52,49 +52,26 @@ public class LikeService {
         likeRepository.delete(like);
     }
 
-    public Likes saveLike(LikeFormWithSize form, Authentication authentication) {
-        Member findMember = null;
-        User findUser = null;
-
-        Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
+    public LookUpLikeDto lookUpLikeList(Authentication authentication) {
+        List<Likes> findLikes = new ArrayList<>();
+        MemberRole role = null;
 
         MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
-            findMember = cacheRepository.findMemberAtCache(username);
-        }
-
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            findUser = cacheRepository.findUserAtCache(username);
-        }
-
-        Likes like = new Likes(findMember, findUser, findItem, "좋아요", form.getSize());
-
-        return likeRepository.save(like);
-    }
-
-    public LookUpLikeDto lookUpLikeList(Authentication authentication) {
-        List<Likes> findLikes = new ArrayList<>();
-        MemberRole role = null;
-
-        boolean isRoleMember = authentication.getAuthorities().stream().anyMatch(r -> r.equals("ROLE_MEMBER"));
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-
-        if (isRoleMember) {
-            Member findMember = cacheRepository.findMemberAtCache(principal.getUsername());
+        if (isRoleMember(memberRole)) {
+            Member findMember = cacheRepository.findMemberAtCache(username);
 
             findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
             role = findMember.getRole();
         }
-        else {
-            User findUser = cacheRepository.findUserAtCache(principal.getUsername());
-
-            findLikes = likeRepository.findMyLikesByUserId(findUser.getId());
-        }
 
         return new LookUpLikeDto(findLikes, role);
+    }
+
+    private boolean isRoleMember(MemberRole memberRole) {
+        return memberRole.equals(MemberRole.ROLE_MEMBER) || memberRole.equals(MemberRole.ROLE_SOCIAL);
     }
 
     // TODO return 값은 findMember, findUser, findItem, orders, findLike
@@ -105,19 +82,16 @@ public class LikeService {
         Member findMember = null;
         User findUser = null;
 
-        boolean isRoleMember = authentication.getAuthorities().stream().anyMatch(r -> r.equals("ROLE_MEMBER"));
+        MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
         Integer orders = 0;
 
-        if (isRoleMember) {
-            findMember = cacheRepository.findMemberAtCache(principal.getUsername());
-            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
-            orders = findBucket.size();
-        }
-        else {
-            findUser = cacheRepository.findUserAtCache(principal.getUsername());
-            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
+        if (isRoleMember(memberRole)) {
+            findMember = cacheRepository.findMemberAtCache(username);
+            Long memberId = findMember.getId();
+            List<Bucket> findBucket = bucketRepository.findByMemberId(memberId);
             orders = findBucket.size();
         }
 

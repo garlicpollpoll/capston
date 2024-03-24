@@ -11,6 +11,8 @@ import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -41,7 +43,6 @@ public class ItemController {
     private final ClickDuplicationPreventService clickService;
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 아이템 리스트 조회
@@ -51,7 +52,7 @@ public class ItemController {
      * @return
      */
     @GetMapping("/item_list")
-    public String itemList(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow, HttpSession session) {
+    public String itemList(Model model, @RequestParam(value = "page", defaultValue = "0") Integer pageNow, Authentication authentication) {
         if (pageNow != 0) {
             pageNow -= 1;
         }
@@ -61,8 +62,10 @@ public class ItemController {
 
         PagingDto pagingDto = pagingService.paging(9, pageNow, itemRepository.count());
 
-        String loginId = (String) session.getAttribute("loginId");
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        Member findMember = cacheRepository.findMemberAtCache(username);
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());

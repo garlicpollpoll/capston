@@ -38,27 +38,31 @@ public class OrderItemService {
             // 때문에 최종적으로 save() 메서드가 호출되는 곳이 동시성 문제에서 해결될 수 있음
             List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(findItem.getId());
 
-            try {
-                for (ItemDetail itemDetail : findItemDetail) {
-                    if (temporaryOrder.getSize().equals(itemDetail.getSize()) && itemDetail.getStock() > 0) {
-                        itemDetail.changeStock(temporaryOrder.getCount());
-                        itemDetailRepository.save(itemDetail);
-                    }
-                    else if (temporaryOrder.getSize().equals(itemDetail.getSize()) && itemDetail.getStock() <= 0) {
-                        flag = false;
-                    }
-                }
+            ItemDetail itemDetailWithFilter =
+                    findItemDetail.stream()
+                            .filter(itemDetail -> temporaryOrder.getSize().equals(itemDetail.getSize()))
+                            .findAny()
+                            .orElse(new ItemDetail());
 
-                if (flag) {
-                    orderItemRepository.save(orderItem);
-                }
-                else {
-                    throw new TransactionException("상품의 재고가 없습니다.");
-                }
-            } catch (TransactionException e) {
+            if (itemStockIsOverZero(itemDetailWithFilter)) {
+                itemDetailWithFilter.changeStock(temporaryOrder.getCount());
+                itemDetailRepository.save(itemDetailWithFilter);
+            }
+            else {
+                flag = false;
+            }
+
+            if (flag) {
+                orderItemRepository.save(orderItem);
+            }
+            else {
                 map.put("message", "상품의 재고가 없습니다.");
             }
         }
         return map;
+    }
+
+    private boolean itemStockIsOverZero(ItemDetail itemDetailWithFilter) {
+        return itemDetailWithFilter.getStock() > 0;
     }
 }

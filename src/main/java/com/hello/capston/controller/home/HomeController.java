@@ -42,20 +42,8 @@ public class HomeController {
      * @return
      */
     @GetMapping("/")
-    public String home(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        String loginId = (String) session.getAttribute("loginId");
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
-
+    public String home(Model model, HttpServletRequest request) {
         HomeDto dto = homeService.homeSetting();
-
-        if (dto.getIsMemberOrUser() != null && dto.getSessionAttribute() != null && dto.getRole() != null) {
-            if (dto.getIsMemberOrUser().equals("loginId")) {
-                session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
-            }
-            else {
-                session.setAttribute(dto.getIsMemberOrUser(), dto.getSessionAttribute());
-            }
-        }
 
         model.addAttribute("status", dto.getRole());
 
@@ -65,13 +53,6 @@ public class HomeController {
 
         model.addAttribute("newItem", findNewItem);
         model.addAttribute("popularItem", findPopularItem);
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                System.out.println(cookie.getName());
-            }
-        }
 
         return "index";
     }

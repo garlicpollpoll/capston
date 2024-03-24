@@ -5,16 +5,18 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.entity.User;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.MemberRepository;
+import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class HomeService {
 
-    private final MemberRepository memberRepository;
+    private final CacheRepository cacheRepository;
 
     public HomeDto homeSetting() {
         String sessionAttribute = null;
@@ -24,16 +26,14 @@ public class HomeService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.isAuthenticated()) {
-            String name = authentication.getName();
+            UserDetails principal = (UserDetails) authentication.getPrincipal();
+            String username = principal.getUsername();
 
-            if (name.equals("anonymousUser")) {
-                Member findMemberFromAuthentication = memberRepository.findByLoginId(name).orElse(null);
-                if (findMemberFromAuthentication != null) {
-                    sessionAttribute = findMemberFromAuthentication.getUsername();
-                    role = findMemberFromAuthentication.getRole();
-                    isMemberOrUser = "loginId";
-                }
-            }
+            Member memberAtCache = cacheRepository.findMemberAtCache(username);
+
+            sessionAttribute = memberAtCache.getUsername();
+            role = memberAtCache.getRole();
+            isMemberOrUser = "loginId";
         }
         return new HomeDto(sessionAttribute, isMemberOrUser, role);
     }
