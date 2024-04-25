@@ -1,7 +1,10 @@
 package com.hello.capston.service;
 
+import com.hello.capston.absctracts.policy.Policy;
+import com.hello.capston.absctracts.policy.config.PolicyManager;
 import com.hello.capston.dto.dto.CouponDto;
 import com.hello.capston.dto.dto.SelectCouponDto;
+import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.CouponRepository;
@@ -28,16 +31,25 @@ public class CouponService {
     private final TemporaryOrderService temporaryOrderService;
     private final WhatIsRoleService roleService;
 
+    private final PolicyManager policyManager;
+
 
     @Transactional
     public CouponDto isCoupon(Authentication authentication, String code) {
         Map<String, String> map = new HashMap<>();
         Coupon coupon = couponRepository.findByCode(code).orElse(null);
         boolean isCouponHas = false;
+        CouponSettingDto couponSettingDto = new CouponSettingDto();
 
         MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
+
+        couponSettingDto.setUsername(username);
+        couponSettingDto.setCoupon(coupon);
+        couponSettingDto.setCode(code);
+
+        Policy policy = policyManager.policy(memberRole);
 
         if (coupon == null) {
             map.put("message", "존재하지 않는 쿠폰입니다.");
@@ -45,61 +57,9 @@ public class CouponService {
             return new CouponDto(map, isCouponHas);
         }
 
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
-            Member findMember = cacheRepository.findMemberAtCache(username);
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberId(findMember.getId());
+        CouponDto couponDto = policy.isCoupon(couponSettingDto);
 
-            if (findCoupon.isEmpty()) {
-                memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(null, findMember, coupon, 0));
-                map.put("message", "쿠폰이 등록되었습니다.");
-                map.put("url", "/");
-                return new CouponDto(map, isCouponHas);
-            }
-
-            for (MemberWhoGetCoupon memberWhoGetCoupon : findCoupon) {
-                if (memberWhoGetCoupon.getCoupon().getCode().equals(code)) {
-                    map.put("message", "이미 가지고 있는 쿠폰입니다.");
-                    map.put("url", "/coupon");
-                    isCouponHas = true;
-                    return new CouponDto(map, isCouponHas);
-                }
-                else {
-                    memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(null, findMember, coupon, 0));
-                    map.put("message", "쿠폰이 등록되었습니다.");
-                    map.put("url", "/");
-                    return new CouponDto(map, isCouponHas);
-                }
-            }
-        }
-
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            User findUser = cacheRepository.findUserAtCache(username);
-            List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByUserId(findUser.getId());
-
-            if (findCoupon.isEmpty()) {
-                memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(findUser, null, coupon, 0));
-                map.put("message", "쿠폰이 등록되었습니다.");
-                map.put("url", "/");
-                return new CouponDto(map, isCouponHas);
-            }
-
-            for (MemberWhoGetCoupon memberWhoGetCoupon : findCoupon) {
-                if (memberWhoGetCoupon.getCoupon().getCode().equals(code)) {
-                    map.put("message", "이미 가지고 있는 쿠폰입니다.");
-                    map.put("url", "/coupon");
-                    isCouponHas = true;
-                    return new CouponDto(map, isCouponHas);
-                }
-                else {
-                    memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(findUser, null, coupon, 0));
-                    map.put("message", "쿠폰이 등록되었습니다.");
-                    map.put("url", "/");
-                    return new CouponDto(map, isCouponHas);
-                }
-            }
-        }
-
-        return new CouponDto(map, isCouponHas);
+        return couponDto;
     }
 
     public Map<String, Double> selectCoupon(Authentication authentication, SelectCouponDto dto) {
@@ -110,6 +70,8 @@ public class CouponService {
         MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
+
+        Policy policy = policyManager.policy(memberRole);
 
         if (isRoleMember(memberRole)) {
             Member findMember = cacheRepository.findMemberAtCache(username);

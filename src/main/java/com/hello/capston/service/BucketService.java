@@ -32,10 +32,6 @@ public class BucketService {
         return bucketRepository.findByMemberId(memberId);
     }
 
-    public List<Bucket> findBucketByUserId(Long userId) {
-        return bucketRepository.findByUserId(userId);
-    }
-
     public Bucket findById(Long bucketId) {
         return bucketRepository.findById(bucketId).orElse(null);
     }
@@ -46,10 +42,6 @@ public class BucketService {
 
     public int findTotalAmountByMemberId(Long memberId) {
         return bucketRepository.findTotalAmountByMemberId(memberId).orElse(0);
-    }
-
-    public int findTotalAmountByUserId(Long userId) {
-        return bucketRepository.findTotalAmountByUserId(userId).orElse(0);
     }
 
     public Bucket save(Member member, User user, Item item, int orders) {
@@ -111,7 +103,6 @@ public class BucketService {
         return bucket;
     }
 
-    // TODO bucket, bucketCount, totalAmount, status
     public LookUpBucketDto lookUpMyBucket(Authentication authentication) {
         Map<String, Object> map = new HashMap<>();
         User findUser = null;
