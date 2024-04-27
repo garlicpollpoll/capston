@@ -1,7 +1,8 @@
-package com.hello.capston.absctracts.policy.impl;
+package com.hello.capston.absctracts.policy.impl.social;
 
-import com.hello.capston.absctracts.policy.Policy;
+import com.hello.capston.absctracts.policy.CouponPolicy;
 import com.hello.capston.dto.dto.CouponDto;
+import com.hello.capston.dto.dto.SelectCouponDto;
 import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.entity.MemberWhoGetCoupon;
 import com.hello.capston.entity.User;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class UserPolicy implements Policy {
+public class UserCouponPolicy implements CouponPolicy {
 
     private final CacheRepository cacheRepository;
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
@@ -53,7 +54,7 @@ public class UserPolicy implements Policy {
     }
 
     @Override
-    public Map<String, Double> selectCoupon() {
+    public Map<String, Double> selectCoupon(String username, SelectCouponDto dto) {
         return null;
     }
 }

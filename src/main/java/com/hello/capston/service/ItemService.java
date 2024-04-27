@@ -67,12 +67,6 @@ public class ItemService {
         }
     }
 
-    @Transactional
-    public void addClick(Item findItem) {
-        findItem.addClick();
-        log.info("click : {}", findItem.getClick());
-    }
-
     public boolean checkItemStock(Item findItem, String size) {
         ItemDetail findItemDetail = itemDetailRepository.findByItemIdAndSize(findItem.getId(), size);
 

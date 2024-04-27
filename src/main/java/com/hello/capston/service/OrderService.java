@@ -18,22 +18,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    public Order saveUsingMember(Member member, Delivery delivery, PaymentCompleteDto dto) {
-        Order order = new Order(member, null, delivery, LocalDateTime.now(), OrderStatus.ORDER, dto.getZipcode(), dto.getStreet(), dto.getDetailAddress());
-
-        orderRepository.save(order);
-
-        return order;
-    }
-
-    public Order saveUsingUser(User user, Delivery delivery, PaymentCompleteDto dto) {
-        Order order = new Order(null, user, delivery, LocalDateTime.now(), OrderStatus.ORDER, dto.getZipcode(), dto.getStreet(), dto.getDetailAddress());
-
-        orderRepository.save(order);
-
-        return order;
-    }
-
     public Order save(User user, Member member, Delivery delivery, PaymentCompleteDto dto) {
         Order order = new Order(member, user, delivery, LocalDateTime.now(), OrderStatus.ORDER, dto.getZipcode(), dto.getStreet(), dto.getDetailAddress());
 

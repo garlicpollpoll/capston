@@ -2,6 +2,8 @@ package com.hello.capston.service.iamport;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.hello.capston.absctracts.policy.PaymentPolicy;
+import com.hello.capston.absctracts.policy.config.PolicyManager;
 import com.hello.capston.dto.dto.payment.LookUpPaymentCompleteDto;
 import com.hello.capston.dto.dto.payment.LookUpPaymentDto;
 import com.hello.capston.entity.*;
@@ -44,6 +46,8 @@ public class PaymentService {
     private final ItemDetailRepository itemDetailRepository;
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
     private final WhatIsRoleService roleService;
+
+    private final PolicyManager policyManager;
 
     public String getToken() throws IOException {
         HttpsURLConnection conn = null;
@@ -121,100 +125,26 @@ public class PaymentService {
 
     @Transactional
     public LookUpPaymentCompleteDto paymentComplete(Authentication authentication) {
-        int orderPrice = 0;
-        Member findMember = null;
-        User findUser = null;
-        List<OrderItem> findOrderItem = new ArrayList<>();
-        MemberRole role = null;
-
         MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            findUser = cacheRepository.findUserAtCache(username);
-            findOrderItem = orderItemRepository.findOrdersByUserId(findUser.getId());
-            for (OrderItem orderItem : findOrderItem) {
-                orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
-            }
-        }
+        PaymentPolicy policy = policyManager.paymentPolicy(memberRole);
+        LookUpPaymentCompleteDto dto = policy.paymentComplete(username);
 
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
-            findMember = cacheRepository.findMemberAtCache(username);
-            findOrderItem = orderItemRepository.findOrdersByMemberId(findMember.getId());
-            for (OrderItem orderItem : findOrderItem) {
-                orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
-            }
-            role = findMember.getRole();
-        }
-
-        return new LookUpPaymentCompleteDto(findOrderItem, role, orderPrice);
+        return dto;
     }
 
     @Transactional
     public LookUpPaymentDto lookUpPayment(Authentication authentication) {
-        int orderPrice = 0;
-        boolean checkStock = true;
-        Member findMember = null;
-        User findUser = null;
-        List<TemporaryOrder> findTOrder = new ArrayList<>();
-        List<MemberWhoGetCoupon> findCoupon = new ArrayList<>();
-        String itemName = null;
-        String message = null;
-        MemberRole role = null;
-
         MemberRole memberRole = roleService.whatIsRole(authentication);
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
-            findUser = cacheRepository.findUserAtCache(username);
-            List<Bucket> findBucket = bucketRepository.findByUserId(findUser.getId());
+        PaymentPolicy policy = policyManager.paymentPolicy(memberRole);
+        LookUpPaymentDto dto = policy.lookUpPayment(username);
 
-            for (Bucket bucket : findBucket) {
-                TemporaryOrder findTemporaryOrder = temporaryOrderRepository.findTemporaryOrderByBucketId(bucket.getId());
-
-                List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(bucket.getItem().getId());
-
-                Map<String, Object> map = checkStockAndRedirect(findTemporaryOrder, findItemDetail);
-                checkStock = (boolean) map.get("checkStock");
-                message = (String) map.get("message");
-
-                orderPrice += findTemporaryOrder.getCount() * findTemporaryOrder.getPrice();
-                itemName = bucket.getItem().getItemName();
-            }
-
-            findTOrder = temporaryOrderRepository.findTemporaryOrderByUserId(findUser.getId());
-
-            findCoupon = memberWhoGetCouponRepository.findCouponByUserIdAndCheckUsed(findUser.getId(), 0);
-        }
-
-        if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
-            findMember = cacheRepository.findMemberAtCache(username);
-            List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
-
-            for (Bucket bucket : findBucket) {
-                TemporaryOrder findTemporaryOrder = temporaryOrderRepository.findTemporaryOrderByBucketId(bucket.getId());
-
-
-                List<ItemDetail> findItemDetail = itemDetailRepository.findByItemId(bucket.getItem().getId());
-
-                Map<String, Object> map = checkStockAndRedirect(findTemporaryOrder, findItemDetail);
-                checkStock = (boolean) map.get("checkStock");
-                message = (String) map.get("message");
-
-                orderPrice += findTemporaryOrder.getCount() * findTemporaryOrder.getPrice();
-                itemName = bucket.getItem().getItemName();
-            }
-
-            role = findMember.getRole();
-
-            findTOrder = temporaryOrderRepository.findTemporaryOrderByMemberId(findMember.getId());
-
-            findCoupon = memberWhoGetCouponRepository.findCouponByMemberIdAndCheckUsed(findMember.getId(), 0);
-        }
-
-        return new LookUpPaymentDto(findCoupon, findTOrder, orderPrice, findTOrder.size(), itemName, role, checkStock, findMember, findUser, message);
+        return dto;
     }
 
     private Map<String, Object> checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail) {

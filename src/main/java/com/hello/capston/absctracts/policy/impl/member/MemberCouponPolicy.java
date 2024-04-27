@@ -1,12 +1,15 @@
-package com.hello.capston.absctracts.policy.impl;
+package com.hello.capston.absctracts.policy.impl.member;
 
-import com.hello.capston.absctracts.policy.Policy;
+import com.hello.capston.absctracts.policy.CouponPolicy;
 import com.hello.capston.dto.dto.CouponDto;
+import com.hello.capston.dto.dto.SelectCouponDto;
 import com.hello.capston.dto.dto.coupon.CouponSettingDto;
-import com.hello.capston.entity.Member;
-import com.hello.capston.entity.MemberWhoGetCoupon;
+import com.hello.capston.entity.*;
+import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.MemberWhoGetCouponRepository;
+import com.hello.capston.repository.OrderItemRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.TemporaryOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +19,12 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class MemberPolicy implements Policy {
+public class MemberCouponPolicy implements CouponPolicy {
 
     private final CacheRepository cacheRepository;
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
+    private final CouponRepository couponRepository;
+    private final TemporaryOrderService temporaryOrderService;
 
     @Override
     public CouponDto isCoupon(CouponSettingDto dto) {
@@ -53,7 +58,25 @@ public class MemberPolicy implements Policy {
     }
 
     @Override
-    public Map<String, Double> selectCoupon() {
-        return null;
+    public Map<String, Double> selectCoupon(String username, SelectCouponDto dto) {
+        Map<String, Double> map = new HashMap<>();
+        int totalPrice = 0;
+        double percentage = 0;
+
+        Member findMember = cacheRepository.findMemberAtCache(username);
+        List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
+
+        for (TemporaryOrder temporaryOrder : findTOrder) {
+            totalPrice += temporaryOrder.getPrice() * temporaryOrder.getCount();
+        }
+
+        Coupon coupon = couponRepository.findByDetail(dto.getTarget()).orElse(null);
+
+        percentage = 1 - (coupon.getPercentage() * 0.01);
+
+        map.put("orderPrice", totalPrice * percentage);
+        map.put("discountPrice", totalPrice - (totalPrice * percentage));
+
+        return map;
     }
 }

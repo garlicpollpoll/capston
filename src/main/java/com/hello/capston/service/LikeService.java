@@ -73,28 +73,4 @@ public class LikeService {
     private boolean isRoleMember(MemberRole memberRole) {
         return memberRole.equals(MemberRole.ROLE_MEMBER) || memberRole.equals(MemberRole.ROLE_SOCIAL);
     }
-
-    // TODO return 값은 findMember, findUser, findItem, orders, findLike
-    public LikeToBucketDto likeToBucket(LikeForm form, Authentication authentication) {
-        Likes findLike = likeRepository.findById(Long.parseLong(form.getId())).orElse(null);
-        Item findItem = itemRepository.findById(findLike.getItem().getId()).orElse(null);
-
-        Member findMember = null;
-        User findUser = null;
-
-        MemberRole memberRole = roleService.whatIsRole(authentication);
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-        String username = principal.getUsername();
-
-        Integer orders = 0;
-
-        if (isRoleMember(memberRole)) {
-            findMember = cacheRepository.findMemberAtCache(username);
-            Long memberId = findMember.getId();
-            List<Bucket> findBucket = bucketRepository.findByMemberId(memberId);
-            orders = findBucket.size();
-        }
-
-        return new LikeToBucketDto(findMember, findUser, findItem, orders, findLike);
-    }
 }

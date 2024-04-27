@@ -14,16 +14,8 @@ public class TemporaryOrderService {
 
     private final TemporaryOrderRepository temporaryOrderRepository;
 
-    public TemporaryOrder findByBucketId(Long bucketId) {
-        return temporaryOrderRepository.findTemporaryOrderByBucketId(bucketId);
-    }
-
     public List<TemporaryOrder> findTOrderListByMemberId(Long memberId) {
         return temporaryOrderRepository.findTemporaryOrderByMemberId(memberId);
-    }
-
-    public List<TemporaryOrder> findTOrderListByUserId(Long userId) {
-        return temporaryOrderRepository.findTemporaryOrderByUserId(userId);
     }
 
     public TemporaryOrder save(Bucket bucket, int price, String size) {
