@@ -1,4 +1,4 @@
-package com.hello.capston.dto.dto;
+package com.hello.capston.dto.dto.uitls;
 
 import com.hello.capston.entity.enums.MemberRole;
 import lombok.Data;

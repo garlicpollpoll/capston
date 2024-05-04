@@ -5,16 +5,10 @@ import com.hello.capston.dto.form.LikeFormWithSize;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Likes;
 import com.hello.capston.entity.Member;
-import com.hello.capston.entity.User;
 import com.hello.capston.repository.ItemRepository;
-import com.hello.capston.repository.LikeRepository;
 import com.hello.capston.repository.MemberRepository;
-import com.hello.capston.repository.UserRepository;
 import com.hello.capston.repository.cache.CacheRepository;
-import com.hello.capston.service.ItemService;
 import com.hello.capston.service.LikeService;
-import com.hello.capston.service.MemberService;
-import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor

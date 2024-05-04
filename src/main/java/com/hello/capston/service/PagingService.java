@@ -1,9 +1,8 @@
 package com.hello.capston.service;
 
-import com.hello.capston.dto.dto.PagingDto;
+import com.hello.capston.dto.dto.uitls.PagingDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

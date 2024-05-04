@@ -1,11 +1,10 @@
 package com.hello.capston.controller.payment;
 
 import com.hello.capston.dto.dto.payment.LookUpPaymentDto;
-import com.hello.capston.dto.dto.payment.PaymentCompleteDto;
+import com.hello.capston.dto.request.payment.PaymentCompleteDto;
 import com.hello.capston.dto.dto.payment.PaymentDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.*;
-import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +36,6 @@ public class PaymentController {
     private final TemporaryOrderService temporaryOrderService;
     private final BucketService bucketService;
     private final MemberService memberService;
-    private final UserService userService;
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final AlertService alertService;

@@ -1,18 +1,13 @@
 package com.hello.capston.service;
 
-import com.hello.capston.dto.dto.like.LikeToBucketDto;
 import com.hello.capston.dto.dto.like.LookUpLikeDto;
-import com.hello.capston.dto.form.LikeForm;
-import com.hello.capston.dto.form.LikeFormWithSize;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.BucketRepository;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
-import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

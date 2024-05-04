@@ -1,8 +1,8 @@
 package com.hello.capston.absctracts.policy.impl.social;
 
 import com.hello.capston.absctracts.policy.CouponPolicy;
-import com.hello.capston.dto.dto.CouponDto;
-import com.hello.capston.dto.dto.SelectCouponDto;
+import com.hello.capston.dto.dto.coupon.CouponDto;
+import com.hello.capston.dto.request.SelectCouponDto;
 import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.entity.MemberWhoGetCoupon;
 import com.hello.capston.entity.User;

@@ -1,15 +1,9 @@
 package com.hello.capston.controller.inquiry;
 
 import com.hello.capston.dto.form.InquiryForm;
-import com.hello.capston.entity.Inquiry;
 import com.hello.capston.entity.Member;
-import com.hello.capston.entity.User;
-import com.hello.capston.repository.InquiryRepository;
-import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.InquiryService;
-import com.hello.capston.service.MemberService;
-import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Controller

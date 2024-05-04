@@ -1,4 +1,4 @@
-package com.hello.capston.dto.dto.payment;
+package com.hello.capston.dto.request.payment;
 
 import lombok.Data;
 

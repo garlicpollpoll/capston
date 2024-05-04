@@ -1,6 +1,6 @@
 package com.hello.capston.controller.send;
 
-import com.hello.capston.dto.dto.SendEmailDto;
+import com.hello.capston.dto.dto.uitls.SendEmailDto;
 import com.hello.capston.service.email.AsyncService;
 import com.hello.capston.service.email.MailService;
 import lombok.RequiredArgsConstructor;

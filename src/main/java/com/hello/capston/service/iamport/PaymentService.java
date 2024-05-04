@@ -146,19 +146,4 @@ public class PaymentService {
 
         return dto;
     }
-
-    private Map<String, Object> checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail) {
-        Map<String, Object> map = new HashMap<>();
-        for (ItemDetail itemDetail : findItemDetail) {
-            if (findTemporaryOrder.getSize().equals(itemDetail.getSize())) {
-                if (itemDetail.getStock() - findTemporaryOrder.getCount() < 0) {
-                    map.put("checkStock", false);
-                    map.put("message", "재고가 남아있지 않습니다. 상품이름 : " + itemDetail.getItem().getViewName() + "/ 남은 재고 : " + itemDetail.getStock());
-                    return map;
-                }
-            }
-        }
-        map.put("checkStock", true);
-        return map;
-    }
 }

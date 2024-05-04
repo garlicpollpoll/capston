@@ -1,14 +1,9 @@
 package com.hello.capston.controller.send;
 
-import com.hello.capston.dto.dto.CheckNumberDto;
-import com.hello.capston.dto.form.JoinForm;
+import com.hello.capston.dto.request.CheckNumberDto;
 import com.hello.capston.service.AlertService;
-import com.hello.capston.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;

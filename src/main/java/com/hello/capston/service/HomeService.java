@@ -1,10 +1,8 @@
 package com.hello.capston.service;
 
-import com.hello.capston.dto.dto.HomeDto;
+import com.hello.capston.dto.dto.uitls.HomeDto;
 import com.hello.capston.entity.Member;
-import com.hello.capston.entity.User;
 import com.hello.capston.entity.enums.MemberRole;
-import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

@@ -4,8 +4,6 @@ import com.hello.capston.jwt.JwtAuthenticationFilter;
 import com.hello.capston.jwt.JwtTokenProvider;
 import com.hello.capston.jwt.OAuth2LoginSuccessHandler;
 import com.hello.capston.jwt.gitbefore.RedisTokenRepository;
-import com.hello.capston.jwt.service.JwtService;
-import com.hello.capston.jwtDeprecated.JwtUtil;
 import com.hello.capston.principal.PrincipalDetailService;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.UserRepository;

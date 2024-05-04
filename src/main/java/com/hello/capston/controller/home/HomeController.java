@@ -1,6 +1,6 @@
 package com.hello.capston.controller.home;
 
-import com.hello.capston.dto.dto.HomeDto;
+import com.hello.capston.dto.dto.uitls.HomeDto;
 import com.hello.capston.dto.form.UploadForm;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;

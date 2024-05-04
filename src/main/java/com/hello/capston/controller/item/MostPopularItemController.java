@@ -1,12 +1,11 @@
 package com.hello.capston.controller.item;
 
-import com.hello.capston.dto.dto.PagingDto;
+import com.hello.capston.dto.dto.uitls.PagingDto;
 import com.hello.capston.entity.Item;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
-import com.hello.capston.service.MemberService;
 import com.hello.capston.service.PagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpSession;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor

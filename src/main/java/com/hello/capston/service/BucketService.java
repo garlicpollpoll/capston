@@ -1,6 +1,6 @@
 package com.hello.capston.service;
 
-import com.hello.capston.dto.dto.ChangeCountDto;
+import com.hello.capston.dto.request.ChangeCountDto;
 import com.hello.capston.dto.dto.bucket.LookUpBucketDto;
 import com.hello.capston.dto.form.BucketForm;
 import com.hello.capston.entity.*;

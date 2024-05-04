@@ -1,6 +1,6 @@
 package com.hello.capston.service;
 
-import com.hello.capston.dto.dto.payment.PaymentCompleteDto;
+import com.hello.capston.dto.request.payment.PaymentCompleteDto;
 import com.hello.capston.entity.Delivery;
 import com.hello.capston.entity.Member;
 import com.hello.capston.entity.Order;

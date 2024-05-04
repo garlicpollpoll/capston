@@ -1,7 +1,7 @@
 package com.hello.capston.controller.coupon;
 
 import com.hello.capston.S3.S3Uploader;
-import com.hello.capston.dto.dto.CouponUploadDto;
+import com.hello.capston.dto.request.CouponUploadDto;
 import com.hello.capston.entity.Coupon;
 import com.hello.capston.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;

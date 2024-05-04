@@ -1,17 +1,12 @@
 package com.hello.capston.controller.coupon;
 
-import com.hello.capston.dto.dto.CouponDto;
+import com.hello.capston.dto.dto.coupon.CouponDto;
 import com.hello.capston.entity.Coupon;
 import com.hello.capston.entity.Member;
-import com.hello.capston.entity.MemberWhoGetCoupon;
-import com.hello.capston.entity.User;
 import com.hello.capston.repository.CouponRepository;
-import com.hello.capston.repository.MemberWhoGetCouponRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.AlertService;
 import com.hello.capston.service.CouponService;
-import com.hello.capston.service.MemberService;
-import com.hello.capston.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;

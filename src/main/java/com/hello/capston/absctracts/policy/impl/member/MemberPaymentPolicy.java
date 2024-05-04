@@ -2,7 +2,6 @@ package com.hello.capston.absctracts.policy.impl.member;
 
 import com.hello.capston.absctracts.policy.PaymentPolicy;
 import com.hello.capston.absctracts.policy.impl.utils.CheckStockUtils;
-import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.dto.dto.payment.LookUpPaymentCompleteDto;
 import com.hello.capston.dto.dto.payment.LookUpPaymentDto;
 import com.hello.capston.entity.*;

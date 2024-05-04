@@ -2,14 +2,12 @@ package com.hello.capston.service;
 
 import com.hello.capston.absctracts.policy.CouponPolicy;
 import com.hello.capston.absctracts.policy.config.PolicyManager;
-import com.hello.capston.dto.dto.CouponDto;
-import com.hello.capston.dto.dto.SelectCouponDto;
+import com.hello.capston.dto.dto.coupon.CouponDto;
+import com.hello.capston.dto.request.SelectCouponDto;
 import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.CouponRepository;
-import com.hello.capston.repository.MemberWhoGetCouponRepository;
-import com.hello.capston.repository.cache.CacheRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service

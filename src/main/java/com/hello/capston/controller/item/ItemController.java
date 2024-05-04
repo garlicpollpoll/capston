@@ -1,11 +1,10 @@
 package com.hello.capston.controller.item;
 
-import com.hello.capston.dto.dto.PagingDto;
+import com.hello.capston.dto.dto.uitls.PagingDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
-import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.*;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor

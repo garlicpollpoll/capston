@@ -1,4 +1,4 @@
-package com.hello.capston.dto.dto;
+package com.hello.capston.dto.dto.coupon;
 
 import lombok.Data;
 

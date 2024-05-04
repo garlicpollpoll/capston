@@ -1,6 +1,6 @@
 package com.hello.capston.controller.payment;
 
-import com.hello.capston.dto.dto.CancelDto;
+import com.hello.capston.dto.request.cancel.CancelDto;
 import com.hello.capston.service.iamport.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
