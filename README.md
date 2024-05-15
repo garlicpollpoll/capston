@@ -206,6 +206,8 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
     }
 ```
 
+더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.5)를 참고해주세요.
+
 ---
 
 ## ver.4 에서 개선한 점 (2023년 8월 13일 완)
