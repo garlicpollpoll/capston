@@ -14,8 +14,8 @@
 * **빌드** : Gradle
 * **프레임워크** : Spring Boot, Spring Security, Spring Batch, JUnit5, Mockito
 * **ORM** : Spring Data JPA, QueryDSL
-* **데이터베이스** : MySQL, Redis, Elasticsearch
-* **인프라** : Route53, EC2, S3, ACM, ELB, ECR
+* **데이터베이스** : MySQL, Redis
+* **인프라** : Route53, EC2, S3, ACM, ELB, ECR, VPC
 * **배포** : Docker, Docker-Compose
 * **CI/CD** : Jenkins
 * **버전관리** : Git
@@ -91,7 +91,7 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 
 ---
 
-## ver.5 에서 개선한 점 (마지막 개선 2024년 5월 15일) (현재 진행중)
+## ver.5 에서 개선한 점 (마지막 개선 2024년 4월 28일) (현재 진행중)
 버전 5의 컨셉은 **남이 봐도 이해되는 코드를 작성하자**를 목표로 하였습니다. 
 
 기존의 코드들은 코드 가독성을 눈 씻고 찾아봐도 없었을 정도로 굉장히 엉망이었습니다. 기존 코드들은 코드 가독성의 측면에서 꽤나 많은 문제를 가지고 있었습니다. 
@@ -222,6 +222,8 @@ Nginx를 사용한 이유는 제 프로젝트가 동적 컨텐츠가 없고 정�
 
 ### 2. VPC를 이용해 private subnet에 데이터베이스 서버를 위치
 AWS의 VPC를 이용해 데이터베이스 서버를 private subnet에 위치함으로써 보안 그룹도 SSH를 위한 22번 포트와 MySQL을 위한 3306포트만 두어 데이터베이스 서버의 보안을 끌어올렸습니다. 
+
+또한, 데이터베이스 서버에 접속하기 위해선 바스티온 서버인 WAS서버를 통해서만 들어갈 수 있기 때문에 데이터베이스로의 접근이 쉽지 않게 설계하였습니다. 
 
 VPC를 설정하면서 NAT Gateway나 라우팅 테이블과 같은 네트워크 기능들을 직접 조작하면서 많은 공부가 되었습니다. 
 
