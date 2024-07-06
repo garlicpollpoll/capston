@@ -44,13 +44,6 @@ CI / CD 과정에서 발생할 수 있는 문제인 Hard Shutdown 문제와 JVM�
 * [Graceful Shutdown](https://coding-review.tistory.com/428)
 * [ClassLoader Warmup / JIT compiler Warmup](https://coding-review.tistory.com/428)
 
-# ✔️ Test
-서버사이드 랜더링을 선택했기 때문에 Controller 계층의 테스트는 진행하지 않았습니다. 이는 추후 버전 4에 추가할 예정입니다. 
-
-총 43개의 Service 계층 단위 테스트와 총 23개의 Repository 계층 단위 테스트를 완료했습니다. 
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/e4e04729-359b-4a24-9765-75b06b72a8fb">
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/54ed7a14-afcb-4a11-986a-4ba600f326d0">
-
 # 🛒 Core functionality 
 ## 1. 장바구니 
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/9c398c0b-db10-4663-8e00-7988c1c9e3a9">
@@ -89,7 +82,7 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 
 ---
 
-## ver.5 에서 개선한 점 (마지막 개선 2024년 4월 28일) (현재 진행중)
+## ver.5 에서 개선한 점 (2024년 4월 28일 완) (현재 진행중)
 버전 5의 컨셉은 **남이 봐도 이해되는 코드를 작성하자**를 목표로 하였습니다. 
 
 기존의 코드들은 코드 가독성을 눈 씻고 찾아봐도 없었을 정도로 굉장히 엉망이었습니다. 기존 코드들은 코드 가독성의 측면에서 꽤나 많은 문제를 가지고 있었습니다. 
