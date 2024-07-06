@@ -126,7 +126,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
 
 이로인해 MySQL의 부하를 80퍼센트 줄일 수 있었고 커넥션 풀의 안정성을 가질 수 있게 되었습니다. 
 
-더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.6)를 참고해주세요.
+버전 6에 대해 더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.6)를 참고해주세요.
 
 ---
 ## ver.5 에서 개선한 점 (2024년 4월 28일 완)
@@ -244,7 +244,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
     }
 ```
 
-더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.5)를 참고해주세요.
+버전5에 대한 더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.5)를 참고해주세요.
 
 ---
 
