@@ -81,8 +81,53 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 # ❗ Problem Solve
 
 ---
+## ver.6 에서 개선한 점 (2024년 7월 6일 기준 진행중)
+버전 6에서는 데이터베이스의 성능을 끌어올리는 개선을 진행하였습니다. 
 
-## ver.5 에서 개선한 점 (2024년 4월 28일 완) (현재 진행중)
+ver.6에서 개선된 점은 Redis for Client Side Caching을 이용해 Redis의 응답시간을 줄인 것과 기존 동시성 문제를 Pessimistic Lock을 이용해 개선했던 것을 한번 더 개선해 Redis의 Distributed Lock으로 개선하였습니다. 
+
+### Server Side Caching -> Client Side Caching
+ver.2에서 RDBMS에서 정적 데이터를 요청하던 것을 Redis를 이용해 캐시솔루션을 적용하여 MySQL의 부하를 30퍼센트 줄였습니다. 
+
+이번 ver.6에선 Redis에서 캐시 데이터를 요청하던 것을 Spring Boot에서 처리하여 Redis로 요청하는 네트워크 비용과 더불어 Redis의 부하를 줄였습니다. 
+
+Spring Boot (Client Side) 에서 로컬 캐시를 이용하려면 반드시 해결해야하는 문제가 Redis에서 값이 변경되었을 때 오래된 데이터를 보여주지 않아야합니다. 
+
+이를 해결하기 위해 Redis 6에 추가된 기능인 Redis for Client Side Caching을 이용해서 개선하였습니다. 
+
+- 성능 테스트는 wrk2를 이용해 진행하였습니다.
+- 스레드 수는 8개, 커넥션 수는 50개, 테스트 진행 시간은 60초, 초당 요청 수는 1000개입니다. 
+
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1e9570ca-0723-4d10-9d30-6ea7cb4068d1"> <br>
+일반 Redis 요청에 대한 Latency는 평균 4.64ms, 최대 88.77ms이고 throughput은 평균 124, 최대 126을 기록하였습니다. 
+
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/3fd92290-a03c-4aa5-82f3-55d8044e375d"> <br>
+Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 throughput은 평균 129, 최대 444를 기록하였습니다. 
+
+이로인해 Latency는 평균 80% 최대 130% 개선하였고, throughput은 평균 4% 최대 250% 개선하였습니다. 
+
+### Pessimistic Lock -> Redis Distributed Lock
+기존 ver.2에서 동시성 문제를 발견하여 이를 JPA의 Pessimistic Lock으로 해결하였습니다. 이를 통해 동시성 문제로 인한 버그를 예방할 수 있었습니다. 
+
+이번 ver.6에선 JPA의 Pessimistic Lock을 Redis의 Distributed Lock을 이용해 동시성 문제를 다른 방식으로 해결하였습니다. 
+
+이렇게 한 이유는 기존 방식은 Pessimistic Lock으로 인해 lock을 관리하기위한 커넥션을 생성해야하고 이는 데이터베이스 커넥션 풀의 불안정성을 야기하였습니다. 또한, lock을 관리하기위한 추가적인 CPU사용량 때문에 RDBMS의 부하를 막기위함이었습니다. 
+
+- 성능 테스트는 wrk2를 이용해 진행하였습니다.
+- 스레드 수는 8개, 커넥션 수는 50개, 테스트 진행 시간은 60초, 초당 요청 수는 1000개입니다.
+- CPU점유율 모니터링은 docker 모니터링을 사용하였습니다.
+- 부하테스트를 진행하면서 MySQL에 대한 부하를 최대한 보기위해 같은 쿼리를 사용하고 Point Query를 사용하였습니다. 또한, 조건문에 걸리는 컬럼에 인덱스를 설정하였습니다.
+
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1645ac0f-77a4-4cc5-aa73-1f5f2208cab7"> <br>
+기존 Pessimistic Lock에 대한 부하테스트이며 MySQL의 부하가 45%를 기록하고 있습니다. 
+
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/da7e1344-51a2-44da-b208-5620671115a1"> <br>
+개선한 Redis의 Distributed Lock는 MySQL의 부하가 25%이고 락을 관리하기위해 Redis의 부하가 4%를 기록하고 있습니다. 
+
+이로인해 MySQL의 부하를 80퍼센트 줄일 수 있었고 커넥션 풀의 안정성을 가질 수 있게 되었습니다. 
+
+---
+## ver.5 에서 개선한 점 (2024년 4월 28일 완)
 버전 5의 컨셉은 **남이 봐도 이해되는 코드를 작성하자**를 목표로 하였습니다. 
 
 기존의 코드들은 코드 가독성을 눈 씻고 찾아봐도 없었을 정도로 굉장히 엉망이었습니다. 기존 코드들은 코드 가독성의 측면에서 꽤나 많은 문제를 가지고 있었습니다. 
