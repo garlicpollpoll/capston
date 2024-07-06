@@ -19,7 +19,7 @@
 * **버전관리** : Git
 * **모니터링** : Prometheus, Grafana, Spring Actuator
 
-# ⚙️ System Architecture
+# ⚙️ 흐름도
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/7cd483e4-e13d-4d70-affe-3f658230d3b2">
 
 
