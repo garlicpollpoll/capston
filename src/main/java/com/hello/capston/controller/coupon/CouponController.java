@@ -8,6 +8,7 @@ import com.hello.capston.repository.cache.CacheRepository;
 import com.hello.capston.service.AlertService;
 import com.hello.capston.service.CouponService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class CouponController {
 
     private final CouponService couponService;

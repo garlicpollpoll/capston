@@ -10,6 +10,7 @@ import com.hello.capston.absctracts.policy.impl.utils.CheckStockUtils;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.CouponService;
 import com.hello.capston.service.TemporaryOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class PolicyManager {
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
     private final CouponRepository couponRepository;
     private final TemporaryOrderService temporaryOrderService;
+    private final CouponService couponService;
 
     // dependency for payment
     private final OrderItemRepository orderItemRepository;
@@ -39,7 +41,7 @@ public class PolicyManager {
             return new UserCouponPolicy(cacheRepository, memberWhoGetCouponRepository);
         }
         else {
-            return new MemberCouponPolicy(cacheRepository, memberWhoGetCouponRepository, couponRepository, temporaryOrderService);
+            return new MemberCouponPolicy(cacheRepository, memberWhoGetCouponRepository, couponRepository, temporaryOrderService, couponService);
         }
     }
 

@@ -8,13 +8,16 @@ import com.hello.capston.dto.dto.coupon.CouponSettingDto;
 import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.CouponRepository;
+import com.hello.capston.repository.MemberWhoGetCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,6 +28,7 @@ public class CouponService {
     private final WhatIsRoleService roleService;
 
     private final PolicyManager policyManager;
+    private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
 
 
     @Transactional
@@ -64,5 +68,16 @@ public class CouponService {
         Map<String, Double> map = policy.selectCoupon(username, dto);
 
         return map;
+    }
+
+    public List<MemberWhoGetCoupon> getMemberWheGetCouponList(Long memberId) {
+        List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberId(memberId);
+
+        if (findCoupon == null) {
+            return Collections.emptyList();
+        }
+        else {
+            return findCoupon;
+        }
     }
 }

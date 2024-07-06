@@ -8,6 +8,7 @@ import com.hello.capston.entity.*;
 import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.MemberWhoGetCouponRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.service.CouponService;
 import com.hello.capston.service.TemporaryOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,12 +26,14 @@ public class MemberCouponPolicy implements CouponPolicy {
     private final CouponRepository couponRepository;
     private final TemporaryOrderService temporaryOrderService;
 
+    private final CouponService couponService;
+
     @Override
     public CouponDto isCoupon(CouponSettingDto dto) {
         Map<String, String> map = new HashMap<>();
         boolean isCouponHas = false;
         Member findMember = cacheRepository.findMemberAtCache(dto.getUsername());
-        List<MemberWhoGetCoupon> findCoupon = memberWhoGetCouponRepository.findCouponByMemberId(findMember.getId());
+        List<MemberWhoGetCoupon> findCoupon = couponService.getMemberWheGetCouponList(findMember.getId());
 
         if (findCoupon.isEmpty()) {
             memberWhoGetCouponRepository.save(new MemberWhoGetCoupon(null, findMember, dto.getCoupon(), 0));
