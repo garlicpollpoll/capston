@@ -3,9 +3,7 @@
 # 📈 Introduce
 해당 프로젝트의 의의는 현재 존재하는 온라인 쇼핑몰을 현실적으로 구현하는 것입니다. 
 
-기획, 프론트 엔드, 벡 엔드, 배포에 걸쳐서 현재까지 5개월정도 시간이 소요됐습니다. 
-
-현재 버전 3까지 배포된 상태이며 추후 버전 4, 버전 5까지 계속해서 고도화시킬 예정입니다. 
+기획, 프론트 엔드, 벡 엔드, 배포에 걸쳐서 ver.1은 2022년 8월 완료되었고 이후 꾸준히 버전 업을 하여 현재 ver.5까지 진행된 상태입니다. 
 
 # 🛠️ Use Tools
 * **헬퍼** : ChatGPT
@@ -14,14 +12,14 @@
 * **빌드** : Gradle
 * **프레임워크** : Spring Boot, Spring Security, Spring Batch, JUnit5, Mockito
 * **ORM** : Spring Data JPA, QueryDSL
-* **데이터베이스** : MySQL, Redis, Elasticsearch
-* **인프라** : Route53, EC2, S3, ACM, ELB, ECR
+* **데이터베이스** : MySQL, Redis
+* **인프라** : Route53, EC2, S3, ACM, ELB, ECR, VPC
 * **배포** : Docker, Docker-Compose
 * **CI/CD** : Jenkins
 * **버전관리** : Git
 * **모니터링** : Prometheus, Grafana, Spring Actuator
 
-# ⚙️ System Architecture
+# ⚙️ System Flow
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/7cd483e4-e13d-4d70-affe-3f658230d3b2">
 
 
@@ -45,13 +43,6 @@ CI / CD 과정에서 발생할 수 있는 문제인 Hard Shutdown 문제와 JVM�
 
 * [Graceful Shutdown](https://coding-review.tistory.com/428)
 * [ClassLoader Warmup / JIT compiler Warmup](https://coding-review.tistory.com/428)
-
-# ✔️ Test
-서버사이드 랜더링을 선택했기 때문에 Controller 계층의 테스트는 진행하지 않았습니다. 이는 추후 버전 4에 추가할 예정입니다. 
-
-총 43개의 Service 계층 단위 테스트와 총 23개의 Repository 계층 단위 테스트를 완료했습니다. 
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/e4e04729-359b-4a24-9765-75b06b72a8fb">
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/54ed7a14-afcb-4a11-986a-4ba600f326d0">
 
 # 🛒 Core functionality 
 ## 1. 장바구니 
@@ -88,16 +79,185 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 이 외에도 댓글, 상품 검색, 문의하기, 상품 등록 (관리자 페이지), 회원가입 (이메일로 2차 인증), 소셜 로그인 등이 구현되어있습니다. 
 
 # ❗ Problem Solve
-## ver.1 에서 개선한 점
-버전 1에선 우선 돌아가게 만든 후 제대로 만드는 작업을 진행했습니다. 
-
-그러기위해 객체지향 원칙을 지키도록 리팩토링 하였고 애플리케이션의 신뢰도를 높이기 위해 테스트케이스를 작성했습니다. 
-
-ver.1 에 대해 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91)를 클릭해주세요. 
 
 ---
 
-## ver.2 에서 개선한 점
+## ver.5 에서 개선한 점 (2024년 4월 28일 완) (현재 진행중)
+버전 5의 컨셉은 **남이 봐도 이해되는 코드를 작성하자**를 목표로 하였습니다. 
+
+기존의 코드들은 코드 가독성을 눈 씻고 찾아봐도 없었을 정도로 굉장히 엉망이었습니다. 기존 코드들은 코드 가독성의 측면에서 꽤나 많은 문제를 가지고 있었습니다. 
+
+그도 그럴것이 ver.5의 업데이트를 작성하고 있는 2024년 5월 15일 기준 2년 2개월 전에 만든 프로젝트이기 때문에 개발 공부를 시작한지 얼마 되지않아 객체지향의 철학이나 스프링을 이해하지 못한 상태로 단지 돌아가게만 만든 코드들입니다. 
+
+회사에 취직하고 다른 사람이 저의 코드를 볼 일이 많아졌고 이 때문에 남이 내 코드를 봤을 때 욕이 나오는 코드는 만들면 안되겠다는 책임감이 생겼습니다. 
+
+때문에 버전 5를 위해 클린코드와 객체지향, 디자인패턴 등을 공부하게 되었습니다. 
+
+기존 코드는 이런 문제를 가지고 있었습니다. 
+
+* 스프링 시큐리티를 사용함에도 사용자 인증을 위해 HttpSession을 사용하고 Authentication 객체를 적극 활용하지 않았던 점
+* 일반적인 로그인방법으로 로그인한 Member와 소셜 로그인으로 로그인한 User의 로직이 달랐는데 이를 위해 if else 블럭을 남발한 점
+* for문과 if문이 중첩으로 세개 네개씩 들어가있어 코드의 가독성을 해친 점
+
+버전 5에선 이렇게 해결하였습니다. 
+
+### HttpSession -> Authentication 객체
+```
+        // 개선 전
+        String loginId = (String) session.getAttribute("loginId");
+
+        // 개선 후
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+```
+
+### if else 블록이 중복되던 것 -> 전략 패턴을 이용해 추상화 (코드가 길어서 일부 생략)
+```
+    // 개선 전
+    @Transactional
+    public LookUpPaymentDto lookUpPayment(Authentication authentication) {
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            // 소셜 로그인 대상자 결제 내역 확인 로직
+        }
+        else if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            // 일반 로그인 대상자 결제 내역 확인 로직
+        }
+    }
+
+    @Transactional
+    public LookUpPaymentDto paymentComplete(Authentication authentication) {
+        if (memberRole.equals(MemberRole.ROLE_SOCIAL)) {
+            // 소셜 로그인 대상자 결제 완료 로직
+        }
+        else if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
+            // 일반 로그인 대상자 결제 완료 로직
+        }
+    }
+
+    // 개선 후
+    @Transactional
+    public LookUpPaymentCompleteDto paymentComplete(Authentication authentication) {
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        PaymentPolicy policy = policyManager.paymentPolicy(memberRole);
+        LookUpPaymentCompleteDto dto = policy.paymentComplete(username);
+
+        return dto;
+    }
+
+    @Transactional
+    public LookUpPaymentDto lookUpPayment(Authentication authentication) {
+        MemberRole memberRole = roleService.whatIsRole(authentication);
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        PaymentPolicy policy = policyManager.paymentPolicy(memberRole);
+        LookUpPaymentDto dto = policy.lookUpPayment(username);
+
+        return dto;
+    }
+```
+
+### for문과 if문의 중첩을 StreamAPI로 가독성 ↑
+```
+    // 개선 전
+    public Map<String, Object> checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail) {
+        Map<String, Object> map = new HashMap<>();
+        for (ItemDetail itemDetail : findItemDetail) {
+            if (findTemporaryOrder.getSize().equals(itemDetail.getSize())) {
+                if (itemDetail.getStock() - findTemporaryOrder.getCount() < 0) {
+                    map.put("checkStock", false);
+                    map.put("message", "재고가 남아있지 않습니다. 상품 이름 : " + itemDetail.getItem().getViewName() + "/ 남은 재고 : " + itemDetail.getStock());
+                    return map;
+                }
+            }
+        }
+        map.put("checkStock", true);
+
+        return map;
+    }
+
+    // 개선 후
+    public Map<String, Object> checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("checkStock", true);
+
+        findItemDetail.stream()
+                .filter((itemDetail) -> findTemporaryOrder.getSize().equals(itemDetail.getSize()))
+                .filter((itemDetail) -> itemDetail.getStock() - findTemporaryOrder.getCount() < 0)
+                .findAny().ifPresent((itemDetail) -> {
+                    map.put("checkStock", false);
+                    map.put("message", "재고가 남아있지 않습니다. 상품이름 : " + itemDetail.getItem().getViewName() + "/ 남은 재고 : " + itemDetail.getStock());
+                });
+
+        return map;
+    }
+```
+
+더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.5)를 참고해주세요.
+
+---
+
+## ver.4 에서 개선한 점 (2023년 8월 13일 완)
+버전 4의 컨셉은 **실무 환경과 같은 인프라 환경을 구축하는 것**을 목표로 하였습니다. 
+
+실전에선 웹서버와 애플리케이션이 있는 WAS서버와 데이터베이스 서버를 이루고 있는 3 티어 아키텍처를 구현하고 있다고하여 이를 구현하기 위해 프로젝트를 시작했습니다. 
+
+### 1. Web Server로 Nginx를 선택
+첫 번째 계층인 Web Server는 Nginx를 사용하였습니다. 
+
+Nginx를 사용한 이유는 제 프로젝트가 동적 컨텐츠가 없고 정적 컨텐츠만 있기 때문에 동적 컨텐츠를 수용할 수 없는 Nginx여도 단점이 티가 나지 않았기 때문입니다. 또한, reverse proxy 역할을 수행해내기 쉽다는 점과, 컨텍스트 스위칭 비용이 Apache에 비해 적어 성능상 이점이 있어 Nginx를 사용하였습니다. 
+
+### 2. VPC를 이용해 private subnet에 데이터베이스 서버를 위치
+AWS의 VPC를 이용해 데이터베이스 서버를 private subnet에 위치함으로써 보안 그룹도 SSH를 위한 22번 포트와 MySQL을 위한 3306포트만 두어 데이터베이스 서버의 보안을 끌어올렸습니다. 
+
+또한, 데이터베이스 서버에 접속하기 위해선 바스티온 서버인 WAS서버를 통해서만 들어갈 수 있기 때문에 데이터베이스로의 접근이 쉽지 않게 설계하였습니다. 
+
+VPC를 설정하면서 NAT Gateway나 라우팅 테이블과 같은 네트워크 기능들을 직접 조작하면서 많은 공부가 되었습니다. 
+
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1109d624-5ac5-4433-9eaf-41cdb3d77be9">
+
+버전 4에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.4)를 참고해주세요. 
+
+---
+
+## ver.3 에서 개선한 점 (2023년 7월 18일 완)
+버전 3의 컨셉은 **"버전 2를 지속적인 통합, 지속적인 배포 (CI / CD) 를 위해서 어떤 부분이 개선되어야 하는가"** 입니다.
+
+버전 3에서는 주로 배포와 관련된 개선을 이루어냈습니다. 
+
+### 1. Jenkins로 배포 자동화
+기존 Blue / Green 배포는 무중단 배포라는 쾌거를 이루었지만 배포 방식이 너무 복잡하다는 문제가 있었습니다. 
+
+총 8단계의 배포 과정이 필요했고 이를 자동화 할 필요성이 생기게 되었습니다. 
+
+이에 자바진영 CI 자동화 툴의 표준인 Jenkins로 CI / CD 과정을 자동화 하였습니다. 
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/31906b10-a345-4927-ba6c-c65821418090"> 
+
+### 2. Graceful shutdown
+기존 배포 방식은 자동화로인해 편하게 배포를 진행할 수 있었지만 새로운 서버가 올라갈 때 기존 서버를 이용하고 있던 사용자가 갑자기 연결이 끊겨버리는 상황이 우려되었습니다. 
+
+만약 이 때 사용자가 결제를 진행하고 있었다면 이는 굉장히 부정적인 사용자 경험으로 이어질 수 있다고 판단했습니다. 
+
+때문에 기존 Hard shutdown을 Graceful Shutdown으로 변경함으로써 사용자의 모든 요청이 마무리 되고 서버가 내려가도록 설정했습니다. 
+
+### 3. Warmup
+JVM의 특성상 한번 배포가 된 다음부터는 제 성능을 보여주지만 배포가 막 끝났을 때 초기에는 심한 Latency가 발생합니다. 
+
+이는 ClassLoader의 지연 로딩과 JIT 컴파일러가 네이티브 코드로 변경하기 위한 최소 반복 횟수인 250번 때문에 생기는 문제였습니다. 
+
+이를 해결하기위해 ClassLoader Warmup은 스프링의 ApplicationRunner를 구현함으로써 개선하였고, JIT 컴파일러 Warmup은 Jenkins 파이프라인에 warmup 과정을 추가하여 개선하였습니다. 
+
+JIT 컴파일러가 warmup 되는 과정에서 발생할 수 있는 서버 부하는 warmup이 진행되는 중간에는 400코드를 내려보내고 모두 완료된 다음엔 200코드를 내려보냄으로써 개선하였습니다. 
+
+ver.3에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91%20ver.3)를 확인해주세요. 
+
+---
+
+## ver.2 에서 개선한 점 (2023년 5월 23일 완)
 버전 2의 컨셉은 **"만약 사용자 수가 엄청나게 많아진다면 어떤 문제가 발생할까"** 입니다. 
 
 주로 성능적으로 이슈가 될만한 부분을 개선하였습니다. 
@@ -130,9 +290,8 @@ ver.1 에 대해 자세한 내용은 [여기](https://coding-review.tistory.com/
 
 실제로 100만행의 데이터의 맨 마지막 행을 검색한 결과 0.8초라는 긴 시간이 걸리는 것을 확인했습니다. 
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/4cb21559-ad8f-4ffd-9866-50190aed77d8">
-
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1f9c5564-e81c-4205-b3cb-0af7d8b26d7f"> <br>
 이러한 문제를 Elasticsearch를 도입해 검색 성능을 획기적으로 줄였습니다. 
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1f9c5564-e81c-4205-b3cb-0af7d8b26d7f"> 
 
 실제로 스프링이 구동되는 시간인 0.35초를 빼고 나면 Elasticsearch는 0.021초 기존 풀 스캔은 0.434초가 걸리는 것을 확인했습니다. 
 
@@ -143,36 +302,12 @@ ver.2에 대해 더 자세한 내용은 [여기](https://coding-review.tistory.c
 
 ---
 
-## ver.3 에서 개선한 점
-버전 3의 컨셉은 **"버전 2를 지속적인 통합, 지속적인 배포 (CI / CD) 를 위해서 어떤 부분이 개선되어야 하는가"** 입니다.
+## ver.1 에서 개선한 점 (2022년 8월 14일 완)
+버전 1에선 우선 돌아가게 만든 후 제대로 만드는 작업을 진행했습니다. 
 
-버전 3에서는 주로 배포와 관련된 개선을 이루어냈습니다. 
+그러기위해 객체지향 원칙을 지키도록 리팩토링 하였고 애플리케이션의 신뢰도를 높이기 위해 테스트케이스를 작성했습니다. 
 
-### 1. Jenkins로 배포 자동화
-기존 Blue / Green 배포는 무중단 배포라는 쾌거를 이루었지만 배포 방식이 너무 복잡하다는 문제가 있었습니다. 
-
-총 8단계의 배포 과정이 필요했고 이를 자동화 할 필요성이 생기게 되었습니다. 
-
-이에 자바진영 CI 자동화 툴의 표준인 Jenkins로 CI / CD 과정을 자동화 하였습니다. 
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/31906b10-a345-4927-ba6c-c65821418090"> 
-
-### 2. Graceful shutdown
-기존 배포 방식은 자동화로인해 편하게 배포를 진행할 수 있었지만 새로운 서버가 올라갈 때 기존 서버를 이용하고 있던 사용자가 갑자기 연결이 끊겨버리는 상황이 우려되었습니다. 
-
-만약 이 때 사용자가 결제를 진행하고 있었다면 이는 굉장히 부정적인 사용자 경험으로 이어질 수 있다고 판단했습니다. 
-
-때문에 기존 Hard shutdown을 Graceful Shutdown으로 변경함으로써 사용자의 모든 요청이 마무리 되고 서버가 내려가도록 설정했습니다. 
-
-### 3. Warmup
-JVM의 특성상 한번 배포가 된 다음부터는 제 성능을 보여주지만 배포가 막 끝났을 때 초기에는 심한 Latency가 발생합니다. 
-
-이는 ClassLoader의 지연 로딩과 JIT 컴파일러가 네이티브 코드로 변경하기 위한 최소 반복 횟수인 250번 때문에 생기는 문제였습니다. 
-
-이를 해결하기위해 ClassLoader Warmup은 스프링의 ApplicationRunner를 구현함으로써 개선하였고, JIT 컴파일러 Warmup은 Jenkins 파이프라인에 warmup 과정을 추가하여 개선하였습니다. 
-
-JIT 컴파일러가 warmup 되는 과정에서 발생할 수 있는 서버 부하는 warmup이 진행되는 중간에는 400코드를 내려보내고 모두 완료된 다음엔 200코드를 내려보냄으로써 개선하였습니다. 
-
-ver.3에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91%20ver.3)를 확인해주세요. 
+ver.1 에 대해 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%BA%A1%EC%8A%A4%ED%86%A4%20%EB%94%94%EC%9E%90%EC%9D%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%ED%99%88%EC%87%BC%ED%95%91)를 클릭해주세요. 
 
 ---
 
