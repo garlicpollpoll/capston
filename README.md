@@ -290,9 +290,8 @@ ver.3에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/c
 
 실제로 100만행의 데이터의 맨 마지막 행을 검색한 결과 0.8초라는 긴 시간이 걸리는 것을 확인했습니다. 
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/4cb21559-ad8f-4ffd-9866-50190aed77d8">
-
+<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1f9c5564-e81c-4205-b3cb-0af7d8b26d7f"> <br>
 이러한 문제를 Elasticsearch를 도입해 검색 성능을 획기적으로 줄였습니다. 
-<img src="https://github.com/garlicpollpoll/capston/assets/86602266/1f9c5564-e81c-4205-b3cb-0af7d8b26d7f"> 
 
 실제로 스프링이 구동되는 시간인 0.35초를 빼고 나면 Elasticsearch는 0.021초 기존 풀 스캔은 0.434초가 걸리는 것을 확인했습니다. 
 
