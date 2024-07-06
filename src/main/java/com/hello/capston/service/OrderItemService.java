@@ -1,6 +1,7 @@
 package com.hello.capston.service;
 
 import com.hello.capston.entity.*;
+import com.hello.capston.lock.annotation.DistributedLock;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class OrderItemService {
     private boolean flag = true;
     private Map<String, String> map = new ConcurrentHashMap<>();
 
-    @Transactional
-    public Map<String, String> saveUsingTemporaryOrder(List<TemporaryOrder> tOrder, Order order) {
+    @DistributedLock(key = "#key")
+    public Map<String, String> saveUsingTemporaryOrder(List<TemporaryOrder> tOrder, Order order, String key) {
         for (TemporaryOrder temporaryOrder : tOrder) {
             Item findItem = temporaryOrder.getBucket().getItem();
             OrderItem orderItem = new OrderItem(findItem, order, temporaryOrder.getPrice(), temporaryOrder.getCount());

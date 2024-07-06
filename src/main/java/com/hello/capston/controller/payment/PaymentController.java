@@ -100,7 +100,7 @@ public class PaymentController {
             }
             Delivery delivery = deliveryService.save();
             Order order = orderService.save(null, findMember, delivery, dto);
-            orderItemService.saveUsingTemporaryOrder(findTOrder, order);
+            orderItemService.saveUsingTemporaryOrder(findTOrder, order, "tOrder");
 
             if (findMyCoupon != null) {
                 findMyCoupon.changeCheckUsedToOne();
