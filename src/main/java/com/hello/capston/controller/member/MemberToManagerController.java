@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MemberToManagerController {
 
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+
 
     @GetMapping("/admin/member_to_manager")
     public String memberToManager() {

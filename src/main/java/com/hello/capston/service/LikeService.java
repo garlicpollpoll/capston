@@ -7,6 +7,8 @@ import com.hello.capston.repository.BucketRepository;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +22,9 @@ import java.util.List;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
-    private final BucketRepository bucketRepository;
     private final WhatIsRoleService roleService;
+    private final CacheFrontend<String, Member> frontend;
 
     public List<Likes> likeCount(Long itemId) {
         return likeRepository.likeCount(itemId);
@@ -56,7 +57,9 @@ public class LikeService {
         String username = principal.getUsername();
 
         if (isRoleMember(memberRole)) {
-            Member findMember = cacheRepository.findMemberAtCache(username);
+            String key = KeyGenerator.memberKeyGenerate(username);
+            Member findMember = frontend.get(key);
+//            Member findMember = cacheRepository.findMemberAtCache(username);
 
             findLikes = likeRepository.findMyLikesByMemberId(findMember.getId());
             role = findMember.getRole();

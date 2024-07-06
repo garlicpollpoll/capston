@@ -9,6 +9,8 @@ import com.hello.capston.entity.User;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +28,7 @@ public class CommentService {
     private final CacheRepository cacheRepository;
     private final CommentRepository commentRepository;
     private final WhatIsRoleService roleService;
+    private final CacheFrontend<String, Member> frontend;
 
     @Transactional
     public Comment saveComment(String itemId, CommentForm form, Authentication authentication) {
@@ -44,7 +47,9 @@ public class CommentService {
         String username = principal.getUsername();
 
         if (memberRole.equals(MemberRole.ROLE_MEMBER)) {
-            Member findMember = cacheRepository.findMemberAtCache(username);
+            String key = KeyGenerator.memberKeyGenerate(username);
+            Member findMember = frontend.get(key);
+//            Member findMember = cacheRepository.findMemberAtCache(username);
             Comment comment = new Comment(findMember, null, findItem, form.getComment(), imageUrl);
             saveComment = commentRepository.save(comment);
         }

@@ -8,6 +8,8 @@ import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +29,15 @@ public class MemberPaymentPolicy implements PaymentPolicy {
     private final MemberWhoGetCouponRepository memberWhoGetCouponRepository;
 
     private final CheckStockUtils checkStockUtils;
+    private final CacheFrontend<String, Member> frontend;
 
     @Override
     public LookUpPaymentCompleteDto paymentComplete(String username) {
         int orderPrice = 0;
-        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
+
+//        Member findMember = cacheRepository.findMemberAtCache(username);
         List<OrderItem> findOrderItem = orderItemRepository.findOrdersByMemberId(findMember.getId());
         for (OrderItem orderItem : findOrderItem) {
             orderPrice += orderItem.getCount() * orderItem.getOrderPrice();
@@ -43,7 +49,9 @@ public class MemberPaymentPolicy implements PaymentPolicy {
 
     @Override
     public LookUpPaymentDto lookUpPayment(String username) {
-        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
         List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
         boolean checkStock = true;
         String message = null;

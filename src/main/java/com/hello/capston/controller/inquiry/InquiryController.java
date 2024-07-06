@@ -6,7 +6,9 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.InquiryRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.PagingService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -27,7 +29,7 @@ public class InquiryController {
 
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 문의하기 페이지
@@ -51,9 +53,12 @@ public class InquiryController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
+//        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
-        model.addAttribute("status", findMemberAtCache.getRole());
+
+        model.addAttribute("status", findMember.getRole());
         model.addAttribute("inquiry", findAll);
         model.addAttribute("pageCount", pagingDto.getMap());
         model.addAttribute("lastPage", pagingDto.getTotalPage());

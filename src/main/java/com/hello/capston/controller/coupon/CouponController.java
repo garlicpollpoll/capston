@@ -5,8 +5,10 @@ import com.hello.capston.entity.Coupon;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.AlertService;
 import com.hello.capston.service.CouponService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -30,19 +32,22 @@ public class CouponController {
     private final CouponRepository couponRepository;
     private final AlertService alertService;
     private final CacheRepository cacheRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 쿠폰 조회
      * @param model
-     * @param session
      * @return
      */
     @GetMapping("/coupon")
-    public String coupon(Model model, HttpSession session) {
+    public String coupon(Model model, Authentication authentication) {
         List<Coupon> findAllCoupon = couponRepository.findAll();
 
-        String loginId = (String) session.getAttribute("loginId");
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        Member principal = (Member) authentication.getPrincipal();
+        String loginId = principal.getUsername();
+//        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        String key = KeyGenerator.memberKeyGenerate(loginId);
+        Member findMember = frontend.get(key);
 
         model.addAttribute("coupon", findAllCoupon);
         model.addAttribute("status", findMember.getRole());

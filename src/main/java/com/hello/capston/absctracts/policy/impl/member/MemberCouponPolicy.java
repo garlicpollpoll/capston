@@ -8,8 +8,10 @@ import com.hello.capston.entity.*;
 import com.hello.capston.repository.CouponRepository;
 import com.hello.capston.repository.MemberWhoGetCouponRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.CouponService;
 import com.hello.capston.service.TemporaryOrderService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +29,15 @@ public class MemberCouponPolicy implements CouponPolicy {
     private final TemporaryOrderService temporaryOrderService;
 
     private final CouponService couponService;
+    private final CacheFrontend<String, Member> frontend;
 
     @Override
     public CouponDto isCoupon(CouponSettingDto dto) {
         Map<String, String> map = new HashMap<>();
         boolean isCouponHas = false;
-        Member findMember = cacheRepository.findMemberAtCache(dto.getUsername());
+//        Member findMember = cacheRepository.findMemberAtCache(dto.getUsername());
+        String key = KeyGenerator.memberKeyGenerate(dto.getUsername());
+        Member findMember = frontend.get(key);
         List<MemberWhoGetCoupon> findCoupon = couponService.getMemberWheGetCouponList(findMember.getId());
 
         if (findCoupon.isEmpty()) {
@@ -65,7 +70,10 @@ public class MemberCouponPolicy implements CouponPolicy {
         int totalPrice = 0;
         double percentage = 0;
 
-        Member findMember = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
+
         List<TemporaryOrder> findTOrder = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
         for (TemporaryOrder temporaryOrder : findTOrder) {

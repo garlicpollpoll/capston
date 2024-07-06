@@ -3,7 +3,9 @@ package com.hello.capston.controller.inquiry;
 import com.hello.capston.dto.form.InquiryForm;
 import com.hello.capston.entity.Member;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.InquiryService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,7 @@ public class InquiryWriteController {
 
     private final InquiryService inquiryService;
     private final CacheRepository cacheRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 문의하기 작성 페이지 redirect
@@ -51,9 +54,12 @@ public class InquiryWriteController {
 
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
-        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
 
-        inquiryService.saveInquiry(findMemberAtCache, null, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
+
+        inquiryService.saveInquiry(findMember, null, LocalDateTime.now().toString().substring(0, 10), form.getContent(), form.getTitle());
 
         return "redirect:/inquiry";
     }

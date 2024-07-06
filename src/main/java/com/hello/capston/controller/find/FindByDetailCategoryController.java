@@ -6,7 +6,9 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.PagingService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -27,7 +29,7 @@ public class FindByDetailCategoryController {
 
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 카테고리별 제품 보는 페이지
@@ -46,9 +48,12 @@ public class FindByDetailCategoryController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
-        model.addAttribute("status", findMemberAtCache.getRole());
+//        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
+
+        model.addAttribute("status", findMember.getRole());
 
         String category = request.getParameter("category");
 

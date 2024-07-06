@@ -6,7 +6,9 @@ import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.LikeRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.*;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +34,7 @@ public class LikeToBucketController {
     private final BucketService bucketService;
     private final TemporaryOrderService temporaryOrderService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 좋아요 리스트에서 장바구니로 이동
@@ -54,7 +56,9 @@ public class LikeToBucketController {
 
         Integer orders = null;
 
-        Member findMember = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
         List<Bucket> findBucket = bucketService.findBucketByMemberId(findMember.getId());
         orders = findBucket.size();

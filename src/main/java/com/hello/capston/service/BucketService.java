@@ -7,6 +7,8 @@ import com.hello.capston.entity.*;
 import com.hello.capston.entity.enums.MemberRole;
 import com.hello.capston.repository.*;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +29,7 @@ public class BucketService {
     private final ItemRepository itemRepository;
     private final TemporaryOrderService temporaryOrderService;
     private final WhatIsRoleService roleService;
+    private final CacheFrontend<String, Member> frontend;
 
     public List<Bucket> findBucketByMemberId(Long memberId) {
         return bucketRepository.findByMemberId(memberId);
@@ -87,7 +90,9 @@ public class BucketService {
         String username = principal.getUsername();
 
         if (isRoleMember(memberRole)) {
-            findMember = cacheRepository.findMemberAtCache(username);
+            String key = KeyGenerator.memberKeyGenerate(username);
+            findMember = frontend.get(key);
+//            findMember = cacheRepository.findMemberAtCache(username);
             List<Bucket> findBucket = bucketRepository.findByMemberId(findMember.getId());
             orders = findBucket.size();
         }
@@ -116,7 +121,9 @@ public class BucketService {
         String username = principal.getUsername();
 
         if (isRoleMember(memberRole)) {
-            findMember = cacheRepository.findMemberAtCache(username);
+            String key = KeyGenerator.memberKeyGenerate(username);
+            findMember = frontend.get(key);
+//            findMember = cacheRepository.findMemberAtCache(username);
             myBucket = temporaryOrderService.findTOrderListByMemberId(findMember.getId());
 
             totalAmount = findTotalAmountByMemberId(findMember.getId());

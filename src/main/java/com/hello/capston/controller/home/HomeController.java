@@ -7,7 +7,9 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.HomeService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +33,7 @@ public class HomeController {
     private final ItemRepository itemRepository;
     private final CacheRepository cacheRepository;
     private final HomeService homeService;
-    private final MemberRepository memberRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 메인 페이지
@@ -83,7 +85,9 @@ public class HomeController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
+            String key = KeyGenerator.memberKeyGenerate(loginId);
+            Member findMember = frontend.get(key);
+//            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 

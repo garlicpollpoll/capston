@@ -6,7 +6,9 @@ import com.hello.capston.repository.CommentRepository;
 import com.hello.capston.repository.ItemDetailRepository;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.*;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +43,8 @@ public class ItemController {
     private final PagingService pagingService;
     private final CacheRepository cacheRepository;
 
+    private final CacheFrontend<String, Member> frontend;
+
     /**
      * 아이템 리스트 조회
      * @param model
@@ -62,7 +66,9 @@ public class ItemController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        Member findMember = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
         if (findMember != null) {
             model.addAttribute("status", findMember.getRole());
@@ -96,7 +102,10 @@ public class ItemController {
         String userEmail = (String) session.getAttribute("userEmail");
         String loginId = (String) session.getAttribute("loginId");
 
-        Member findMember = cacheRepository.findMemberAtCache(loginId);
+//        Member findMember = cacheRepository.findMemberAtCache(loginId);
+        String key = KeyGenerator.memberKeyGenerate(loginId);
+        Member findMember = frontend.get(key);
+
         User findUser = cacheRepository.findUserAtCache(userEmail);
         List<Likes> findLikes = likeService.likeCount(id);
 

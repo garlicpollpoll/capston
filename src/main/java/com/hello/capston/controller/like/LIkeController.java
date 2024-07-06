@@ -8,7 +8,9 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.ItemRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
 import com.hello.capston.service.LikeService;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +27,7 @@ public class LIkeController {
 
     private final LikeService likeService;
     private final CacheRepository cacheRepository;
-    private final MemberRepository memberRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 좋아요 클릭 시 좋아요 목록에 담아짐
@@ -40,7 +42,9 @@ public class LIkeController {
 
         Item findItem = itemRepository.findById(Long.parseLong(form.getId())).orElse(new Item());
 
-        Member findMember = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
         likeService.save(findMember, null, findItem, form.getSize());
 
@@ -60,7 +64,9 @@ public class LIkeController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        Member findMember = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
         Likes like = likeService.findByMemberId(findMember.getId(), Long.parseLong(form.getId()));
         likeService.delete(like);

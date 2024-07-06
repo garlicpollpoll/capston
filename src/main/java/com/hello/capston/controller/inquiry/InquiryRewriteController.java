@@ -6,6 +6,8 @@ import com.hello.capston.entity.Member;
 import com.hello.capston.repository.InquiryRepository;
 import com.hello.capston.repository.MemberRepository;
 import com.hello.capston.repository.cache.CacheRepository;
+import com.hello.capston.repository.cache.KeyGenerator;
+import io.lettuce.core.support.caching.CacheFrontend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,8 +30,8 @@ public class InquiryRewriteController {
 
     private final InquiryRepository inquiryRepository;
 
-    private final MemberRepository memberRepository;
     private final CacheRepository cacheRepository;
+    private final CacheFrontend<String, Member> frontend;
 
     /**
      * 문의하기 세부 내용 확인
@@ -50,13 +52,16 @@ public class InquiryRewriteController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
 
-        Member findMemberAtCache = cacheRepository.findMemberAtCache(username);
+//        Member findMember = cacheRepository.findMemberAtCache(username);
+        String key = KeyGenerator.memberKeyGenerate(username);
+        Member findMember = frontend.get(key);
 
-        if (findMemberAtCache.getId() == findInquiry.getMember().getId()) {
+
+        if (findMember.getId() == findInquiry.getMember().getId()) {
             model.addAttribute("correct", 1);
         }
 
-        model.addAttribute("status", findMemberAtCache.getRole());
+        model.addAttribute("status", findMember.getRole());
 
         model.addAttribute("inquiry", findInquiry);
         model.addAttribute("previousInquiry", previousInquiry);
@@ -79,7 +84,9 @@ public class InquiryRewriteController {
         String loginId = (String) session.getAttribute("loginId");
 
         if (loginId != null) {
-            Member findMember = cacheRepository.findMemberAtCache(loginId);
+            String key = KeyGenerator.memberKeyGenerate(loginId);
+            Member findMember = frontend.get(key);
+//            Member findMember = cacheRepository.findMemberAtCache(loginId);
             model.addAttribute("status", findMember.getRole());
         }
 
