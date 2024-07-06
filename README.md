@@ -86,7 +86,7 @@ Iamport API를 가져와 실제로 결제가 되는 로직을 구현했습니다
 
 ver.6에서 개선된 점은 Redis for Client Side Caching을 이용해 Redis의 응답시간을 줄인 것과 기존 동시성 문제를 Pessimistic Lock을 이용해 개선했던 것을 한번 더 개선해 Redis의 Distributed Lock으로 개선하였습니다. 
 
-### Server Side Caching -> Client Side Caching
+### 1. Server Side Caching -> Client Side Caching
 ver.2에서 RDBMS에서 정적 데이터를 요청하던 것을 Redis를 이용해 캐시솔루션을 적용하여 MySQL의 부하를 30퍼센트 줄였습니다. 
 
 이번 ver.6에선 Redis에서 캐시 데이터를 요청하던 것을 Spring Boot에서 처리하여 Redis로 요청하는 네트워크 비용과 더불어 Redis의 부하를 줄였습니다. 
@@ -106,7 +106,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
 
 이로인해 Latency는 평균 80% 최대 130% 개선하였고, throughput은 평균 4% 최대 250% 개선하였습니다. 
 
-### Pessimistic Lock -> Redis Distributed Lock
+### 2. Pessimistic Lock -> Redis Distributed Lock
 기존 ver.2에서 동시성 문제를 발견하여 이를 JPA의 Pessimistic Lock으로 해결하였습니다. 이를 통해 동시성 문제로 인한 버그를 예방할 수 있었습니다. 
 
 이번 ver.6에선 JPA의 Pessimistic Lock을 Redis의 Distributed Lock을 이용해 동시성 문제를 다른 방식으로 해결하였습니다. 
@@ -148,7 +148,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
 
 버전 5에선 이렇게 해결하였습니다. 
 
-### HttpSession -> Authentication 객체
+### 1. HttpSession -> Authentication 객체
 ```
         // 개선 전
         String loginId = (String) session.getAttribute("loginId");
@@ -158,7 +158,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
         String username = principal.getUsername();
 ```
 
-### if else 블록이 중복되던 것 -> 전략 패턴을 이용해 추상화 (코드가 길어서 일부 생략)
+### 2. if else 블록이 중복되던 것 -> 전략 패턴을 이용해 추상화 (코드가 길어서 일부 생략)
 ```
     // 개선 전
     @Transactional
@@ -207,7 +207,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
     }
 ```
 
-### for문과 if문의 중첩을 StreamAPI로 가독성 ↑
+### 3. for문과 if문의 중첩을 StreamAPI로 가독성 ↑
 ```
     // 개선 전
     public Map<String, Object> checkStockAndRedirect(TemporaryOrder findTemporaryOrder, List<ItemDetail> findItemDetail) {
