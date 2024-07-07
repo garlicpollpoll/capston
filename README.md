@@ -3,7 +3,7 @@
 # 📈 Introduce
 해당 프로젝트의 의의는 현재 존재하는 온라인 쇼핑몰을 현실적으로 구현하는 것입니다. 
 
-기획, 프론트 엔드, 벡 엔드, 배포에 걸쳐서 ver.1은 2022년 8월 완료되었고 이후 꾸준히 버전 업을 하여 현재 ver.5까지 진행된 상태입니다. 
+기획, 프론트 엔드, 벡 엔드, 배포에 걸쳐서 ver.1은 2022년 8월 완료되었고 이후 꾸준히 버전 업을 하여 현재 ver.6까지 진행된 상태입니다. 
 
 # 🛠️ Use Tools
 * **헬퍼** : ChatGPT
@@ -29,7 +29,7 @@ EC2에 Docker를 활용해 배포하였습니다.
 배포할 때 단순히 배포하기 보단 부정적인 사용자 경험을 줄이기 위해 Blue / Green 배포를 진행했습니다. 
 
 * [Docker-Compose를 이용해 배포하기](https://coding-review.tistory.com/406)
-* [Docker-Compose + Nginx를 이용해 무중단 배포하기](https://coding-review.tistory.com/408)
+* [AWS ALB를 이용해 무중단 배포하기](https://coding-review.tistory.com/450)
 
 ## CI / CD
 Blue / Green 배포를 통해 무중단으로 배포할 수 있었지만 배포 과정이 너무 복잡하여 배포하는 것이 큰 부담이 되었습니다. 
@@ -266,6 +266,13 @@ AWS의 VPC를 이용해 데이터베이스 서버를 private subnet에 위치함
 VPC를 설정하면서 NAT Gateway나 라우팅 테이블과 같은 네트워크 기능들을 직접 조작하면서 많은 공부가 되었습니다. 
 
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/1109d624-5ac5-4433-9eaf-41cdb3d77be9">
+
+### 3. Load Balancer을 Nginx -> AWS ALB 로 변경
+기존 ver.3에서 Nginx를 이용해 무중단 배포를 진행하였지만 shell 스크립트 파일의 복잡도가 증가하는 것으로 인해 유지보수에 어려움이 있었습니다. 
+
+이를 해결하기 위해 AWS의 VPC를 적용함과 동시에 AWS ALB를 이용해 무중단 배포를 진행하였습니다. 
+
+이를 통해 Blue Green 배포를 진행하면서 AWS CLI를 이용해 유연하게 타겟그룹을 변경하면서 기존 중단 시간이 1초 이내로 존재했던 것을 아예 중단 시간이 존재하지 않도록 개선하였습니다. 
 
 버전 4에 대한 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.4)를 참고해주세요. 
 
