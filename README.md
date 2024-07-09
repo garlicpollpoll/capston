@@ -116,7 +116,7 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
 - 성능 테스트는 wrk2를 이용해 진행하였습니다.
 - 스레드 수는 8개, 커넥션 수는 50개, 테스트 진행 시간은 60초, 초당 요청 수는 1000개입니다.
 - CPU점유율 모니터링은 docker 모니터링을 사용하였습니다.
-- 부하테스트를 진행하면서 MySQL에 대한 부하를 최대한 보기위해 같은 쿼리를 사용하고 Point Query를 사용하였습니다. 또한, 조건문에 걸리는 컬럼에 인덱스를 설정하였습니다.
+- 부하테스트를 진행하면서 MySQL에 대한 부하를 최소화 하기위해 같은 쿼리를 사용하고 Point Query를 사용하였습니다. 또한, 조건문에 걸리는 컬럼에 인덱스를 설정하였습니다.
 
 <img src="https://github.com/garlicpollpoll/capston/assets/86602266/1645ac0f-77a4-4cc5-aa73-1f5f2208cab7"> <br>
 기존 Pessimistic Lock에 대한 부하테스트이며 MySQL의 부하가 45%를 기록하고 있습니다. 
@@ -125,6 +125,13 @@ Client Side Caching에 대한 Latency는 평균 2.50ms, 최대 38.46ms이고 thr
 개선한 Redis의 Distributed Lock는 MySQL의 부하가 25%이고 락을 관리하기위해 Redis의 부하가 4%를 기록하고 있습니다. 
 
 이로인해 MySQL의 부하를 80퍼센트 줄일 수 있었고 커넥션 풀의 안정성을 가질 수 있게 되었습니다. 
+
+### 3. 대기열 시스템 추가
+제 프로젝트는 온라인 쇼핑몰이고 이러한 특성은 선착순 이벤트나 콜라보와 같은 특정 시간에 트래픽이 몰리는 상황에 빈번히 노출되기 쉽다는 문제를 발견했습니다. 
+
+이를 해결하기위해 대기열 시스템을 구상하게 되었고 Redis의 Sorted Set을 이용해서 구현하게 되었습니다. 
+
+또한, 현재 남아있는 대기열에 대한 정보를 사용자가 쉽게 보이게 하기위해 WebSocket을 이용해 대기열을 구현하였습니다. 
 
 버전 6에 대해 더 자세한 내용은 [여기](https://coding-review.tistory.com/category/%EC%82%AC%EC%9D%B4%EB%93%9C%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%98%A8%EB%9D%BC%EC%9D%B8%20%EC%87%BC%ED%95%91%EB%AA%B0%20ver.6)를 참고해주세요.
 
